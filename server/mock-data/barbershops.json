@@ -1,0 +1,144 @@
+[
+  {
+    "_id": "bs_001",
+    "name": "Classic Cuts Tel Aviv",
+    "ownerId": "u_owner_001",
+    "address": {
+      "street": "Dizengoff 100",
+      "city": "Tel Aviv",
+      "country": "Israel",
+      "fullText": "Dizengoff 100, Tel Aviv"
+    },
+    "location": {
+      "type": "Point",
+      "coordinates": [34.7749, 32.0792]
+    },
+    "phone": "035555001",
+    "description": "A traditional barbershop blending modern styles with old-school service. Two skilled barbers, walk-ins welcome.",
+    "coverImageUrl": "https://picsum.photos/seed/bs001/800/400",
+    "galleryImages": [
+      "https://picsum.photos/seed/bs001a/600/400",
+      "https://picsum.photos/seed/bs001b/600/400",
+      "https://picsum.photos/seed/bs001c/600/400"
+    ],
+    "workingHours": {
+      "sunday":    { "open": "09:00", "close": "20:00", "isClosed": false },
+      "monday":    { "open": "09:00", "close": "20:00", "isClosed": false },
+      "tuesday":   { "open": "09:00", "close": "20:00", "isClosed": false },
+      "wednesday": { "open": "09:00", "close": "20:00", "isClosed": false },
+      "thursday":  { "open": "09:00", "close": "22:00", "isClosed": false },
+      "friday":    { "open": "09:00", "close": "14:00", "isClosed": false },
+      "saturday":  { "open": null,    "close": null,    "isClosed": true }
+    },
+    "rating": { "average": 4.6, "count": 47 },
+    "isActive": true,
+    "createdAt": "2025-11-01T00:00:00Z",
+    "updatedAt": "2026-03-10T12:00:00Z"
+  },
+  {
+    "_id": "bs_002",
+    "name": "Urban Barber",
+    "ownerId": "u_owner_002",
+    "address": {
+      "street": "Rothschild 45",
+      "city": "Tel Aviv",
+      "country": "Israel",
+      "fullText": "Rothschild Boulevard 45, Tel Aviv"
+    },
+    "location": {
+      "type": "Point",
+      "coordinates": [34.7723, 32.0634]
+    },
+    "phone": "035555002",
+    "description": "Modern barbershop for the urban gentleman. Trendy cuts, beard sculpting, and coffee while you wait.",
+    "coverImageUrl": "https://picsum.photos/seed/bs002/800/400",
+    "galleryImages": [
+      "https://picsum.photos/seed/bs002a/600/400",
+      "https://picsum.photos/seed/bs002b/600/400",
+      "https://picsum.photos/seed/bs002c/600/400",
+      "https://picsum.photos/seed/bs002d/600/400"
+    ],
+    "workingHours": {
+      "sunday":    { "open": "10:00", "close": "21:00", "isClosed": false },
+      "monday":    { "open": "10:00", "close": "21:00", "isClosed": false },
+      "tuesday":   { "open": "10:00", "close": "21:00", "isClosed": false },
+      "wednesday": { "open": "10:00", "close": "21:00", "isClosed": false },
+      "thursday":  { "open": "10:00", "close": "22:00", "isClosed": false },
+      "friday":    { "open": "09:00", "close": "15:00", "isClosed": false },
+      "saturday":  { "open": null,    "close": null,    "isClosed": true }
+    },
+    "rating": { "average": 4.8, "count": 89 },
+    "isActive": true,
+    "createdAt": "2025-09-15T00:00:00Z",
+    "updatedAt": "2026-04-01T09:30:00Z"
+  },
+  {
+    "_id": "bs_003",
+    "name": "The Gentleman Barbershop",
+    "ownerId": "u_owner_003",
+    "address": {
+      "street": "Ibn Gvirol 78",
+      "city": "Tel Aviv",
+      "country": "Israel",
+      "fullText": "Ibn Gvirol 78, Tel Aviv"
+    },
+    "location": {
+      "type": "Point",
+      "coordinates": [34.7828, 32.0852]
+    },
+    "phone": "035555003",
+    "description": "Old-world craftsmanship. Traditional shaves, premium products, a private experience.",
+    "coverImageUrl": "https://picsum.photos/seed/bs003/800/400",
+    "galleryImages": [
+      "https://picsum.photos/seed/bs003a/600/400",
+      "https://picsum.photos/seed/bs003b/600/400"
+    ],
+    "workingHours": {
+      "sunday":    { "open": "10:00", "close": "19:00", "isClosed": false },
+      "monday":    { "open": "10:00", "close": "19:00", "isClosed": false },
+      "tuesday":   { "open": "10:00", "close": "19:00", "isClosed": false },
+      "wednesday": { "open": "10:00", "close": "19:00", "isClosed": false },
+      "thursday":  { "open": "10:00", "close": "20:00", "isClosed": false },
+      "friday":    { "open": null,    "close": null,    "isClosed": true },
+      "saturday":  { "open": null,    "close": null,    "isClosed": true }
+    },
+    "rating": { "average": 4.9, "count": 34 },
+    "isActive": true,
+    "createdAt": "2025-05-01T00:00:00Z",
+    "updatedAt": "2025-05-01T00:00:00Z"
+  },
+  {
+    "_id": "bs_004",
+    "name": "Quick Snip",
+    "ownerId": "u_owner_002",
+    "address": {
+      "street": "Allenby 22",
+      "city": "Tel Aviv",
+      "country": "Israel",
+      "fullText": "Allenby 22, Tel Aviv"
+    },
+    "location": {
+      "type": "Point",
+      "coordinates": [34.7681, 32.0668]
+    },
+    "phone": "035555004",
+    "description": "Fast, affordable cuts. No appointments needed — walk-in friendly with short queues.",
+    "coverImageUrl": "https://picsum.photos/seed/bs004/800/400",
+    "galleryImages": [
+      "https://picsum.photos/seed/bs004a/600/400"
+    ],
+    "workingHours": {
+      "sunday":    { "open": "08:00", "close": "22:00", "isClosed": false },
+      "monday":    { "open": "08:00", "close": "22:00", "isClosed": false },
+      "tuesday":   { "open": "08:00", "close": "22:00", "isClosed": false },
+      "wednesday": { "open": "08:00", "close": "22:00", "isClosed": false },
+      "thursday":  { "open": "08:00", "close": "22:00", "isClosed": false },
+      "friday":    { "open": "08:00", "close": "15:00", "isClosed": false },
+      "saturday":  { "open": "20:00", "close": "23:00", "isClosed": false }
+    },
+    "rating": { "average": 4.2, "count": 156 },
+    "isActive": true,
+    "createdAt": "2025-08-01T00:00:00Z",
+    "updatedAt": "2026-02-15T11:00:00Z"
+  }
+]

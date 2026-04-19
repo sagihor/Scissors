@@ -1,0 +1,156 @@
+[
+  {
+    "_id": "sv_001",
+    "barbershopId": "bs_001",
+    "name": "Classic Haircut",
+    "description": "Traditional haircut with scissors and clippers. Includes wash and styling.",
+    "price": 80,
+    "durationMinutes": 30,
+    "category": "hair",
+    "isActive": true,
+    "createdAt": "2025-11-01T00:00:00Z"
+  },
+  {
+    "_id": "sv_002",
+    "barbershopId": "bs_001",
+    "name": "Skin Fade",
+    "description": "Precision fade from skin to desired length. Sharp, clean finish.",
+    "price": 100,
+    "durationMinutes": 45,
+    "category": "hair",
+    "isActive": true,
+    "createdAt": "2025-11-01T00:00:00Z"
+  },
+  {
+    "_id": "sv_003",
+    "barbershopId": "bs_001",
+    "name": "Beard Trim",
+    "description": "Shaping and trimming with hot towel finish.",
+    "price": 50,
+    "durationMinutes": 20,
+    "category": "beard",
+    "isActive": true,
+    "createdAt": "2025-11-01T00:00:00Z"
+  },
+  {
+    "_id": "sv_004",
+    "barbershopId": "bs_001",
+    "name": "Haircut + Beard Combo",
+    "description": "Full haircut and beard service. Best value.",
+    "price": 120,
+    "durationMinutes": 50,
+    "category": "combo",
+    "isActive": true,
+    "createdAt": "2025-11-01T00:00:00Z"
+  },
+  {
+    "_id": "sv_005",
+    "barbershopId": "bs_002",
+    "name": "Modern Cut",
+    "description": "Trendy styles including fringes, textured tops, and fades.",
+    "price": 110,
+    "durationMinutes": 45,
+    "category": "hair",
+    "isActive": true,
+    "createdAt": "2025-09-15T00:00:00Z"
+  },
+  {
+    "_id": "sv_006",
+    "barbershopId": "bs_002",
+    "name": "Beard Sculpting",
+    "description": "Full beard design and shaping. Includes oil treatment.",
+    "price": 70,
+    "durationMinutes": 30,
+    "category": "beard",
+    "isActive": true,
+    "createdAt": "2025-09-15T00:00:00Z"
+  },
+  {
+    "_id": "sv_007",
+    "barbershopId": "bs_002",
+    "name": "Cut + Beard Premium",
+    "description": "Premium combo with scalp massage and aftershave.",
+    "price": 160,
+    "durationMinutes": 75,
+    "category": "combo",
+    "isActive": true,
+    "createdAt": "2025-09-15T00:00:00Z"
+  },
+  {
+    "_id": "sv_008",
+    "barbershopId": "bs_002",
+    "name": "Kid's Cut",
+    "description": "Cut for children under 12.",
+    "price": 60,
+    "durationMinutes": 25,
+    "category": "hair",
+    "isActive": true,
+    "createdAt": "2025-09-15T00:00:00Z"
+  },
+  {
+    "_id": "sv_009",
+    "barbershopId": "bs_003",
+    "name": "The Gentleman's Cut",
+    "description": "Our signature classic cut with premium products and attention to detail.",
+    "price": 150,
+    "durationMinutes": 60,
+    "category": "hair",
+    "isActive": true,
+    "createdAt": "2025-05-01T00:00:00Z"
+  },
+  {
+    "_id": "sv_010",
+    "barbershopId": "bs_003",
+    "name": "Royal Straight Razor Shave",
+    "description": "Traditional hot-towel straight razor shave. 30 minutes of pure relaxation.",
+    "price": 180,
+    "durationMinutes": 40,
+    "category": "beard",
+    "isActive": true,
+    "createdAt": "2025-05-01T00:00:00Z"
+  },
+  {
+    "_id": "sv_011",
+    "barbershopId": "bs_003",
+    "name": "Full Gentleman Experience",
+    "description": "Haircut, shave, facial, and whiskey. The ultimate pampering.",
+    "price": 350,
+    "durationMinutes": 120,
+    "category": "combo",
+    "isActive": true,
+    "createdAt": "2025-05-01T00:00:00Z"
+  },
+  {
+    "_id": "sv_012",
+    "barbershopId": "bs_004",
+    "name": "Quick Cut",
+    "description": "Fast haircut. In and out in 20 minutes.",
+    "price": 50,
+    "durationMinutes": 20,
+    "category": "hair",
+    "isActive": true,
+    "createdAt": "2025-08-01T00:00:00Z"
+  },
+  {
+    "_id": "sv_013",
+    "barbershopId": "bs_004",
+    "name": "Quick Beard",
+    "description": "Fast beard trim.",
+    "price": 30,
+    "durationMinutes": 15,
+    "category": "beard",
+    "isActive": true,
+    "createdAt": "2025-08-01T00:00:00Z"
+  },
+  {
+    "_id": "sv_014",
+    "barbershopId": "bs_004",
+    "name": "Quick Combo",
+    "description": "Cut + beard, no waiting.",
+    "price": 70,
+    "durationMinutes": 30,
+    "category": "combo",
+    "isActive": true,
+    "createdAt": "2025-08-01T00:00:00Z"
+  }
+]

@@ -1,0 +1,110 @@
+[
+  {
+    "_id": "port_001",
+    "barberId": "u_barber_001",
+    "barbershopId": "bs_001",
+    "imageUrl": "https://picsum.photos/seed/port001/600/600",
+    "caption": "Classic skin fade with textured top",
+    "tags": ["fade", "modern", "short"],
+    "uploadedAt": "2026-01-15T10:00:00Z"
+  },
+  {
+    "_id": "port_002",
+    "barberId": "u_barber_001",
+    "barbershopId": "bs_001",
+    "imageUrl": "https://picsum.photos/seed/port002/600/600",
+    "caption": "Full beard sculpt and trim",
+    "tags": ["beard", "classic"],
+    "uploadedAt": "2026-02-03T14:30:00Z"
+  },
+  {
+    "_id": "port_003",
+    "barberId": "u_barber_001",
+    "barbershopId": "bs_001",
+    "imageUrl": "https://picsum.photos/seed/port003/600/600",
+    "caption": "Traditional side-part",
+    "tags": ["classic", "business"],
+    "uploadedAt": "2026-02-20T11:00:00Z"
+  },
+  {
+    "_id": "port_004",
+    "barberId": "u_barber_002",
+    "barbershopId": "bs_001",
+    "imageUrl": "https://picsum.photos/seed/port004/600/600",
+    "caption": "Hair design with razor line",
+    "tags": ["design", "modern", "creative"],
+    "uploadedAt": "2026-01-28T16:45:00Z"
+  },
+  {
+    "_id": "port_005",
+    "barberId": "u_barber_002",
+    "barbershopId": "bs_001",
+    "imageUrl": "https://picsum.photos/seed/port005/600/600",
+    "caption": "Platinum blonde color transformation",
+    "tags": ["color", "modern"],
+    "uploadedAt": "2026-03-08T13:20:00Z"
+  },
+  {
+    "_id": "port_006",
+    "barberId": "u_barber_003",
+    "barbershopId": "bs_002",
+    "imageUrl": "https://picsum.photos/seed/port006/600/600",
+    "caption": "Perfect beard line with hot towel",
+    "tags": ["beard", "shave", "classic"],
+    "uploadedAt": "2026-01-10T09:00:00Z"
+  },
+  {
+    "_id": "port_007",
+    "barberId": "u_barber_003",
+    "barbershopId": "bs_002",
+    "imageUrl": "https://picsum.photos/seed/port007/600/600",
+    "caption": "Full grooming package result",
+    "tags": ["beard", "combo"],
+    "uploadedAt": "2026-02-14T15:00:00Z"
+  },
+  {
+    "_id": "port_008",
+    "barberId": "u_barber_004",
+    "barbershopId": "bs_002",
+    "imageUrl": "https://picsum.photos/seed/port008/600/600",
+    "caption": "Trendy curtains + mid fade",
+    "tags": ["fade", "modern", "trendy"],
+    "uploadedAt": "2026-03-01T17:30:00Z"
+  },
+  {
+    "_id": "port_009",
+    "barberId": "u_barber_004",
+    "barbershopId": "bs_002",
+    "imageUrl": "https://picsum.photos/seed/port009/600/600",
+    "caption": "Kids cut — clean and easy",
+    "tags": ["kids", "short"],
+    "uploadedAt": "2026-03-15T11:45:00Z"
+  },
+  {
+    "_id": "port_010",
+    "barberId": "u_barber_005",
+    "barbershopId": "bs_003",
+    "imageUrl": "https://picsum.photos/seed/port010/600/600",
+    "caption": "Classic gentleman's cut with pomade finish",
+    "tags": ["classic", "premium"],
+    "uploadedAt": "2025-12-20T10:00:00Z"
+  },
+  {
+    "_id": "port_011",
+    "barberId": "u_barber_005",
+    "barbershopId": "bs_003",
+    "imageUrl": "https://picsum.photos/seed/port011/600/600",
+    "caption": "Traditional straight razor shave",
+    "tags": ["shave", "classic", "premium"],
+    "uploadedAt": "2026-01-05T14:00:00Z"
+  },
+  {
+    "_id": "port_012",
+    "barberId": "u_barber_005",
+    "barbershopId": "bs_003",
+    "imageUrl": "https://picsum.photos/seed/port012/600/600",
+    "caption": "Full gentleman experience — cut, shave, facial",
+    "tags": ["combo", "premium", "classic"],
+    "uploadedAt": "2026-02-28T16:00:00Z"
+  }
+]

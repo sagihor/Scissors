@@ -1,0 +1,52 @@
+[
+  {
+    "_id": "rev_001",
+    "appointmentId": "apt_001",
+    "customerId": "u_cust_001",
+    "barbershopId": "bs_001",
+    "barberId": "u_barber_001",
+    "rating": 5,
+    "comment": "David is a pro. Best cut I've had in years. Will definitely come back.",
+    "createdAt": "2026-03-15T11:00:00Z"
+  },
+  {
+    "_id": "rev_002",
+    "appointmentId": "apt_002",
+    "customerId": "u_cust_001",
+    "barbershopId": "bs_001",
+    "barberId": "u_barber_001",
+    "rating": 5,
+    "comment": "Consistent quality every time. David knows exactly what I want.",
+    "createdAt": "2026-04-05T12:30:00Z"
+  },
+  {
+    "_id": "rev_003",
+    "appointmentId": "apt_003",
+    "customerId": "u_cust_002",
+    "barbershopId": "bs_001",
+    "barberId": "u_barber_002",
+    "rating": 4,
+    "comment": "Great fade, had to wait a bit longer than expected but worth it.",
+    "createdAt": "2026-04-10T17:00:00Z"
+  },
+  {
+    "_id": "rev_004",
+    "appointmentId": "apt_004",
+    "customerId": "u_cust_003",
+    "barbershopId": "bs_002",
+    "barberId": "u_barber_003",
+    "rating": 5,
+    "comment": "Eitan is a master at beard sculpting. Attention to detail is incredible.",
+    "createdAt": "2026-04-12T18:15:00Z"
+  },
+  {
+    "_id": "rev_005",
+    "appointmentId": "apt_006",
+    "customerId": "u_cust_005",
+    "barbershopId": "bs_001",
+    "barberId": "u_barber_002",
+    "rating": 4,
+    "comment": "Good cut, nice atmosphere. Parking is a nightmare though.",
+    "createdAt": "2026-04-18T15:45:00Z"
+  }
+]
