@@ -1,44 +1,46 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
+
+const logger = require('./middleware/logger');
+const userRoutes = require('./routes/user.routes');
+const barbershopRoutes = require('./routes/barbershop.routes');
 
 const app = express();
 
-// הגדרות בסיסיות
 app.use(cors());
-app.use(express.json({ limit: '10mb' })); 
 
-// נתיב בדיקה לראות שהשרת חי (Health Check)
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    mode: process.env.USE_MOCKS === 'true' ? 'mock' : 'real' 
-  });
-});
+// Parse incoming request bodies as JSON 
+app.use(express.json()); 
 
-// טיפול בשגיאות (Error Handler)
+// Attach the custom logger middleware to all incoming requests
+app.use(logger);
+
+// Route all '/users' requests to the user router
+app.use('/users', userRoutes);
+
+// Route all '/barbershops' requests to the barbershop router
+app.use('/barbershops', barbershopRoutes);
+
+
+// Catch unexpected server errors and format them to match the API standard
 app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(err.status || 500).json({ error: err.message || 'Server error' });
+  console.error("Unhandled Exception:", err);
+  
+  res.status(500).json({
+    success: false,
+    data: null,
+    error: {
+      code: "INTERNAL_SERVER_ERROR",
+      message: err.message || "An unexpected error occurred",
+      details: {}
+    }
+  });
 });
 
-// פונקציית ההפעלה
-async function start() {
-  if (process.env.USE_MOCKS !== 'true') {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ DB connected');
-  } else {
-    console.log('⚠️ Running in MOCK mode — no DB connection');
-  }
+// 4. Start Server 
+const PORT = process.env.PORT || 3000; 
 
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
-  });
-}
-
-start().catch(err => {
-  console.error('❌ Failed to start server:', err);
-  process.exit(1);
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(`⚠️ Running with Mock Data Only (No DB connection)`);
 });

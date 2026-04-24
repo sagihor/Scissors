@@ -1,0 +1,34 @@
+[
+  {
+    "barbershopId": 2,
+    "name": "Classic Cuts Updated",
+    "address": "Herzl 20, Tel Aviv",
+    "phone": "03-5555555",
+    "createDate": "2025-02-15T09:00:00Z",
+    "updateDate": "2026-04-23T20:49:15.293Z"
+  },
+  {
+    "barbershopId": 3,
+    "name": "Golden",
+    "address": "Rothschild 22, Tel Aviv",
+    "phone": "03-5555555",
+    "createDate": "2026-04-23T20:26:56.465Z",
+    "updateDate": "2026-04-23T20:26:56.465Z"
+  },
+  {
+    "barbershopId": 4,
+    "name": "The Golden Blade",
+    "address": "Rothschild 22, Tel Aviv",
+    "phone": "03-5555555",
+    "createDate": "2026-04-23T20:26:56.465Z",
+    "updateDate": "2026-04-23T20:26:56.465Z"
+  },
+  {
+    "barbershopId": 5,
+    "name": "The Golden Blade",
+    "address": "Rothschild 22, Tel Aviv",
+    "phone": "03-5555555",
+    "createDate": "2026-04-23T20:49:56.571Z",
+    "updateDate": "2026-04-23T20:49:56.571Z"
+  }
+]

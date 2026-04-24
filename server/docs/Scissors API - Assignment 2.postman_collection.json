@@ -1,0 +1,1399 @@
+{
+  "info": {
+    "_postman_id": "df3e15ea-0a3d-4932-b21d-033e660bc7d3",
+    "name": "Scissors API - Assignment 2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53318319",
+    "_collection_link": "https://go.postman.co/collection/53318319-df3e15ea-0a3d-4932-b21d-033e660bc7d3?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "GET All Users",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": [
+            {
+              "name": "successful example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/users",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "2245"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"8c5-L/KE/IK+ujG6SLPqbhyK8olsyC0\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:17:46 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"userId\": 2,\n            \"firstName\": \"Rachel\",\n            \"lastName\": \"Levi\",\n            \"createDate\": \"2026-02-01T12:00:00Z\",\n            \"updateDate\": \"2026-02-01T12:00:00Z\",\n            \"userRole\": \"customer\"\n        },\n        {\n            \"userId\": 3,\n            \"firstName\": \"Avi\",\n            \"lastName\": \"Mizrahi\",\n            \"createDate\": \"2026-02-10T09:15:00Z\",\n            \"updateDate\": \"2026-02-10T09:15:00Z\",\n            \"userRole\": \"customer\"\n        },\n        {\n            \"userId\": 4,\n            \"firstName\": \"Shira\",\n            \"lastName\": \"Ben-David\",\n            \"createDate\": \"2026-02-20T16:20:00Z\",\n            \"updateDate\": \"2026-03-01T10:00:00Z\",\n            \"userRole\": \"customer\"\n        },\n        {\n            \"userId\": 5,\n            \"firstName\": \"Daniel\",\n            \"lastName\": \"Katz\",\n            \"createDate\": \"2026-03-05T11:30:00Z\",\n            \"updateDate\": \"2026-03-05T11:30:00Z\",\n            \"userRole\": \"customer\"\n        },\n        {\n            \"userId\": 6,\n            \"firstName\": \"Maya\",\n            \"lastName\": \"Friedman\",\n            \"createDate\": \"2026-03-15T14:00:00Z\",\n            \"updateDate\": \"2026-03-15T14:00:00Z\",\n            \"userRole\": \"customer\"\n        },\n        {\n            \"userId\": 7,\n            \"firstName\": \"David\",\n            \"lastName\": \"Perez\",\n            \"createDate\": \"2025-11-01T08:00:00Z\",\n            \"updateDate\": \"2026-01-10T09:00:00Z\",\n            \"userRole\": \"barber\"\n        },\n        {\n            \"userId\": 8,\n            \"firstName\": \"Moshe\",\n            \"lastName\": \"Ohayon\",\n            \"createDate\": \"2025-12-01T08:00:00Z\",\n            \"updateDate\": \"2025-12-01T08:00:00Z\",\n            \"userRole\": \"barber\"\n        },\n        {\n            \"userId\": 9,\n            \"firstName\": \"Eitan\",\n            \"lastName\": \"Shapira\",\n            \"createDate\": \"2025-10-15T08:00:00Z\",\n            \"updateDate\": \"2026-01-01T10:00:00Z\",\n            \"userRole\": \"barber\"\n        },\n        {\n            \"userId\": 10,\n            \"firstName\": \"Omer\",\n            \"lastName\": \"Dahan\",\n            \"createDate\": \"2026-01-05T08:00:00Z\",\n            \"updateDate\": \"2026-01-05T08:00:00Z\",\n            \"userRole\": \"barber\"\n        },\n        {\n            \"userId\": 11,\n            \"firstName\": \"Yaron\",\n            \"lastName\": \"Azulay\",\n            \"createDate\": \"2025-06-01T08:00:00Z\",\n            \"updateDate\": \"2025-06-01T08:00:00Z\",\n            \"userRole\": \"barber\"\n        },\n        {\n            \"userId\": 12,\n            \"firstName\": \"Roni\",\n            \"lastName\": \"Hadad\",\n            \"createDate\": \"2025-10-01T08:00:00Z\",\n            \"updateDate\": \"2025-10-01T08:00:00Z\",\n            \"userRole\": \"owner\"\n        },\n        {\n            \"userId\": 13,\n            \"firstName\": \"Itai\",\n            \"lastName\": \"Malka\",\n            \"createDate\": \"2025-09-15T08:00:00Z\",\n            \"updateDate\": \"2025-09-15T08:00:00Z\",\n            \"userRole\": \"owner\"\n        },\n        {\n            \"userId\": 14,\n            \"firstName\": \"Gadi\",\n            \"lastName\": \"Peretz\",\n            \"createDate\": \"2025-05-01T08:00:00Z\",\n            \"updateDate\": \"2025-05-01T08:00:00Z\",\n            \"userRole\": \"owner\"\n        },\n        {\n            \"userId\": 15,\n            \"firstName\": \"Israel\",\n            \"lastName\": \"Israeli\",\n            \"createDate\": \"2026-04-23T19:30:00.511Z\",\n            \"updateDate\": \"2026-04-23T19:30:00.511Z\",\n            \"userRole\": \"customer\"\n        },\n        {\n            \"userId\": 16,\n            \"firstName\": \"Israel\",\n            \"lastName\": \"Israeli\",\n            \"createDate\": \"2026-04-23T19:47:03.084Z\",\n            \"updateDate\": \"2026-04-23T19:47:03.084Z\",\n            \"userRole\": \"customer\"\n        }\n    ],\n    \"error\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET User By Id",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": [
+            {
+              "name": "successful example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/users/2",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    "2"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "182"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"b6-SBPUUakGwn9tzBdpqQzBXAWjHGY\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:18:07 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"data\": {\n        \"userId\": 2,\n        \"firstName\": \"Rachel\",\n        \"lastName\": \"Levi\",\n        \"createDate\": \"2026-02-01T12:00:00Z\",\n        \"updateDate\": \"2026-02-01T12:00:00Z\",\n        \"userRole\": \"customer\"\n    },\n    \"error\": null\n}"
+            },
+            {
+              "name": "Invalid Id example - 404",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/users/200",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    "200"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "111"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"6f-5tRVgZXZj2K8CvAGM//zQ6Lx+i8\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:18:27 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": false,\n    \"data\": null,\n    \"error\": {\n        \"code\": \"NOT_FOUND\",\n        \"message\": \"User with ID 200 not found.\",\n        \"details\": {}\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Create User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstName\": \"Israel\",\r\n  \"lastName\": \"Israeli\",\r\n  \"userRole\": \"customer\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "successful example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"firstName\": \"Israel\",\r\n  \"lastName\": \"Israeli\",\r\n  \"userRole\": \"customer\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/users",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "50"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"32-N6UG2334gxlQmKBKweKsraa7E/g\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:19:27 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"data\": {\n        \"userId\": 17\n    },\n    \"error\": null\n}"
+            },
+            {
+              "name": "missing field - 400",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"firstName\": \"Israel\",\r\n  \"lastName\": \"Israeli\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/users",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "152"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"98-mk/kybZhK1yvN0Qk1F7d178H9oU\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:21:45 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": false,\n    \"data\": null,\n    \"error\": {\n        \"code\": \"VALIDATION_ERROR\",\n        \"message\": \"Missing required fields.\",\n        \"details\": {\n            \"field\": \"firstName/lastName/userRole\"\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstName\": \"Yossi\",\r\n  \"lastName\": \"Updated\",\r\n  \"userRole\": \"customer\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Invalid Id example - 404",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "x-user-role",
+                    "value": "admin",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"lastName\": \"Updated\",\r\n  \"userRole\": \"customer\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/users/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    "1"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "109"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"6d-dTdioEDGSKK48z4JSR5KrJ7hW3Q\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:22:34 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": false,\n    \"data\": null,\n    \"error\": {\n        \"code\": \"NOT_FOUND\",\n        \"message\": \"User with ID 1 not found.\",\n        \"details\": {}\n    }\n}"
+            },
+            {
+              "name": "successful example",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "x-user-role",
+                    "value": "admin",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"firstName\": \"Yossi\",\r\n  \"lastName\": \"Updated\",\r\n  \"userRole\": \"customer\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/users/5",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    "5"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "49"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"31-iYan9JKxF9ZZQdMCd8sxavAXa/Q\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:24:03 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"data\": {\n        \"userId\": 5\n    },\n    \"error\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Invalid Id example - 404",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "x-user-role",
+                    "value": "admin",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/users/100",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    "100"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "111"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"6f-wyqExWVo9tg0at+GzoHuxJ9CN9U\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:24:22 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": false,\n    \"data\": null,\n    \"error\": {\n        \"code\": \"NOT_FOUND\",\n        \"message\": \"User with ID 100 not found.\",\n        \"details\": {}\n    }\n}"
+            },
+            {
+              "name": "successful example",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "x-user-role",
+                    "value": "admin",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/users/3",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "users",
+                    "3"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "49"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"31-u3Q90q6vHFzQ8LTzQ9h3C1FktYI\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:24:45 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"data\": {\n        \"userId\": 3\n    },\n    \"error\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "barbershops",
+      "item": [
+        {
+          "name": "GET Barbershops",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": [
+            {
+              "name": "successful example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/barbershops",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "barbershops"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "379"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"17b-tyTAIKbpdhdN8ZwT5XIdnOblwj8\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:25:22 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"barbershopId\": 2,\n            \"name\": \"Urban Barber\",\n            \"address\": \"Dizengoff 99, Tel Aviv\",\n            \"phone\": \"03-2222222\",\n            \"createDate\": \"2025-02-15T09:00:00Z\",\n            \"updateDate\": \"2025-02-15T09:00:00Z\"\n        },\n        {\n            \"barbershopId\": 3,\n            \"name\": \"The Golden Blade\",\n            \"address\": \"Rothschild 22, Tel Aviv\",\n            \"phone\": \"\",\n            \"createDate\": \"2026-04-23T20:04:03.892Z\",\n            \"updateDate\": \"2026-04-23T20:04:03.892Z\"\n        }\n    ],\n    \"error\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET Barbershop By Id",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": [
+            {
+              "name": "Invalid Id example - 404",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/barbershops/100",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "barbershops",
+                    "100"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "105"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"69-T5zSanEVRl6SvD7psxfsMDS7SUs\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:25:37 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": false,\n    \"data\": null,\n    \"error\": {\n        \"code\": \"NOT_FOUND\",\n        \"message\": \"Barbershop not found.\",\n        \"details\": {}\n    }\n}"
+            },
+            {
+              "name": "successful example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000/barbershops/2",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "barbershops",
+                    "2"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "205"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"cd-7bkBd9PQL2VuvTlc8F7D5DYAGo8\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:26:00 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"data\": {\n        \"barbershopId\": 2,\n        \"name\": \"Urban Barber\",\n        \"address\": \"Dizengoff 99, Tel Aviv\",\n        \"phone\": \"03-2222222\",\n        \"createDate\": \"2025-02-15T09:00:00Z\",\n        \"updateDate\": \"2025-02-15T09:00:00Z\"\n    },\n    \"error\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Create Barbershop",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"The Golden Blade\",\r\n  \"address\": \"Rothschild 22, Tel Aviv\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/barbershops",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "barbershops"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "missing field - 400",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-user-role",
+                    "value": "admin",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"address\": \"Rothschild 22, Tel Aviv\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/barbershops",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "barbershops"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "115"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"73-Q0rVl3/2biTmrHi8uhT+Sh08xjY\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:26:28 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": false,\n    \"data\": null,\n    \"error\": {\n        \"code\": \"VALIDATION_ERROR\",\n        \"message\": \"Missing name or address.\",\n        \"details\": {}\n    }\n}"
+            },
+            {
+              "name": "successful example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-user-role",
+                    "value": "admin",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"The Golden Blade\",\r\n  \"address\": \"Rothschild 22, Tel Aviv\",\r\n  \"phone\": \"03-5555555\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/barbershops",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "barbershops"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "55"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"37-PhFw6ljrJFKGu81gz5qaJ3VVY94\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:49:56 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"data\": {\n        \"barbershopId\": 5\n    },\n    \"error\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT Update Barbershoop",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Classic Cuts Updated\",\r\n  \"address\": \"Herzl 20, Tel Aviv\",\r\n  \"phone\": \"03-5555555\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/barbershops/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "barbershops",
+                "2"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "successful example",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "x-user-role",
+                    "value": "admin",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"Classic Cuts Updated\",\r\n  \"address\": \"Herzl 20, Tel Aviv\",\r\n  \"phone\": \"03-5555555\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/barbershops/2",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "barbershops",
+                    "2"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "55"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"37-mbfn7n7SFZyI8XcHbreibWNISYc\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:30:11 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"data\": {\n        \"barbershopId\": 2\n    },\n    \"error\": null\n}"
+            },
+            {
+              "name": "missing field - 400",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "x-user-role",
+                    "value": "admin",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"address\": \"Herzl 20, Tel Aviv\",\r\n  \"phone\": \"03-5555555\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3000/barbershops/2",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "barbershops",
+                    "2"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "163"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"a3-tmxvHJTaMX/A8gAmfOTcVvTVc/0\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:30:55 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": false,\n    \"data\": null,\n    \"error\": {\n        \"code\": \"VALIDATION_ERROR\",\n        \"message\": \"Missing required fields for update.\",\n        \"details\": {\n            \"required\": [\n                \"name\",\n                \"address\",\n                \"phone\"\n            ]\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE Barbershop",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": [
+            {
+              "name": "Invalid Id example - 404",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "x-user-role",
+                    "value": "admin",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/barbershops/100",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "barbershops",
+                    "100"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "105"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"69-T5zSanEVRl6SvD7psxfsMDS7SUs\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:31:28 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": false,\n    \"data\": null,\n    \"error\": {\n        \"code\": \"NOT_FOUND\",\n        \"message\": \"Barbershop not found.\",\n        \"details\": {}\n    }\n}"
+            },
+            {
+              "name": "successful example",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "x-user-role",
+                    "value": "admin",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:3000/barbershops/3",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000",
+                  "path": [
+                    "barbershops",
+                    "3"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "55"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"37-yfD3F/pCj1Mrhv75g26DWsulvfc\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 23 Apr 2026 20:32:04 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"success\": true,\n    \"data\": {\n        \"barbershopId\": 3\n    },\n    \"error\": null\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "userId": 2,
+    "firstName": "Rachel",
+    "lastName": "Levi",
+    "createDate": "2026-02-01T12:00:00Z",
+    "updateDate": "2026-02-01T12:00:00Z",
+    "userRole": "customer"
+  },
+  {
+    "userId": 4,
+    "firstName": "Shira",
+    "lastName": "Ben-David",
+    "createDate": "2026-02-20T16:20:00Z",
+    "updateDate": "2026-03-01T10:00:00Z",
+    "userRole": "customer"
+  },
+  {
+    "userId": 5,
+    "firstName": "Yossi",
+    "lastName": "Updated",
+    "createDate": "2026-03-05T11:30:00Z",
+    "updateDate": "2026-04-23T20:24:03.582Z",
+    "userRole": "customer"
+  },
+  {
+    "userId": 6,
+    "firstName": "Maya",
+    "lastName": "Friedman",
+    "createDate": "2026-03-15T14:00:00Z",
+    "updateDate": "2026-03-15T14:00:00Z",
+    "userRole": "customer"
+  },
+  {
+    "userId": 7,
+    "firstName": "David",
+    "lastName": "Perez",
+    "createDate": "2025-11-01T08:00:00Z",
+    "updateDate": "2026-01-10T09:00:00Z",
+    "userRole": "barber"
+  },
+  {
+    "userId": 8,
+    "firstName": "Moshe",
+    "lastName": "Ohayon",
+    "createDate": "2025-12-01T08:00:00Z",
+    "updateDate": "2025-12-01T08:00:00Z",
+    "userRole": "barber"
+  },
+  {
+    "userId": 9,
+    "firstName": "Eitan",
+    "lastName": "Shapira",
+    "createDate": "2025-10-15T08:00:00Z",
+    "updateDate": "2026-01-01T10:00:00Z",
+    "userRole": "barber"
+  },
+  {
+    "userId": 10,
+    "firstName": "Omer",
+    "lastName": "Dahan",
+    "createDate": "2026-01-05T08:00:00Z",
+    "updateDate": "2026-01-05T08:00:00Z",
+    "userRole": "barber"
+  },
+  {
+    "userId": 11,
+    "firstName": "Yaron",
+    "lastName": "Azulay",
+    "createDate": "2025-06-01T08:00:00Z",
+    "updateDate": "2025-06-01T08:00:00Z",
+    "userRole": "barber"
+  },
+  {
+    "userId": 12,
+    "firstName": "Roni",
+    "lastName": "Hadad",
+    "createDate": "2025-10-01T08:00:00Z",
+    "updateDate": "2025-10-01T08:00:00Z",
+    "userRole": "owner"
+  },
+  {
+    "userId": 13,
+    "firstName": "Itai",
+    "lastName": "Malka",
+    "createDate": "2025-09-15T08:00:00Z",
+    "updateDate": "2025-09-15T08:00:00Z",
+    "userRole": "owner"
+  },
+  {
+    "userId": 14,
+    "firstName": "Gadi",
+    "lastName": "Peretz",
+    "createDate": "2025-05-01T08:00:00Z",
+    "updateDate": "2025-05-01T08:00:00Z",
+    "userRole": "owner"
+  },
+  {
+    "userId": 15,
+    "firstName": "Israel",
+    "lastName": "Israeli",
+    "createDate": "2026-04-23T19:30:00.511Z",
+    "updateDate": "2026-04-23T19:30:00.511Z",
+    "userRole": "customer"
+  },
+  {
+    "userId": 16,
+    "firstName": "Israel",
+    "lastName": "Israeli",
+    "createDate": "2026-04-23T19:47:03.084Z",
+    "updateDate": "2026-04-23T19:47:03.084Z",
+    "userRole": "customer"
+  },
+  {
+    "userId": 17,
+    "firstName": "Israel",
+    "lastName": "Israeli",
+    "createDate": "2026-04-23T20:19:27.353Z",
+    "updateDate": "2026-04-23T20:19:27.353Z",
+    "userRole": "customer"
+  },
+  {
+    "userId": 18,
+    "firstName": "Israel",
+    "lastName": "Israeli",
+    "createDate": "2026-04-23T20:22:10.141Z",
+    "updateDate": "2026-04-23T20:22:10.141Z",
+    "userRole": "customer"
+  }
+]
