@@ -1,59 +1,48 @@
-const fs = require('fs');
-const path = require('path');
-
-const DATA_PATH = path.join(__dirname, 'barbershops.json');
-
-// Load initial data into memory
-let barbershops = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+const db = require('./db');
 
 module.exports = {
-    // Returns all barbershops
-    findAll: () => barbershops,
+    findAll: async () => {
+        const [rows] = await db.promise().query('SELECT * FROM barbershops');
+        return rows;
+    },
     
-    // Finds a barbershop by its ID
-    findById: (id) => barbershops.find(b => b.barbershopId === parseInt(id)),
+    findById: async (id) => {
+        const [rows] = await db.promise().query('SELECT * FROM barbershops WHERE barbershopId = ?', [id]);
+        return rows[0];
+    },
     
-    // Creates a new barbershop in memory
-    create: (shopData) => {
-        // Calculate the next available ID
-        const nextId = barbershops.length > 0 ? Math.max(...barbershops.map(b => b.barbershopId)) + 1 : 1;
-        const now = new Date().toISOString();
+    create: async (shopData) => {
+        const now = new Date();
+        const [result] = await db.promise().query(
+            'INSERT INTO barbershops (name, address, phone, createDate, updateDate) VALUES (?, ?, ?, ?, ?)',
+            [shopData.name, shopData.address, shopData.phone || "", now, now]
+        );
         
-        const newShop = {
-            barbershopId: nextId,
+        return {
+            barbershopId: result.insertId,
             name: shopData.name,
             address: shopData.address,
             phone: shopData.phone || "",
             createDate: now,
             updateDate: now
         };
-        
-        barbershops.push(newShop);
-        return newShop;
     },
     
-    // Updates a barbershop in memory
-    updateById: (id, updateData) => {
-        const index = barbershops.findIndex(b => b.barbershopId === parseInt(id));
-        if (index === -1) return null; // Not found
+    updateById: async (id, updateData) => {
+        const now = new Date();
+        const [result] = await db.promise().query(
+            'UPDATE barbershops SET name = COALESCE(?, name), address = COALESCE(?, address), phone = COALESCE(?, phone), updateDate = ? WHERE barbershopId = ?',
+            [updateData.name || null, updateData.address || null, updateData.phone || null, now, id]
+        );
         
-        barbershops[index] = {
-            ...barbershops[index], // Keep uneditable fields (like ID and createDate)
-            name: updateData.name || barbershops[index].name,
-            address: updateData.address || barbershops[index].address,
-            phone: updateData.phone || barbershops[index].phone,
-            updateDate: new Date().toISOString() // Refresh the update timestamp
-        };
+        if (result.affectedRows === 0) return null;
         
-        return barbershops[index];
+        const [updatedShop] = await db.promise().query('SELECT * FROM barbershops WHERE barbershopId = ?', [id]);
+        return updatedShop[0];
     },
     
-    // Deletes a barbershop from memory
-    deleteById: (id) => {
-        const initialLength = barbershops.length;
-        barbershops = barbershops.filter(b => b.barbershopId !== parseInt(id));
-        
-        // Return true if the length changed (meaning it was successfully deleted)
-        return barbershops.length !== initialLength;
+    deleteById: async (id) => {
+        const [result] = await db.promise().query('DELETE FROM barbershops WHERE barbershopId = ?', [id]);
+        return result.affectedRows > 0;
     }
 };
