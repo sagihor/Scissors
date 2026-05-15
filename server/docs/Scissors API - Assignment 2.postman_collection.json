@@ -14,7 +14,18 @@
           "name": "GET All Users",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users"
+              ]
+            }
           },
           "response": [
             {
@@ -80,7 +91,19 @@
           "name": "GET User By Id",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/users/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "2"
+              ]
+            }
           },
           "response": [
             {
@@ -383,7 +406,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/users/1",
+              "raw": "http://localhost:3000/users/5",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -391,7 +414,7 @@
               "port": "3000",
               "path": [
                 "users",
-                "1"
+                "5"
               ]
             }
           },
@@ -556,7 +579,7 @@
               }
             ],
             "url": {
-              "raw": "http://localhost:3000/users/1",
+              "raw": "http://localhost:3000/users/18",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -564,7 +587,7 @@
               "port": "3000",
               "path": [
                 "users",
-                "1"
+                "18"
               ]
             }
           },
@@ -708,7 +731,18 @@
           "name": "GET Barbershops",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/barbershops",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "barbershops"
+              ]
+            }
           },
           "response": [
             {
@@ -774,7 +808,19 @@
           "name": "GET Barbershop By Id",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/barbershops/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "barbershops",
+                "2"
+              ]
+            }
           },
           "response": [
             {
@@ -908,7 +954,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"The Golden Blade\",\r\n  \"address\": \"Rothschild 22, Tel Aviv\"\r\n}",
+              "raw": "{\r\n  \"name\": \"The Golden Blade\",\r\n  \"address\": \"Rothschild 22, Tel Aviv\",\r\n  \"phone\": \"03-5555555\"\r\n\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1259,8 +1305,26 @@
         {
           "name": "DELETE Barbershop",
           "request": {
-            "method": "GET",
-            "header": []
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3000/barbershops/3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "barbershops",
+                "3"
+              ]
+            }
           },
           "response": [
             {

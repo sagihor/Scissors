@@ -1,7 +1,7 @@
 # Scissors API - Assignment 2
 
 ## How to Run
-1. Open the terminal in the `server` folder.
+1. Open the terminal.
 2. Run: `npm install`
 3. Run: `node server.js`
 4. The server runs on: `http://localhost:3000`
