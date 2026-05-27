@@ -1,32 +1,27 @@
 const express = require('express');
 const cors = require('cors');
-require('./models/db');
+// REMOVED: require('./models/db');
 
 const logger = require('./middleware/logger');
 const userRoutes = require('./routes/user.routes');
 const barbershopRoutes = require('./routes/barbershop.routes');
+const authRoutes = require('./routes/auth.routes');         // NEW - Phase 2
+const settingsRoutes = require('./routes/settings.routes'); // NEW - Phase 2
 
 const app = express();
 
 app.use(cors());
-
-// Parse incoming request bodies as JSON 
-app.use(express.json()); 
-
-// Attach the custom logger middleware to all incoming requests
+app.use(express.json());
 app.use(logger);
 
-// Route all '/users' requests to the user router
-app.use('/users', userRoutes);
+// Mount everything under /api per Assignment 3 requirement
+app.use('/api/users', userRoutes);
+app.use('/api/barbershops', barbershopRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/settings', settingsRoutes);
 
-// Route all '/barbershops' requests to the barbershop router
-app.use('/barbershops', barbershopRoutes);
-
-
-// Catch unexpected server errors and format them to match the API standard
 app.use((err, req, res, next) => {
   console.error("Unhandled Exception:", err);
-  
   res.status(500).json({
     success: false,
     data: null,
@@ -38,10 +33,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 4. Start Server 
-const PORT = process.env.PORT || 3000; 
-
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
-  console.log(`Running`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

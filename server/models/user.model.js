@@ -1,56 +1,61 @@
-const db = require('./db');
+const fs = require('fs');
+const path = require('path');
+
+const DATA_PATH = path.join(__dirname, 'users.json');
+
+// Load initial data into memory
+let users = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
 
 module.exports = {
-    // מחזיר את כל המשתמשים
-    findAll: async () => {
-        const [rows] = await db.promise().query('SELECT * FROM users');
-        return rows;
-    },
+    // Returns all users
+    findAll: () => users,
     
-    // מוצא משתמש לפי ID
-    findById: async (id) => {
-        const [rows] = await db.promise().query('SELECT * FROM users WHERE userId = ?', [id]);
-        return rows[0]; // יחזיר את המשתמש הראשון (או undefined אם לא נמצא)
-    },
+    // Finds a user by their ID
+    findById: (id) => users.find(u => u.userId === parseInt(id)),
     
-    // יוצר משתמש חדש
-    create: async (userData) => {
-        const now = new Date();
-        const [result] = await db.promise().query(
-            'INSERT INTO users (firstName, lastName, userRole, createDate, updateDate) VALUES (?, ?, ?, ?, ?)',
-            [userData.firstName, userData.lastName, userData.userRole, now, now]
-        );
+    // Finds a user by email (for login). Email is stored in users.json (see Phase 1.4).
+    findByEmail: (email) => users.find(u => u.email === email),
+    
+    // Creates a new user in memory
+    create: (userData) => {
+        const nextId = users.length > 0 ? Math.max(...users.map(u => u.userId)) + 1 : 1;
+        const now = new Date().toISOString();
         
-        // MySQL נותן את ה-ID אוטומטית! אנחנו פשוט שולפים אותו בחזרה ומחזירים לקונטרולר
-        return { 
-            userId: result.insertId, 
+        const newUser = {
+            userId: nextId,
             firstName: userData.firstName,
             lastName: userData.lastName,
             userRole: userData.userRole,
+            email: userData.email || null,
             createDate: now,
             updateDate: now
         };
+        
+        users.push(newUser);
+        return newUser;
     },
     
-    // מעדכן משתמש
-    updateById: async (id, updateData) => {
-        const now = new Date();
-        // פונקציית COALESCE ב-SQL שומרת על הערך הקיים אם הלקוח לא שלח לנו ערך חדש בבקשה
-        const [result] = await db.promise().query(
-            'UPDATE users SET firstName = COALESCE(?, firstName), lastName = COALESCE(?, lastName), userRole = COALESCE(?, userRole), updateDate = ? WHERE userId = ?',
-            [updateData.firstName || null, updateData.lastName || null, updateData.userRole || null, now, id]
-        );
+    // Updates a user in memory
+    updateById: (id, updateData) => {
+        const index = users.findIndex(u => u.userId === parseInt(id));
+        if (index === -1) return null;
         
-        if (result.affectedRows === 0) return null; // אם לא עודכנה אף שורה, המשתמש כנראה לא קיים
+        users[index] = {
+            ...users[index],
+            firstName: updateData.firstName || users[index].firstName,
+            lastName: updateData.lastName || users[index].lastName,
+            userRole: updateData.userRole || users[index].userRole,
+            email: updateData.email || users[index].email,
+            updateDate: new Date().toISOString()
+        };
         
-        // שולפים את המשתמש המעודכן מהטבלה כדי להחזיר אותו בדיוק כמו שקובץ ה-JSON עשה
-        const [updatedUser] = await db.promise().query('SELECT * FROM users WHERE userId = ?', [id]);
-        return updatedUser[0];
+        return users[index];
     },
     
-    // מוחק משתמש
-    deleteById: async (id) => {
-        const [result] = await db.promise().query('DELETE FROM users WHERE userId = ?', [id]);
-        return result.affectedRows > 0; // מחזיר true אם באמת נמחקה שורה
+    // Deletes a user from memory
+    deleteById: (id) => {
+        const initialLength = users.length;
+        users = users.filter(u => u.userId !== parseInt(id));
+        return users.length !== initialLength;
     }
 };
