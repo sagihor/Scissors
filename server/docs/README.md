@@ -21,10 +21,13 @@ All responses use this structure:
 
 ### 2. Validation & Security
 - **Fields**: POST and PUT requests must include all required fields, or the server returns **400 Bad Request**.
-- **Roles**: PUT and DELETE requests (and POST for barbershops) require an `admin` role.
-- **Headers**: Use `x-user-role: admin` in Postman to access protected routes.
+- **Roles** (sent via the `x-user-role` header — values: `admin`, `manager`, `user`):
+  - **DELETE** (any resource) and **POST /barbershops**: `admin` only.
+  - **PUT /barbershops/:id**: `admin` or `manager`.
+  - **PUT /users/:id**: `admin` or `manager` — OR a regular `user` updating their **own** record. For self-update, send `x-user-id: <your userId>` so the server can verify the requester matches `:id`.
+  - **GET** endpoints and **POST /users**: open access.
+- **Headers**: Use `x-user-role` for the role, and `x-user-id` when a regular user updates their own record.
 - **IDs**: If an ID is not found, the server returns **404 Not Found**.
-
 ---
 
 ## API Reference
@@ -76,8 +79,7 @@ Example Validation Error (Status 400): Returned when required fields are missing
 ```
 
 
-Example Forbidden Error (Status 403): Returned when a protected route is accessed without x-user-role: admin header
-
+Example Forbidden Error (Status 403): Returned when a protected route is accessed with an insufficient `x-user-role` (e.g. `user` trying to delete, or `user` trying to update someone else's record).
 ```json
 {
   "success": false,
