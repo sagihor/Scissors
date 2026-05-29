@@ -1,22 +1,33 @@
 [
   {
+    "userId": 1,
+    "firstName": "Roni",
+    "lastName": "Hadad",
+    "createDate": "2026-02-01T12:00:00Z",
+    "updateDate": "2026-02-01T12:00:00Z",
+    "userRole": "customer",
+    "email": "roni@scissors.test",
+    "password": "123456"
+  },
+  {
     "userId": 2,
     "firstName": "Rachel",
     "lastName": "Levi",
     "createDate": "2026-02-01T12:00:00Z",
     "updateDate": "2026-02-01T12:00:00Z",
     "userRole": "customer",
-    "email": "rachel@scissors.test"
-
+    "email": "rachel@scissors.test",
+    "password": "123456"
   },
   {
-    "userId": 4,
+    "userId": 3,
     "firstName": "Shira",
     "lastName": "Ben-David",
     "createDate": "2026-02-20T16:20:00Z",
     "updateDate": "2026-03-01T10:00:00Z",
     "userRole": "customer",
-    "email": "Shira@scissors.test"
+    "email": "Shira@scissors.test",
+    "password": "123456"
   },
   {
     "userId": 5,
@@ -25,7 +36,8 @@
     "createDate": "2026-03-05T11:30:00Z",
     "updateDate": "2026-04-23T20:24:03.582Z",
     "userRole": "customer",
-    "email": "Yossi@scissors.test"
+    "email": "Yossi@scissors.test",
+    "password": "123456"
   },
   {
     "userId": 6,
@@ -34,7 +46,8 @@
     "createDate": "2026-03-15T14:00:00Z",
     "updateDate": "2026-03-15T14:00:00Z",
     "userRole": "customer",
-    "email": "Maya@scissors.test"
+    "email": "Maya@scissors.test",
+    "password": "123456"
   },
   {
     "userId": 7,
@@ -43,7 +56,8 @@
     "createDate": "2025-11-01T08:00:00Z",
     "updateDate": "2026-01-10T09:00:00Z",
     "userRole": "barber",
-    "email": "David@scissors.test"
+    "email": "David@scissors.test",
+    "password": "123456"
   },
   {
     "userId": 8,
@@ -52,7 +66,8 @@
     "createDate": "2025-12-01T08:00:00Z",
     "updateDate": "2025-12-01T08:00:00Z",
     "userRole": "barber",
-    "email": "Moshe@scissors.test"
+    "email": "Moshe@scissors.test",
+    "password": "123456"
   },
   {
     "userId": 9,
@@ -61,7 +76,8 @@
     "createDate": "2025-10-15T08:00:00Z",
     "updateDate": "2026-01-01T10:00:00Z",
     "userRole": "barber",
-    "email": "Eitan@scissors.test"
+    "email": "Eitan@scissors.test",
+    "password": "123456"
   },
   {
     "userId": 10,
@@ -70,7 +86,8 @@
     "createDate": "2026-01-05T08:00:00Z",
     "updateDate": "2026-01-05T08:00:00Z",
     "userRole": "barber",
-    "email": "Omer@scissors.test"
+    "email": "Omer@scissors.test",
+    "password": "123456"
   },
   {
     "userId": 11,
@@ -79,7 +96,8 @@
     "createDate": "2026-01-05T08:00:00Z",
     "updateDate": "2026-01-05T08:00:00Z",
     "userRole": "admin",
-    "email": "ido@scissors.test"
+    "email": "ido@scissors.test",
+    "password": "123456"
   },
   {
     "userId": 12,
@@ -88,7 +106,7 @@
     "createDate": "2026-01-05T08:00:00Z",
     "updateDate": "2026-01-05T08:00:00Z",
     "userRole": "manager",
-    "email": "ido@scissors.test"
+    "email": "sagi@scissors.test",
+    "password": "123456"
   }
-  
 ]

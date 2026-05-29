@@ -13,7 +13,7 @@ module.exports = {
     // Finds a user by their ID
     findById: (id) => users.find(u => u.userId === parseInt(id)),
     
-    // Finds a user by email (for login). Email is stored in users.json (see Phase 1.4).
+    // Finds a user by email (for login).
     findByEmail: (email) => users.find(u => u.email === email),
     
     // Creates a new user in memory
@@ -27,6 +27,7 @@ module.exports = {
             lastName: userData.lastName,
             userRole: userData.userRole,
             email: userData.email || null,
+            password: userData.password || null,
             createDate: now,
             updateDate: now
         };
@@ -46,6 +47,7 @@ module.exports = {
             lastName: updateData.lastName || users[index].lastName,
             userRole: updateData.userRole || users[index].userRole,
             email: updateData.email || users[index].email,
+            password: updateData.password || users[index].password,
             updateDate: new Date().toISOString()
         };
         
