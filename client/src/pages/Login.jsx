@@ -44,7 +44,7 @@ export default function Login() {
   return (
     /* THEME: login page */
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <div className="flex-grow flex items-center justify-center px-4 py-8">
+      <div className="grow flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md bg-white shadow rounded-lg p-8">
 
           <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
