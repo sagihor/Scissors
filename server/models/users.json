@@ -71,6 +71,24 @@
     "updateDate": "2026-01-05T08:00:00Z",
     "userRole": "barber",
     "email": "Omer@scissors.test"
+  },
+  {
+    "userId": 11,
+    "firstName": "Ido",
+    "lastName": "Harel",
+    "createDate": "2026-01-05T08:00:00Z",
+    "updateDate": "2026-01-05T08:00:00Z",
+    "userRole": "admin",
+    "email": "ido@scissors.test"
+  },
+  {
+    "userId": 12,
+    "firstName": "Sagi",
+    "lastName": "Horowitz",
+    "createDate": "2026-01-05T08:00:00Z",
+    "updateDate": "2026-01-05T08:00:00Z",
+    "userRole": "manager",
+    "email": "ido@scissors.test"
   }
   
 ]
