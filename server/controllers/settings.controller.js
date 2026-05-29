@@ -1,4 +1,5 @@
 const settingsModel = require('../models/settings.model');
+const userModel = require('../models/user.model');
 
 const sendError = (res, status, code, message, details = {}) => {
     return res.status(status).json({
@@ -17,21 +18,33 @@ const sendSuccess = (res, status, data) => {
 };
 
 const VALID_THEMES = ['light', 'dark'];
-const VALID_LANGUAGES = ['en', 'he'];
 
 module.exports = {
-    // GET /api/settings
-    // Returns the current user's settings (req.user set by authMock).
     get: (req, res) => {
-        const settings = settingsModel.getForUser(req.user.userId);
-        return sendSuccess(res, 200, settings);
+        const user = req.user;
+        const prefs = settingsModel.getForUser(user.userId);
+        return sendSuccess(res, 200, {
+            username: user.username,
+            email: user.email,
+            theme: prefs.theme
+        });
     },
 
-    // PUT /api/settings
-    // Body may include any subset of: { theme, language, notifications }.
-    // Validates each provided field; merges with existing settings.
     update: (req, res) => {
-        const { theme, language, notifications } = req.body;
+        const { username, email, theme } = req.body;
+
+        // Format validation
+        if (username !== undefined) {
+            if (typeof username !== 'string' || username.trim().length === 0) {
+                return sendError(res, 400, "VALIDATION_ERROR", "Username cannot be empty.", { field: "username" });
+            }
+        }
+
+        if (email !== undefined) {
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                return sendError(res, 400, "VALIDATION_ERROR", "Invalid email format.", { field: "email" });
+            }
+        }
 
         if (theme !== undefined && !VALID_THEMES.includes(theme)) {
             return sendError(res, 400, "VALIDATION_ERROR", "Invalid theme.", {
@@ -40,25 +53,54 @@ module.exports = {
             });
         }
 
-        if (language !== undefined && !VALID_LANGUAGES.includes(language)) {
-            return sendError(res, 400, "VALIDATION_ERROR", "Invalid language.", {
-                field: "language",
-                allowed: VALID_LANGUAGES
+        // Uniqueness checks (username and email must be unique per user)
+        const userUpdates = {};
+        if (username !== undefined) userUpdates.username = username.trim();
+        if (email !== undefined) userUpdates.email = email;
+
+        if (Object.keys(userUpdates).length > 0) {
+            const existingUser = req.user;
+            const allUsers = userModel.findAll();
+
+            if (userUpdates.username !== undefined && userUpdates.username !== existingUser.username) {
+                const conflict = allUsers.find(u =>
+                    u.username === userUpdates.username && u.userId !== existingUser.userId
+                );
+                if (conflict) {
+                    return sendError(res, 409, "CONFLICT", "Username is already taken.", { field: "username" });
+                }
+            }
+
+            if (userUpdates.email !== undefined && userUpdates.email !== existingUser.email) {
+                const conflict = allUsers.find(u =>
+                    u.email === userUpdates.email && u.userId !== existingUser.userId
+                );
+                if (conflict) {
+                    return sendError(res, 409, "CONFLICT", "Email is already taken.", { field: "email" });
+                }
+            }
+
+            userModel.updateById(existingUser.userId, {
+                firstName: existingUser.firstName,
+                lastName: existingUser.lastName,
+                username: userUpdates.username !== undefined ? userUpdates.username : existingUser.username,
+                userRole: existingUser.userRole,
+                email: userUpdates.email || existingUser.email
             });
         }
 
-        if (notifications !== undefined && typeof notifications !== 'boolean') {
-            return sendError(res, 400, "VALIDATION_ERROR", "notifications must be a boolean.", {
-                field: "notifications"
-            });
+        if (theme !== undefined) {
+            settingsModel.updateForUser(req.user.userId, { theme });
         }
 
-        const updated = settingsModel.updateForUser(req.user.userId, {
-            theme,
-            language,
-            notifications
+        // Return the resulting state
+        const refreshedUser = userModel.findById(req.user.userId);
+        const refreshedPrefs = settingsModel.getForUser(req.user.userId);
+
+        return sendSuccess(res, 200, {
+            username: refreshedUser.username,
+            email: refreshedUser.email,
+            theme: refreshedPrefs.theme
         });
-
-        return sendSuccess(res, 200, updated);
     }
 };

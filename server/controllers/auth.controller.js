@@ -23,6 +23,7 @@ const publicUser = (user) => ({
     userId: user.userId,
     firstName: user.firstName,
     lastName: user.lastName,
+    username: user.username,
     email: user.email,
     userRole: user.userRole
 });

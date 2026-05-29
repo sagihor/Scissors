@@ -1,34 +1,62 @@
 [
   {
+    "barbershopId": 1,
+    "name": "The Gentlemen's Den",
+    "address": "142 Oak Street, Tel Aviv",
+    "phone": "03-5551428",
+    "rating": 4.9,
+    "reviewCount": 318,
+    "createDate": "2025-03-12T10:00:00Z",
+    "updateDate": "2025-03-12T10:00:00Z"
+  },
+  {
     "barbershopId": 2,
-    "name": "Classic Cuts Updated",
-    "address": "Herzl 20, Tel Aviv",
-    "phone": "03-5555555",
-    "createDate": "2025-02-15T09:00:00Z",
-    "updateDate": "2026-04-23T20:49:15.293Z"
+    "name": "Fade & Co.",
+    "address": "8 Marlow Avenue, Tel Aviv",
+    "phone": "03-7710098",
+    "rating": 4.7,
+    "reviewCount": 204,
+    "createDate": "2025-07-22T10:00:00Z",
+    "updateDate": "2025-07-22T10:00:00Z"
   },
   {
     "barbershopId": 3,
-    "name": "Golden",
-    "address": "Rothschild 22, Tel Aviv",
-    "phone": "03-5555555",
-    "createDate": "2026-04-23T20:26:56.465Z",
-    "updateDate": "2026-04-23T20:26:56.465Z"
+    "name": "Mahogany Barbers",
+    "address": "55 Chestnut Lane, Jerusalem",
+    "phone": "02-3301145",
+    "rating": 4.5,
+    "reviewCount": 412,
+    "createDate": "2025-01-09T10:00:00Z",
+    "updateDate": "2025-01-09T10:00:00Z"
   },
   {
     "barbershopId": 4,
-    "name": "The Golden Blade",
-    "address": "Rothschild 22, Tel Aviv",
-    "phone": "03-5555555",
-    "createDate": "2026-04-23T20:26:56.465Z",
-    "updateDate": "2026-04-23T20:26:56.465Z"
+    "name": "Sharp Edges Studio",
+    "address": "920 River Road, Haifa",
+    "phone": "04-4427781",
+    "rating": 4.2,
+    "reviewCount": 96,
+    "createDate": "2025-11-04T10:00:00Z",
+    "updateDate": "2025-11-04T10:00:00Z"
   },
   {
     "barbershopId": 5,
-    "name": "The Golden Blade",
-    "address": "Rothschild 22, Tel Aviv",
-    "phone": "03-5555555",
-    "createDate": "2026-04-23T20:49:56.571Z",
-    "updateDate": "2026-04-23T20:49:56.571Z"
+    "name": "The Burgundy Chair",
+    "address": "17 Kingsway, Tel Aviv",
+    "phone": "03-2086643",
+    "rating": 5.0,
+    "reviewCount": 158,
+    "createDate": "2025-05-18T10:00:00Z",
+    "updateDate": "2025-05-18T10:00:00Z"
+  },
+  {
+    "barbershopId": 6,
+    "name": "Old Town Clippers",
+    "address": "3 Foundry Square, Jerusalem",
+    "phone": "02-6193320",
+    "rating": 4.3,
+    "reviewCount": 271,
+    "createDate": "2025-09-29T10:00:00Z",
+    "updateDate": "2025-09-29T10:00:00Z"
   }
 ]
