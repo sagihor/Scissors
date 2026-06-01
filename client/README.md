@@ -111,6 +111,5 @@ This project uses **Vite** instead of create-react-app. Meta deprecated CRA in e
 ## Submission contents
 
 - Source code in `client/` (excluding `node_modules/`)
-- `server/` directory (the Assignment 2 backend, with Assignment 3 endpoints added: `/api/auth/*`, `/api/users/me`, `/api/settings`)
 - This README
 - `screenshots/` folder with Login, Dashboard, Table, Settings screenshots
