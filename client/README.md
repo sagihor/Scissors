@@ -1,70 +1,75 @@
-# Getting Started with Create React App
+# Scissors — Frontend (Assignment 3)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React frontend for the Scissors barbershop appointment management app. Built with create-react-app + React Router + Tailwind CSS v3. Connects to the backend REST API built in Assignment 2.
 
-## Available Scripts
+## Prerequisites
 
-In the project directory, you can run:
+- **Node.js 18.x** (CRA is not compatible with Node 22+ at the time of this submission. If you have a newer Node, install Node 18 via nvm-windows or nvm: `nvm install 18.20.4 && nvm use 18.20.4`)
+- The backend server (Assignment 2) must be running at `http://localhost:3000`
 
-### `npm start`
+## How to install dependencies
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+npm install
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## How to start the server
 
-### `npm test`
+```bash
+npm start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This opens the frontend at **http://localhost:5173**. The port is set explicitly via `.env` to avoid conflict with the backend (which uses port 3000).
 
-### `npm run build`
+## API Base URL
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The frontend connects to the backend at **http://localhost:3000**.
+All API calls go to `http://localhost:3000/api/...` via the shared `apiClient` in `src/services/apiClient.js`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Demo credentials
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The backend seeds these test users (password `123456` for all):
 
-### `npm run eject`
+| Email | Password | Role |
+|---|---|---|
+| `ido@scissors.test` | `123456` | admin |
+| `sagi@scissors.test` | `123456` | manager |
+| `rachel@scissors.test` | `123456` | customer |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Project structure:
+src/
+├── App.js                       # Routing config + AuthProvider wrapper
+├── index.js                     # React DOM mount
+├── index.css                    # Tailwind + dark-mode styles
+├── components/                  # Reusable UI elements
+│   ├── Navbar.js
+│   ├── Footer.js
+│   ├── Layout.js
+│   ├── ProtectedRoute.js
+│   ├── BarbershopCard.js
+│   └── BarbershopTable.js
+├── pages/                       # Main route views
+│   ├── Login.js
+│   ├── Dashboard.js
+│   └── Settings.js
+└── services/                    # API communication
+├── apiClient.js
+└── AuthContext.js
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Assignment 3 requirements mapping
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+| Requirement | Implementation |
+|---|---|
+| Login Page (POST /api/auth/login) | `pages/Login.js` — email + password (≥ 6 chars) validation, loading state, error feedback, redirect on success |
+| Navbar & Layout (GET /api/users/me, POST /api/auth/logout) | `components/Navbar.js` + `Layout.js` |
+| Footer | `components/Footer.js` |
+| Settings Page (GET /api/settings, PUT /api/settings) | `pages/Settings.js` — three independent fields (Username, Email, Theme) with per-field save and validation |
+| Dashboard | `pages/Dashboard.js` — fetches `/api/barbershops`, displays top 3 by rating as cards, full list in a table |
+| Reusable Card Component | `components/BarbershopCard.js` — receives a single `shop` prop, reused 3 times on Dashboard |
+| Data Table Component | `components/BarbershopTable.js` — dynamically maps array to rows |
+| Client-side routing | `App.js` (React Router v6) |
+| Connects to backend API | `services/apiClient.js` |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Loading state visibility
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+The backend includes a small artificial delay (~400ms per request) so that loading states are visible during local demo. This is intentional for grading visibility; it can be removed by deleting the `simulateDelay` middleware from `server/server.js`.
