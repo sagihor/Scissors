@@ -17,7 +17,6 @@ The base URL for all endpoints is `http://localhost:3000/api`.
 - `controllers/` — Request handlers. Validates input, calls the relevant model, formats the response.
 - `routes/` — Express route definitions. Composes middlewares onto each endpoint.
 - `middleware/` — Reusable middlewares: `logger`, `requireRole`, `allowSelfOr`, `authMock`, `simulateDelay`.
-- `docs/` — Postman collection and screenshots (from Assignment 2).
 
 ## Mock Data Persistence
 
