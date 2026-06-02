@@ -30,7 +30,7 @@ npm start
 
 Frontend opens at **http://localhost:5173**.
 
-First start takes a few minutes ** create-react-app uses webpack,
+First start takes a few minutes. create-react-app uses webpack,
 which compiles the whole app on the first `npm start`. Expect roughly 2–4 minutes before
 the browser opens — first "Starting the development server..." appears, then "Compiled
 successfully!" The browser opens automatically at http://localhost:5173 when it is ready.
