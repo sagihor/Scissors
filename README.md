@@ -1,74 +1,53 @@
-# Scissors — Assignment 3 Submission
+# Scissors — Full Stack Barbershop Directory
 
-A React frontend for a barbershop appointment management app, built on top of the Assignment 2 backend with additional endpoints for authentication and per-user settings.
+A barbershop directory app with a MySQL database (Sequelize ORM), real-time chat
+(Socket.IO), and an AI-powered recommender (Google Gemini).
+React (frontend)  ->  Express (backend)  ->  Sequelize ORM  ->  MySQL
+ + WebSockets (Socket.IO)
+            + AI (Google Gemini)
+## Purpose
+Browse barbershops across cities, view their services and reviews, chat with
+other users in real time, and get AI recommendations from a free-text request
+(e.g. "a cheap fade in Tel Aviv with great reviews").
 
-## Quick start
+## Structure
+Scissors/
+├── frontend/   # React app — see frontend/README.md
+└── backend/    # Express + Sequelize + Socket.IO + AI — see backend/README.md
+## Quick Start
 
-Two terminals are needed — one for the backend, one for the frontend.
-
-### Prerequisites
-
-- **Node.js 18.x** (Node 22+ is not compatible with create-react-app)
-
-### Terminal 1 — Backend
-
-```bash
-cd server
-npm install
-npm start
+1. **Create the database** (MySQL):
+```sql
+   CREATE DATABASE IF NOT EXISTS scissors_db
+     CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Backend runs at **http://localhost:3000**.
-
-### Terminal 2 — Frontend
-
+2. **Backend** (from `backend/`):
 ```bash
-cd client
-npm install
-npm start
+   npm install
+   # create .env from .env.example and fill in DB password + Gemini key
+   npx sequelize-cli db:migrate
+   npx sequelize-cli db:seed:all
+   npm run dev          # http://localhost:3000
 ```
 
-Frontend opens at **http://localhost:5173**.
+3. **Frontend** (from `frontend/`):
+```bash
+   npm install
+   npm start            # http://localhost:5173
+```
 
-First start takes a few minutes. create-react-app uses webpack,
-which compiles the whole app on the first `npm start`. Expect roughly 2–4 minutes before
-the browser opens — first "Starting the development server..." appears, then "Compiled
-successfully!" The browser opens automatically at http://localhost:5173 when it is ready.
-Please wait for it rather than stopping the process. 
+Open http://localhost:5173 and log in (e.g. `ido@scissors.test` / `123456`).
 
+## Features
+- **MySQL + ORM:** full CRUD, JOINs, one-to-many & many-to-many relationships.
+- **WebSockets:** live chat with 3 custom events (`chat:message`, `chat:typing`,
+  `chat:join`), persisted to MySQL.
+- **AI:** barbershop recommender via Gemini — `POST /api/ai/recommend`.
 
-## Login credentials
+Details are in `frontend/README.md` and `backend/README.md`.
 
-The backend ships with seeded mock users. Password is `123456` for all.
-
-- **Admin:** `ido@scissors.test`
-- **Manager:** `sagi@scissors.test`
-- **Customer:** `rachel@scissors.test`
-
-## What's in this submission
-
-- `client/` — React frontend (Assignment 3 deliverable, built with create-react-app)
-- `server/` — Express backend (Assignment 2 + new endpoints for Assignment 3)
-- `screenshots/` — required screenshots showing the application running
-- `client/README.md` and `server/README.md` — detailed per-project documentation
-
-## Why both client/ and server/ are included
-
-The Assignment 3 PDF lists "Frontend source code" as the submission. The `server/` directory is also included because:
-
-- The frontend cannot run standalone — it makes HTTP requests to the backend
-- The backend now includes endpoints that were added during Assignment 3 development (`/api/auth/login`, `/api/users/me`, `/api/settings`) which are not in the original Assignment 2 backend
-- Including the server ensures the project can be tested end-to-end on the grader's machine
-
-## Backend changes from Assignment 2
-
-The backend retains every Assignment 2 endpoint and adds:
-
-- `POST /api/auth/login` and `POST /api/auth/logout`
-- `GET /api/users/me`
-- `GET /api/settings` and `PUT /api/settings`
-- `authMock` middleware for token-based authentication
-- All previous routes re-mounted under `/api/` prefix (per Assignment 3 requirement)
-- A `simulateDelay` middleware that adds 400ms to API responses so frontend loading states are visible during demo
-
-See `server/README.md` for full API documentation.
+## Known Limitations
+- Simplified auth (`mock-token-<userId>`, not real JWT).
+- Single global chat channel (no rooms).
+- Seed passwords are plain text; AI free tier may rate-limit occasionally.
