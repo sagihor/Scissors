@@ -79,22 +79,21 @@ module.exports = {
 
   // PUT /api/barbershops/:id — update (UPDATE)
   updateBarbershop: async (req, res, next) => {
-  try {
-    const { name, address, city, phone } = req.body;
-    if (!name || !address || !city) {
-      return sendError(res, 400, 'VALIDATION_ERROR', 'Missing required fields for update.', {
-        required: ['name', 'address', 'city'],
-      });
-    }
+    try {
+      const { name, address, city, phone } = req.body;
+      if (!name || !address || !city) {
+        return sendError(res, 400, 'VALIDATION_ERROR', 'Missing required fields for update.', {
+          required: ['name', 'address', 'city'],
+        });
+      }
 
-    // THIS LINE must exist — it defines `shop`:
-    const shop = await Barbershop.findByPk(req.params.id);
-    if (!shop) return sendError(res, 404, 'NOT_FOUND', `Barbershop with ID ${req.params.id} not found.`);
+      const shop = await Barbershop.findByPk(req.params.id);
+      if (!shop) return sendError(res, 404, 'NOT_FOUND', `Barbershop with ID ${req.params.id} not found.`);
 
-    await shop.update({ name, address, city, phone }); // uses `shop`
-    return sendSuccess(res, 200, { barbershopId: shop.barbershopId });
-  } catch (err) { next(err); }
-},
+      await shop.update({ name, address, city, phone }); // uses `shop`
+      return sendSuccess(res, 200, { barbershopId: shop.barbershopId });
+    } catch (err) { next(err); }
+  },
   // DELETE /api/barbershops/:id — delete (DELETE)
   deleteBarbershop: async (req, res, next) => {
     try {
