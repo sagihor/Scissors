@@ -122,8 +122,6 @@ DB_NAME=scissors_db
 DB_USER=root
 DB_PASSWORD=your_mysql_password      # the local MySQL root password
 
-JWT_SECRET=dev-secret-change-me
-
 AI_API_KEY=your_gemini_api_key       # a free key from Google AI Studio
 ```
 
