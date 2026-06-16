@@ -8,7 +8,7 @@
 import { io } from 'socket.io-client';
 
 // Matches the backend server URL (same host/port as the REST API)
-const SOCKET_URL = 'http://localhost:3000';
+const SOCKET_URL = (process.env.REACT_APP_API_URL || 'http://localhost:3000').replace(/\/+$/, '');
 
 const socket = io(SOCKET_URL, {
   autoConnect: true,

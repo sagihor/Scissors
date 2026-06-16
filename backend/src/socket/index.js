@@ -18,7 +18,7 @@ let io = null;
 
 function initSocket(httpServer) {
   io = new Server(httpServer, {
-    cors: { origin: '*' }, // allow the React dev server to connect
+    cors: { origin: process.env.FRONTEND_URL || '*' },
   });
 
   io.on('connection', (socket) => {
