@@ -8,6 +8,10 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [theme, setThemeState] = useState('light');
 
+  // The effective location used by the map/distance features.
+  // Priority: live browser geolocation (if granted) -> user's saved address.
+  const [browserLocation, setBrowserLocation] = useState(null);
+
   // On mount: restore session + load theme from /settings
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -18,30 +22,38 @@ export function AuthProvider({ children }) {
 
     Promise.all([
       apiClient.get('/users/me'),
-      apiClient.get('/settings').catch(() => null), // settings may fail silently if not seeded
+      apiClient.get('/settings').catch(() => null),
     ])
       .then(([meRes, settingsRes]) => {
         setCurrentUser(meRes.data);
-        if (settingsRes?.data?.theme) {
-          setThemeState(settingsRes.data.theme);
-        }
+        if (settingsRes?.data?.theme) setThemeState(settingsRes.data.theme);
       })
-      .catch(() => {
-        setCurrentUser(null);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      .catch(() => setCurrentUser(null))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Try the browser's geolocation once. If denied/unavailable, we silently
+  // fall back to the user's saved address (handled by effectiveLocation below).
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setBrowserLocation({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          addressLabel: 'Your current location',
+        });
+      },
+      () => setBrowserLocation(null), // denied or failed -> use saved default
+      { timeout: 8000 }
+    );
   }, []);
 
   // Apply theme to the document whenever it changes
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    if (theme === 'dark') root.classList.add('dark');
+    else root.classList.remove('dark');
   }, [theme]);
 
   async function login(email, password) {
@@ -50,33 +62,52 @@ export function AuthProvider({ children }) {
     localStorage.setItem('token', token);
     setCurrentUser(user);
 
-    // After login, fetch settings so theme picks up
     try {
       const settingsRes = await apiClient.get('/settings');
       if (settingsRes?.data?.theme) setThemeState(settingsRes.data.theme);
-    } catch {
-      // ignore
-    }
+    } catch {}
 
     return user;
   }
 
   async function logout() {
-    try {
-      await apiClient.post('/auth/logout');
-    } catch {}
+    try { await apiClient.post('/auth/logout'); } catch {}
     localStorage.removeItem('token');
     setCurrentUser(null);
-    setThemeState('light'); // reset to light on logout
+    setThemeState('light');
   }
 
-  // Called by Settings page when theme is saved so the change is immediate
   function setTheme(newTheme) {
     setThemeState(newTheme);
   }
 
+  // Re-fetch the current user (e.g. after changing address in Settings)
+  async function refreshUser() {
+    try {
+      const meRes = await apiClient.get('/users/me');
+      setCurrentUser(meRes.data);
+    } catch {}
+  }
+
+  // The location the map should use: browser location if we have it,
+  // otherwise the user's saved address (their default).
+  const effectiveLocation =
+    browserLocation ||
+    (currentUser && currentUser.latitude != null
+      ? {
+          latitude: currentUser.latitude,
+          longitude: currentUser.longitude,
+          addressLabel: currentUser.addressLabel,
+        }
+      : null);
+
   return (
-    <AuthContext.Provider value={{ currentUser, loading, login, logout, theme, setTheme }}>
+    <AuthContext.Provider
+      value={{
+        currentUser, loading, login, logout, theme, setTheme,
+        refreshUser, effectiveLocation,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

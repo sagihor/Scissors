@@ -26,6 +26,10 @@ const Barbershop = sequelize.define('Barbershop', {
   city:    { type: DataTypes.STRING, allowNull: false }, // city (used by AI recommender)
   phone:   { type: DataTypes.STRING, allowNull: true, defaultValue: '' },
 
+  // Real geo coordinates for the map + distance features
+  latitude:  { type: DataTypes.FLOAT, allowNull: true },
+  longitude: { type: DataTypes.FLOAT, allowNull: true },
+
 }, {
   tableName: 'barbershops',
   timestamps: true,

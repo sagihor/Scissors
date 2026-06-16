@@ -2,9 +2,11 @@
  * Settings Controller
  * -------------------
  * Reads/updates per-user preferences (theme) and profile fields (username,
- * email) using Sequelize. Each user has exactly one Setting row.
+ * email) plus the user's location (latitude/longitude/addressLabel) using
+ * Sequelize. Each user has exactly one Setting row.
  */
 
+const { Op } = require('sequelize');
 const { User, Setting } = require('../../models');
 
 const sendError = (res, status, code, message, details = {}) =>
@@ -22,20 +24,32 @@ async function getOrCreateSetting(userId) {
   return s;
 }
 
+// Shape of the data returned to the client
+function payload(user, setting) {
+  return {
+    username: user.username,
+    email: user.email,
+    theme: setting.theme,
+    latitude: user.latitude,
+    longitude: user.longitude,
+    addressLabel: user.addressLabel,
+  };
+}
+
 module.exports = {
   // GET /api/settings
   get: async (req, res, next) => {
     try {
       const user = req.user;
       const setting = await getOrCreateSetting(user.userId);
-      return sendSuccess(res, 200, { username: user.username, email: user.email, theme: setting.theme });
+      return sendSuccess(res, 200, payload(user, setting));
     } catch (err) { next(err); }
   },
 
   // PUT /api/settings
   update: async (req, res, next) => {
     try {
-      const { username, email, theme } = req.body;
+      const { username, email, theme, latitude, longitude, addressLabel } = req.body;
 
       if (username !== undefined && (typeof username !== 'string' || !username.trim()))
         return sendError(res, 400, 'VALIDATION_ERROR', 'Username cannot be empty.', { field: 'username' });
@@ -44,10 +58,21 @@ module.exports = {
       if (theme !== undefined && !VALID_THEMES.includes(theme))
         return sendError(res, 400, 'VALIDATION_ERROR', 'Invalid theme.', { field: 'theme', allowed: VALID_THEMES });
 
+      // Location: require all three together and valid coordinate ranges.
+      if (latitude !== undefined || longitude !== undefined || addressLabel !== undefined) {
+        const lat = Number(latitude);
+        const lng = Number(longitude);
+        if (
+          !Number.isFinite(lat) || !Number.isFinite(lng) ||
+          lat < -90 || lat > 90 || lng < -180 || lng > 180 ||
+          typeof addressLabel !== 'string' || !addressLabel.trim()
+        ) {
+          return sendError(res, 400, 'VALIDATION_ERROR', 'Invalid location.', { fields: ['latitude', 'longitude', 'addressLabel'] });
+        }
+      }
+
       const user = await User.findByPk(req.user.userId);
 
-      // Uniqueness checks for username / email
-      const { Op } = require('sequelize');
       if (username !== undefined && username.trim() !== user.username) {
         const clash = await User.findOne({ where: { username: username.trim(), userId: { [Op.ne]: user.userId } } });
         if (clash) return sendError(res, 409, 'CONFLICT', 'Username is already taken.', { field: 'username' });
@@ -58,12 +83,17 @@ module.exports = {
         if (clash) return sendError(res, 409, 'CONFLICT', 'Email is already taken.', { field: 'email' });
         user.email = email;
       }
+      if (addressLabel !== undefined) {
+        user.latitude = Number(latitude);
+        user.longitude = Number(longitude);
+        user.addressLabel = addressLabel.trim();
+      }
       await user.save();
 
       const setting = await getOrCreateSetting(user.userId);
       if (theme !== undefined) { setting.theme = theme; await setting.save(); }
 
-      return sendSuccess(res, 200, { username: user.username, email: user.email, theme: setting.theme });
+      return sendSuccess(res, 200, payload(user, setting));
     } catch (err) { next(err); }
   },
 };

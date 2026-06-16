@@ -32,6 +32,12 @@ module.exports = {
       { userId: 12, firstName: 'Sagi',  lastName: 'Horowitz',  username: 'sagi_h',  userRole: 'manager',  email: 'sagi@scissors.test',  password: '123456', createDate: now, updateDate: now },
     ], {});
 
+    // Default location for every seeded user: Dizengoff Square, Tel Aviv
+    // (a central city that has barbershops). Users can change this in Settings.
+    await queryInterface.sequelize.query(
+      "UPDATE users SET latitude = 32.0786, longitude = 34.7741, addressLabel = 'Dizengoff Square, Tel Aviv'"
+    );
+
     /* ---------------- ADMINS ---------------- */
     await queryInterface.bulkInsert('admins', [
       { userId: 11, accessLevel: 'super', createDate: now, updateDate: now },
@@ -47,30 +53,31 @@ module.exports = {
     ], {});
 
     /* ---------------- BARBERSHOPS: 15 shops, 8 cities ---------------- */
+    // Real street addresses with accurate coordinates (no runtime geocoding needed).
     await queryInterface.bulkInsert('barbershops', [
       // Tel Aviv (3)
-      { barbershopId: 1,  name: "The Gentlemen's Den", address: '142 Oak Street',     city: 'Tel Aviv',      phone: '03-5551428', createDate: now, updateDate: now },
-      { barbershopId: 2,  name: 'Fade & Co.',          address: '8 Marlow Avenue',    city: 'Tel Aviv',      phone: '03-7710098', createDate: now, updateDate: now },
-      { barbershopId: 3,  name: 'Rothschild Razors',   address: '60 Rothschild Blvd', city: 'Tel Aviv',      phone: '03-9912004', createDate: now, updateDate: now },
+      { barbershopId: 1,  name: "The Gentlemen's Den", address: 'Dizengoff St 100, Tel Aviv',  city: 'Tel Aviv',      phone: '03-5551428', latitude: 32.0809, longitude: 34.7741, createDate: now, updateDate: now },
+      { barbershopId: 2,  name: 'Fade & Co.',          address: 'Allenby St 40, Tel Aviv',     city: 'Tel Aviv',      phone: '03-7710098', latitude: 32.0668, longitude: 34.7700, createDate: now, updateDate: now },
+      { barbershopId: 3,  name: 'Rothschild Razors',   address: 'Rothschild Blvd 60, Tel Aviv',city: 'Tel Aviv',      phone: '03-9912004', latitude: 32.0644, longitude: 34.7716, createDate: now, updateDate: now },
       // Jerusalem (2)
-      { barbershopId: 4,  name: 'Mahogany Barbers',    address: '55 Chestnut Lane',   city: 'Jerusalem',     phone: '02-3301145', createDate: now, updateDate: now },
-      { barbershopId: 5,  name: 'Old City Cuts',       address: '7 Jaffa Gate',       city: 'Jerusalem',     phone: '02-6650781', createDate: now, updateDate: now },
+      { barbershopId: 4,  name: 'Mahogany Barbers',    address: 'Jaffa St 50, Jerusalem',      city: 'Jerusalem',     phone: '02-3301145', latitude: 31.7835, longitude: 35.2155, createDate: now, updateDate: now },
+      { barbershopId: 5,  name: 'Old City Cuts',       address: 'Emek Refaim St 20, Jerusalem',city: 'Jerusalem',     phone: '02-6650781', latitude: 31.7625, longitude: 35.2192, createDate: now, updateDate: now },
       // Haifa (2)
-      { barbershopId: 6,  name: 'Sharp Edges Studio',  address: '920 River Road',     city: 'Haifa',         phone: '04-4427781', createDate: now, updateDate: now },
-      { barbershopId: 7,  name: 'Carmel Clippers',     address: '3 Panorama Street',  city: 'Haifa',         phone: '04-8120355', createDate: now, updateDate: now },
+      { barbershopId: 6,  name: 'Sharp Edges Studio',  address: 'Herzl St 30, Haifa',          city: 'Haifa',         phone: '04-4427781', latitude: 32.8120, longitude: 34.9930, createDate: now, updateDate: now },
+      { barbershopId: 7,  name: 'Carmel Clippers',     address: 'Moriah Ave 80, Haifa',        city: 'Haifa',         phone: '04-8120355', latitude: 32.7940, longitude: 34.9820, createDate: now, updateDate: now },
       // Beersheba (2)
-      { barbershopId: 8,  name: 'Beersheba Blades',    address: '12 Negev Blvd',      city: 'Beersheba',     phone: '08-6612200', createDate: now, updateDate: now },
-      { barbershopId: 9,  name: 'Desert Sharp',        address: '45 Ben Gurion Ave',  city: 'Beersheba',     phone: '08-6477190', createDate: now, updateDate: now },
+      { barbershopId: 8,  name: 'Beersheba Blades',    address: 'HaAtzmaut St 40, Beersheba',  city: 'Beersheba',     phone: '08-6612200', latitude: 31.2435, longitude: 34.7920, createDate: now, updateDate: now },
+      { barbershopId: 9,  name: 'Desert Sharp',        address: 'Rager Blvd 15, Beersheba',    city: 'Beersheba',     phone: '08-6477190', latitude: 31.2520, longitude: 34.7910, createDate: now, updateDate: now },
       // Netanya (2)
-      { barbershopId: 10, name: 'Netanya Style Bar',   address: '20 Beach Road',      city: 'Netanya',       phone: '09-8834120', createDate: now, updateDate: now },
-      { barbershopId: 11, name: 'Seaside Shears',      address: '5 Promenade Walk',   city: 'Netanya',       phone: '09-8651233', createDate: now, updateDate: now },
+      { barbershopId: 10, name: 'Netanya Style Bar',   address: 'Herzl St 10, Netanya',        city: 'Netanya',       phone: '09-8834120', latitude: 32.3290, longitude: 34.8570, createDate: now, updateDate: now },
+      { barbershopId: 11, name: 'Seaside Shears',      address: 'Gad Machnes St 5, Netanya',   city: 'Netanya',       phone: '09-8651233', latitude: 32.3215, longitude: 34.8525, createDate: now, updateDate: now },
       // Rishon LeZion (1)
-      { barbershopId: 12, name: 'Rishon Royal Cuts',   address: '88 Herzl Street',    city: 'Rishon LeZion', phone: '03-9504411', createDate: now, updateDate: now },
+      { barbershopId: 12, name: 'Rishon Royal Cuts',   address: 'Rothschild St 30, Rishon LeZion', city: 'Rishon LeZion', phone: '03-9504411', latitude: 31.9640, longitude: 34.8044, createDate: now, updateDate: now },
       // Petah Tikva (1)
-      { barbershopId: 13, name: 'PT Precision',        address: '14 Hahistadrut St',  city: 'Petah Tikva',   phone: '03-9221870', createDate: now, updateDate: now },
+      { barbershopId: 13, name: 'PT Precision',        address: 'Haim Ozer St 12, Petah Tikva',city: 'Petah Tikva',   phone: '03-9221870', latitude: 32.0878, longitude: 34.8870, createDate: now, updateDate: now },
       // Eilat (2)
-      { barbershopId: 14, name: 'Eilat Cuts',          address: '3 Coral Street',     city: 'Eilat',         phone: '08-6377411', createDate: now, updateDate: now },
-      { barbershopId: 15, name: 'Red Sea Barbers',     address: '19 Marina Road',     city: 'Eilat',         phone: '08-6312299', createDate: now, updateDate: now },
+      { barbershopId: 14, name: 'Eilat Cuts',          address: 'HaTmarim Blvd 8, Eilat',      city: 'Eilat',         phone: '08-6377411', latitude: 29.5530, longitude: 34.9510, createDate: now, updateDate: now },
+      { barbershopId: 15, name: 'Red Sea Barbers',     address: 'Durban St 3, Eilat',          city: 'Eilat',         phone: '08-6312299', latitude: 29.5460, longitude: 34.9590, createDate: now, updateDate: now },
     ], {});
     /* ---------------- SERVICES (2-3 per shop) ---------------- */
     await queryInterface.bulkInsert('services', [

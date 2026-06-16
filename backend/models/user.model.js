@@ -36,6 +36,11 @@ const User = sequelize.define('User', {
 
   // Stored password (plain for this assignment, as in the original mock)
   password:  { type: DataTypes.STRING, allowNull: true },
+
+  // User location (a curated real address chosen in Settings, or a city default)
+  latitude:     { type: DataTypes.FLOAT,  allowNull: true },
+  longitude:    { type: DataTypes.FLOAT,  allowNull: true },
+  addressLabel: { type: DataTypes.STRING, allowNull: true },
 }, {
   tableName: 'users', // exact MySQL table name
 

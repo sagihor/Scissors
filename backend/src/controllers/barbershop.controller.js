@@ -5,7 +5,8 @@
  * plus a relational (JOIN) endpoint that returns a shop together with its
  * barbers via the many-to-many junction table.
  *
- * All data now comes from MySQL — no more JSON files.
+ * The list endpoint also supports optional filters: city, minimum rating,
+ * availability window, and distance from a point (lat/lng + maxDistanceKm).
  */
 
 const { Op } = require('sequelize');
@@ -30,17 +31,30 @@ function withComputedRating(shop, reviews) {
   };
 }
 
+// Haversine great-circle distance between two lat/lng points, in kilometers.
+function distanceKm(lat1, lng1, lat2, lng2) {
+  const toRad = (d) => (d * Math.PI) / 180;
+  const R = 6371; // Earth radius km
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 module.exports = {
   // GET /api/barbershops — list all shops with computed rating.
   // Optional filters (all combine):
-  //   ?city=Tel Aviv          exact city match
-  //   ?minRating=4            shops whose computed avg rating >= value
-  //   ?availFrom=ISO&availTo=ISO  only shops with >=1 free slot in that range
+  //   ?city=Tel Aviv               exact city match
+  //   ?minRating=4                 computed avg rating >= value
+  //   ?availFrom=ISO&availTo=ISO   only shops with >=1 free slot in that range
+  //   ?lat=..&lng=..&maxDistanceKm=..  only shops within that distance; also
+  //                                    adds a `distanceKm` field and sorts by it
   getAllBarbershops: async (req, res, next) => {
     try {
-      const { city, minRating, availFrom, availTo } = req.query;
+      const { city, minRating, availFrom, availTo, lat, lng, maxDistanceKm } = req.query;
 
-      // City filter is applied at the DB level when present.
       const where = {};
       if (city) where.city = city;
 
@@ -57,8 +71,8 @@ module.exports = {
         data = data.filter((s) => (s.rating ?? 0) >= min);
       }
 
-      // Availability filter: keep only shops that have at least one free slot
-      // in [availFrom, availTo]. If only availFrom is given, it's "from then on".
+      // Availability filter: keep only shops with at least one free slot
+      // in [availFrom, availTo]. availFrom alone means "from then on".
       if (availFrom) {
         const now = new Date();
         const from = new Date(availFrom);
@@ -69,7 +83,6 @@ module.exports = {
             ? { [Op.gte]: lower, [Op.lte]: new Date(availTo) }
             : { [Op.gte]: lower },
         };
-
         const freeSlots = await Appointment.findAll({
           where: slotWhere,
           attributes: ['barbershopId'],
@@ -77,6 +90,25 @@ module.exports = {
         });
         const shopsWithFree = new Set(freeSlots.map((s) => s.barbershopId));
         data = data.filter((s) => shopsWithFree.has(s.barbershopId));
+      }
+
+      // Distance filter + annotation. Requires a user point (lat/lng).
+      if (lat && lng) {
+        const uLat = parseFloat(lat);
+        const uLng = parseFloat(lng);
+        data = data
+          .map((s) => {
+            if (s.latitude == null || s.longitude == null) return { ...s, distanceKm: null };
+            const d = distanceKm(uLat, uLng, s.latitude, s.longitude);
+            return { ...s, distanceKm: Math.round(d * 10) / 10 };
+          })
+          // sort nearest first (shops without coords sink to the bottom)
+          .sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity));
+
+        if (maxDistanceKm) {
+          const max = parseFloat(maxDistanceKm);
+          data = data.filter((s) => s.distanceKm != null && s.distanceKm <= max);
+        }
       }
 
       return sendSuccess(res, 200, data);
@@ -93,13 +125,12 @@ module.exports = {
   },
 
   // GET /api/barbershops/:id/barbers — RELATIONAL JOIN
-  // Returns the shop with its barbers loaded through the junction table.
   getBarbershopBarbers: async (req, res, next) => {
     try {
       const shop = await Barbershop.findByPk(req.params.id, {
         include: [
-          { model: User, as: 'barbers', through: { attributes: [] } }, // hide junction columns
-          { model: Service }, // also include the shop's services (one-to-many)
+          { model: User, as: 'barbers', through: { attributes: [] } },
+          { model: Service },
         ],
       });
       if (!shop) return sendError(res, 404, 'NOT_FOUND', 'Barbershop not found.');
@@ -110,13 +141,13 @@ module.exports = {
   // POST /api/barbershops — create (CREATE)
   createBarbershop: async (req, res, next) => {
     try {
-      const { name, address, city, phone } = req.body;
+      const { name, address, city, phone, latitude, longitude } = req.body;
       if (!name || !address || !city) {
         return sendError(res, 400, 'VALIDATION_ERROR', 'Missing required fields.', {
           required: ['name', 'address', 'city'],
         });
       }
-      const newShop = await Barbershop.create({ name, address, city, phone });
+      const newShop = await Barbershop.create({ name, address, city, phone, latitude, longitude });
       return sendSuccess(res, 201, { barbershopId: newShop.barbershopId });
     } catch (err) { next(err); }
   },
@@ -124,20 +155,20 @@ module.exports = {
   // PUT /api/barbershops/:id — update (UPDATE)
   updateBarbershop: async (req, res, next) => {
     try {
-      const { name, address, city, phone } = req.body;
+      const { name, address, city, phone, latitude, longitude } = req.body;
       if (!name || !address || !city) {
         return sendError(res, 400, 'VALIDATION_ERROR', 'Missing required fields for update.', {
           required: ['name', 'address', 'city'],
         });
       }
-
       const shop = await Barbershop.findByPk(req.params.id);
       if (!shop) return sendError(res, 404, 'NOT_FOUND', `Barbershop with ID ${req.params.id} not found.`);
 
-      await shop.update({ name, address, city, phone }); // uses `shop`
+      await shop.update({ name, address, city, phone, latitude, longitude });
       return sendSuccess(res, 200, { barbershopId: shop.barbershopId });
     } catch (err) { next(err); }
   },
+
   // DELETE /api/barbershops/:id — delete (DELETE)
   deleteBarbershop: async (req, res, next) => {
     try {

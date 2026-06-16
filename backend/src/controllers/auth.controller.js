@@ -16,6 +16,7 @@ const sendSuccess = (res, status, data) =>
 const publicUser = (u) => ({
   userId: u.userId, firstName: u.firstName, lastName: u.lastName,
   username: u.username, email: u.email, userRole: u.userRole,
+  latitude: u.latitude, longitude: u.longitude, addressLabel: u.addressLabel,
 });
 
 module.exports = {
