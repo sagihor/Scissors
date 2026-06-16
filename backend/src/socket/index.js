@@ -59,4 +59,10 @@ function initSocket(httpServer) {
   return io;
 }
 
-module.exports = { initSocket };
+// Called by the REST controller after an admin clears chat history,
+// so all connected clients empty their chat in real time.
+function broadcastChatCleared() {
+  if (io) io.emit('chat:cleared');
+}
+
+module.exports = { initSocket, broadcastChatCleared };

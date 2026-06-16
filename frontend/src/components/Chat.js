@@ -17,11 +17,13 @@ import { useAuth } from '../services/AuthContext';
 export default function Chat() {
   const { currentUser } = useAuth();
   const senderName = currentUser ? currentUser.firstName : 'Guest';
+  const isAdmin = currentUser?.userRole === 'admin';
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [typingUser, setTypingUser] = useState('');
   const [joinNotice, setJoinNotice] = useState('');
+  const [clearedOk, setClearedOk] = useState(false);
   const listRef = useRef(null);
   const typingTimeout = useRef(null);
 
@@ -52,14 +54,18 @@ export default function Chat() {
       setTimeout(() => setJoinNotice(''), 6000);
     };
 
+    const onCleared = () => setMessages([]); // server says history was wiped
+
     socket.on('chat:message', onMessage);
     socket.on('chat:typing', onTyping);
     socket.on('chat:join', onJoin);
+    socket.on('chat:cleared', onCleared);
 
     return () => {
       socket.off('chat:message', onMessage);
       socket.off('chat:typing', onTyping);
       socket.off('chat:join', onJoin);
+      socket.off('chat:cleared', onCleared);
     };
   }, []);
 
@@ -90,9 +96,40 @@ export default function Chat() {
     if (e.key === 'Enter') sendMessage();
   }
 
+  async function clearHistory() {
+    if (!window.confirm('Delete the entire chat history? This cannot be undone.')) return;
+    try {
+      await apiClient.delete('/messages');
+      setMessages([]);                 // clear locally right away
+      setClearedOk(true);              // show the green check under the button
+      setTimeout(() => setClearedOk(false), 4000);
+    } catch (err) {
+      alert(err.message || 'Could not clear chat history.');
+    }
+  }
+
   return (
     <div className="bg-white shadow rounded-lg p-4 flex flex-col h-96">
-      <h2 className="text-lg font-semibold text-gray-800 mb-2">Live Chat</h2>
+      <div className="flex items-start justify-between mb-2">
+        <h2 className="text-lg font-semibold text-gray-800">Live Chat</h2>
+
+        {isAdmin && (
+          <div className="flex flex-col items-end">
+            <button
+              onClick={clearHistory}
+              className="px-3 py-1 rounded bg-red-600 text-white text-xs font-medium hover:bg-red-700"
+            >
+              Clear chat history
+            </button>
+            {clearedOk && (
+              <span className="mt-1 text-green-600 text-xs font-medium flex items-center gap-1">
+                <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-green-100 text-green-700">✓</span>
+                Chat history cleared
+              </span>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Join notice */}
       {joinNotice && (

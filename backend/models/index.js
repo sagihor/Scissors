@@ -26,6 +26,8 @@ const BarbershopBarber = require('./barbershopBarber.model');
 const Setting = require('./setting.model');
 const Message = require('./message.model');
 const Review = require('./review.model');
+const Appointment = require('./appointment.model');
+
 
 /* ------------------------------------------------------------------ */
 /* One-to-one: a User may have one Admin profile                       */
@@ -54,6 +56,16 @@ Barbershop.hasMany(Service, { foreignKey: 'barbershopId', sourceKey: 'barbershop
 Service.belongsTo(Barbershop, { foreignKey: 'barbershopId', targetKey: 'barbershopId' });
 
 /* ------------------------------------------------------------------ */
+/* One-to-many: a Barbershop has many Appointments (slots)             */
+/*               a User can book many Appointments                      */
+/* ------------------------------------------------------------------ */
+Barbershop.hasMany(Appointment, { foreignKey: 'barbershopId', sourceKey: 'barbershopId' });
+Appointment.belongsTo(Barbershop, { foreignKey: 'barbershopId', targetKey: 'barbershopId' });
+
+User.hasMany(Appointment, { foreignKey: 'userId', sourceKey: 'userId' });
+Appointment.belongsTo(User, { foreignKey: 'userId', targetKey: 'userId' });
+
+/* ------------------------------------------------------------------ */
 /* One-to-many: a Barbershop has many Reviews; a User writes many       */
 /* ------------------------------------------------------------------ */
 Barbershop.hasMany(Review, { foreignKey: 'barbershopId', sourceKey: 'barbershopId' });
@@ -61,6 +73,16 @@ Review.belongsTo(Barbershop, { foreignKey: 'barbershopId', targetKey: 'barbersho
 
 User.hasMany(Review, { foreignKey: 'userId', sourceKey: 'userId' });
 Review.belongsTo(User, { foreignKey: 'userId', targetKey: 'userId' });
+
+/* ------------------------------------------------------------------ */
+/* One-to-many: a Barbershop has many Appointments (slots)             */
+/*              a User can book many Appointments                       */
+/* ------------------------------------------------------------------ */
+Barbershop.hasMany(Appointment, { foreignKey: 'barbershopId', sourceKey: 'barbershopId' });
+Appointment.belongsTo(Barbershop, { foreignKey: 'barbershopId', targetKey: 'barbershopId' });
+
+User.hasMany(Appointment, { foreignKey: 'userId', sourceKey: 'userId' });
+Appointment.belongsTo(User, { foreignKey: 'userId', targetKey: 'userId' });
 
 /* ------------------------------------------------------------------ */
 /* Many-to-many: Users (barbers) <-> Barbershops, via the junction     */
@@ -88,5 +110,5 @@ Barbershop.belongsToMany(User, {
 module.exports = {
   sequelize,
   User, Admin, Barbershop, Service, BarbershopBarber, Setting, Message,
-  Review, 
+  Review, Appointment,
 };

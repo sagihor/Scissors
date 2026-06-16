@@ -17,6 +17,8 @@ const authRoutes = require('./routes/auth.routes');
 const settingsRoutes = require('./routes/settings.routes');
 const messageRoutes = require('./routes/message.routes'); // chat history
 const aiRoutes = require('./routes/ai.routes');
+const appointmentRoutes = require('./routes/appointment.routes');
+
 
 const app = express();
 
@@ -30,6 +32,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/appointments', appointmentRoutes);
 
 app.use((err, req, res, next) => {
   console.error('Unhandled Exception:', err);

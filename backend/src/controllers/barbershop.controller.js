@@ -8,7 +8,8 @@
  * All data now comes from MySQL — no more JSON files.
  */
 
-const { Barbershop, User, Service, Review } = require('../../models');
+const { Op } = require('sequelize');
+const { Barbershop, User, Service, Review, Appointment } = require('../../models');
 
 // Standard response helpers (keep the Assignment 2 API format)
 const sendError = (res, status, code, message, details = {}) =>
@@ -30,11 +31,54 @@ function withComputedRating(shop, reviews) {
 }
 
 module.exports = {
-  // GET /api/barbershops — list all shops with computed rating
+  // GET /api/barbershops — list all shops with computed rating.
+  // Optional filters (all combine):
+  //   ?city=Tel Aviv          exact city match
+  //   ?minRating=4            shops whose computed avg rating >= value
+  //   ?availFrom=ISO&availTo=ISO  only shops with >=1 free slot in that range
   getAllBarbershops: async (req, res, next) => {
     try {
-      const shops = await Barbershop.findAll({ include: [{ model: Review }] });
-      const data = shops.map((shop) => withComputedRating(shop, shop.Reviews || []));
+      const { city, minRating, availFrom, availTo } = req.query;
+
+      // City filter is applied at the DB level when present.
+      const where = {};
+      if (city) where.city = city;
+
+      const shops = await Barbershop.findAll({
+        where,
+        include: [{ model: Review }],
+      });
+
+      let data = shops.map((shop) => withComputedRating(shop, shop.Reviews || []));
+
+      // Minimum rating filter (computed field, so filter in JS).
+      if (minRating) {
+        const min = parseFloat(minRating);
+        data = data.filter((s) => (s.rating ?? 0) >= min);
+      }
+
+      // Availability filter: keep only shops that have at least one free slot
+      // in [availFrom, availTo]. If only availFrom is given, it's "from then on".
+      if (availFrom) {
+        const now = new Date();
+        const from = new Date(availFrom);
+        const lower = from < now ? now : from;
+        const slotWhere = {
+          userId: null,
+          startTime: availTo
+            ? { [Op.gte]: lower, [Op.lte]: new Date(availTo) }
+            : { [Op.gte]: lower },
+        };
+
+        const freeSlots = await Appointment.findAll({
+          where: slotWhere,
+          attributes: ['barbershopId'],
+          group: ['barbershopId'],
+        });
+        const shopsWithFree = new Set(freeSlots.map((s) => s.barbershopId));
+        data = data.filter((s) => shopsWithFree.has(s.barbershopId));
+      }
+
       return sendSuccess(res, 200, data);
     } catch (err) { next(err); }
   },
