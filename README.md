@@ -106,6 +106,18 @@ npm start                        # start frontend on http://localhost:5173
 
 Then open http://localhost:5173 and log in with `ido@scissors.test` / `123456`.
 
+
+### Where to see each requirement in the UI
+
+- **CRUD (MySQL + ORM)** — the barbershop list on the Dashboard is loaded from
+  MySQL; as admin you can create, edit, and delete shops and the changes persist.
+- **ORM relationships (JOIN)** — click any barbershop card or table row to open a
+  detail view that calls `GET /api/barbershops/:id/barbers` and shows the shop's
+  services (one-to-many) and barbers (many-to-many, via the junction table).
+- **WebSockets** — open two browser tabs and chat between them (typing indicator
+  + instant messages).
+- **AI** — use the recommender box at the top of the Dashboard.
+
 ---
 
 ## 3. Database Setup
