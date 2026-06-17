@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import apiClient from '../services/apiClient';
 import BarbershopCard from '../components/BarbershopCard';
 import BarbershopTable from '../components/BarbershopTable';
+import BarbershopDetailModal from '../components/BarbershopDetailModal';
 import Chat from '../components/Chat';
 import AiRecommender from '../components/AiRecommender';
 
 export default function Dashboard() {
   const [barbershops, setBarbershops] = useState(null);
   const [error, setError] = useState('');
+  const [selectedShop, setSelectedShop] = useState(null); // opens the detail modal (JOIN)
 
   useEffect(() => {
     apiClient
@@ -36,7 +38,7 @@ export default function Dashboard() {
           {error}
         </div>
       )}
-      
+
       {/* Section: AI Recommender */}
       <section className="mb-10">
         <AiRecommender />
@@ -46,7 +48,7 @@ export default function Dashboard() {
       <section className="mb-10">
         <h2 className="text-xl font-semibold text-gray-800 mb-1">Top Rated Barbershops</h2>
         <p className="text-sm text-gray-500 mb-4">
-          Our three highest-rated shops, based on customer reviews.
+          Our three highest-rated shops, based on customer reviews. Click a shop to see its services and barbers.
         </p>
 
         {topThree === null ? (
@@ -63,7 +65,11 @@ export default function Dashboard() {
           /* THEME: card grid */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {topThree.map((shop) => (
-              <BarbershopCard key={shop.barbershopId} shop={shop} />
+              <BarbershopCard
+                key={shop.barbershopId}
+                shop={shop}
+                onClick={() => setSelectedShop(shop)}
+              />
             ))}
           </div>
         )}
@@ -81,7 +87,7 @@ export default function Dashboard() {
             Loading data…
           </div>
         ) : (
-          <BarbershopTable shops={barbershops} />
+          <BarbershopTable shops={barbershops} onRowClick={setSelectedShop} />
         )}
       </section>
       {/* Section 3: Live Chat (WebSocket feature) */}
@@ -92,6 +98,15 @@ export default function Dashboard() {
         </p>
         <Chat />
       </section>
+
+      {/* Detail modal — opened by clicking a card or table row.
+          Loads the JOIN endpoint and shows services + barbers. */}
+      {selectedShop && (
+        <BarbershopDetailModal
+          shop={selectedShop}
+          onClose={() => setSelectedShop(null)}
+        />
+      )}
     </div>
   );
 }

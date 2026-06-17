@@ -1,4 +1,4 @@
-export default function BarbershopTable({ shops }) {
+export default function BarbershopTable({ shops, onRowClick }) {
   if (!shops || shops.length === 0) {
     return (
       /* THEME: empty state */
@@ -30,7 +30,11 @@ export default function BarbershopTable({ shops }) {
         </thead>
         <tbody className="divide-y divide-gray-200">
           {shops.map((shop) => (
-            <tr key={shop.barbershopId} className="hover:bg-gray-50">
+            <tr
+              key={shop.barbershopId}
+              onClick={() => onRowClick && onRowClick(shop)}
+              className="hover:bg-gray-50 cursor-pointer"
+            >
               <td className="px-4 py-3 text-sm text-gray-900">{shop.barbershopId}</td>
               <td className="px-4 py-3 text-sm font-medium text-gray-900">{shop.name}</td>
               <td className="px-4 py-3 text-sm text-gray-700">{shop.address}</td>

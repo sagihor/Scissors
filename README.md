@@ -32,15 +32,12 @@ connected through one Express API and one React frontend.
 ### Prerequisites
 - Node.js 18 or higher
 - MySQL 8 or higher (MySQL Workbench recommended)
-- A free Google Gemini API key from https://aistudio.google.com (no credit card)
+- A free Google Gemini API key from https://aistudio.google.com
 
 ### Steps
 
-1. Clone the repository and enter the project folder:
-   ```bash
-   git clone <repository-url>
-   cd Scissors
-   ```
+1. Extract the submitted ZIP file. This gives you a `Scissors/` folder containing
+   `frontend/` and `backend/`. Open a terminal in that folder.
 
 2. Install backend dependencies:
    ```bash
@@ -66,14 +63,48 @@ connected through one Express API and one React frontend.
    npm start            # runs on http://localhost:5173
    ```
 
-6. Open http://localhost:5173 in your browser and log in with a seeded account:
-   - Admin: `ido@scissors.test` / `123456`
-   - Customer: `roni@scissors.test` / `123456`
+6. Open **http://localhost:5173** in your browser. You will land on the **Login**
+   page. Log in using one of the seeded accounts below (you log in with **email +
+   password**). Every seeded account uses the password `123456`.
 
-> Note: the project runs against a local MySQL database. The repository includes
+   | Role     | Email (use to log in)   | Password |
+   |----------|-------------------------|----------|
+   | Admin    | `ido@scissors.test`     | `123456` |
+   | Manager  | `sagi@scissors.test`    | `123456` |
+   | Barber   | `david@scissors.test`   | `123456` |
+   | Customer | `roni@scissors.test`    | `123456` |
+
+   For grading, the **Admin** account (`ido@scissors.test`) is recommended. it has
+   permission to create, update, and delete barbershops and users, so you can see
+   every CRUD operation in the UI. After logging in you are taken to the Dashboard,
+   where the barbershop list, live chat, and AI recommender are all available.
+
+
+> Note: the project runs against a local MySQL database. The submission includes
 > only the migrations (table structure) and seeders (sample data); running them
 > creates and populates the database locally. No external or shared database is
 > required.
+
+### Quick start — full command sequence
+
+Once MySQL is running and `backend/.env` is filled in (sections 3 and 4), this is
+the complete sequence from an extracted ZIP:
+
+```bash
+# 1. Backend setup
+cd backend
+npm install
+npx sequelize-cli db:migrate     # create all tables
+npx sequelize-cli db:seed:all    # load sample data
+npm run dev                      # start backend on http://localhost:3000
+
+# 2. Frontend setup (in a SECOND terminal)
+cd frontend
+npm install                      # add --legacy-peer-deps if it errors
+npm start                        # start frontend on http://localhost:5173
+```
+
+Then open http://localhost:5173 and log in with `ido@scissors.test` / `123456`.
 
 ---
 
@@ -125,15 +156,20 @@ DB_PASSWORD=your_mysql_password      # the local MySQL root password
 AI_API_KEY=your_gemini_api_key       # a free key from Google AI Studio
 ```
 
-The frontend uses `frontend/.env`:
+What to fill in:
+- `DB_PASSWORD` — your local MySQL root password 
+- `DB_USER` / `DB_NAME` / `DB_HOST` / `DB_PORT` — keep the defaults above unless your MySQL setup differs.
+- `AI_API_KEY` — a free Google Gemini key. Get one at https://aistudio.google.com → "Get API key" → "Create API key", then paste it here.
+The app's database, CRUD, and live chat all work without a key; only the AI recommender needs it.
+
+
+The frontend does **not** require a `.env` file — it works out of the box. The
+port is already set to 5173 inside the frontend's `start` script. If you want to
+override it, you may optionally create `frontend/.env`:
 ```
 PORT=5173
 GENERATE_SOURCEMAP=false
 ```
-
-Important: never commit real secrets. The `.env` files are ignored by git; only
-`.env.example` (with empty values) is committed. Each environment uses its own
-MySQL password and its own Gemini API key.
 
 ---
 
@@ -230,8 +266,8 @@ admin Ido). Tokens are returned by the login endpoint.
 |--------|---------------------|-------------------------------|------|
 | POST   | `/api/ai/recommend` | AI barbershop recommendation  | No   |
 
-A Postman collection (`Scissors.postman_collection.json`) with all of these
-requests is included in the repository.
+A Postman collection (`Scissors - Assignment 4.postman_collection.json`) with all of these
+requests is included in the assignment.
 
 ---
 
@@ -282,8 +318,9 @@ the server — it is never exposed to the frontend.
   signed JWTs. This is intentional for the assignment scope.
 - There is a single global chat channel (no separate rooms).
 - Seed-data passwords are stored in plain text for simplicity.
-- The Gemini free tier may occasionally return a temporary "high demand" (503)
-  error; the AI service automatically retries and falls back to a second model.
+- The Gemini free tier may occasionally return a temporary "high demand" error;
+  if that happens, the AI endpoint returns a clean `AI_ERROR` response and the
+  request can simply be retried.
 - Top-3 barbershop sorting is done on the client; this is fine for the current
   dataset size but a larger dataset would warrant server-side sorting.
 

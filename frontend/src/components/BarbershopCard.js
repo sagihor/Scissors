@@ -3,15 +3,17 @@
  * Receives a single shop object via the `shop` prop.
  * Rendered N times by Dashboard via .map(), satisfying "reused at least 3 times".
  */
-export default function BarbershopCard({ shop }) {
+export default function BarbershopCard({ shop, onClick }) {
   // Render N full stars + half star + empty stars for a 0–5 rating
   const fullStars = Math.floor(shop.rating);
   const hasHalf = (shop.rating % 1) >= 0.5;
   const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
 
   return (
-    /* THEME: card */
-    <div className="bg-white shadow rounded-lg p-6 hover:shadow-md transition-shadow">
+    /* THEME: card (clickable — opens detail with JOIN data) */
+    <div
+      onClick={onClick}
+      className="bg-white shadow rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer">
       {/* Header: name + rating */}
       <div className="flex items-start justify-between mb-3">
         <h3 className="text-lg font-semibold text-gray-900 leading-tight">
