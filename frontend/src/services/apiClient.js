@@ -8,7 +8,8 @@
  * - On 401, clears the local token and redirects to /login
  */
 
-const BASE_URL = 'http://localhost:3000/api';
+const API_ORIGIN = (process.env.REACT_APP_API_URL || 'http://localhost:3000').replace(/\/+$/, '');
+const BASE_URL = `${API_ORIGIN}/api`;
 
 async function request(path, options = {}) {
   const token = localStorage.getItem('token');
