@@ -8,7 +8,13 @@
  * - On 401, clears the local token and redirects to /login
  */
 
-const API_ORIGIN = (process.env.REACT_APP_API_URL || 'http://localhost:3000').replace(/\/+$/, '');
+// In production the Express server serves both this app and the API on the
+// same origin, so we use a relative '/api' path. In local dev (Parcel on 5173)
+// we fall back to the backend on localhost:3000.
+const isLocalDev =
+  typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_ORIGIN = isLocalDev ? 'http://localhost:3000' : '';
 const BASE_URL = `${API_ORIGIN}/api`;
 
 async function request(path, options = {}) {

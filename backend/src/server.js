@@ -4,6 +4,8 @@
  */
 
 const http = require('http');
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 
@@ -33,6 +35,18 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/appointments', appointmentRoutes);
+
+// ── Serve the built React (Parcel) frontend in production ──
+// Parcel outputs the compiled app to frontend/dist. Express serves those
+// static files, and any non-API route falls back to index.html so that
+// client-side routing (react-router) works on refresh / deep links.
+const clientDist = path.join(__dirname, '..', '..', 'frontend', 'dist');
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get(/^(?!\/api).*/, (req, res) => {
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
 app.use((err, req, res, next) => {
   console.error('Unhandled Exception:', err);

@@ -7,8 +7,12 @@
 
 import { io } from 'socket.io-client';
 
-// Matches the backend server URL (same host/port as the REST API)
-const SOCKET_URL = (process.env.REACT_APP_API_URL || 'http://localhost:3000').replace(/\/+$/, '');
+// Same origin as the page in production (Express serves both app + socket).
+// In local dev (Parcel on 5173) connect to the backend on localhost:3000.
+const isLocalDev =
+  typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const SOCKET_URL = isLocalDev ? 'http://localhost:3000' : window.location.origin;
 
 const socket = io(SOCKET_URL, {
   autoConnect: true,
