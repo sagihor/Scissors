@@ -5,6 +5,11 @@
  * builds a context string, and asks Gemini to recommend the best shop for the
  * user's free-text request. The API key is read from process.env on the
  * server side only — it is never exposed to the frontend.
+ *
+ * TIMEOUT: the Gemini call is raced against a timeout so a slow or stuck
+ * response can never hang the request forever. If the model does not answer
+ * within AI_TIMEOUT_MS, we throw a clean error and the controller returns a
+ * "try again" message to the user instead of leaving them on "Thinking…".
  */
 
 const { GoogleGenAI } = require('@google/genai');
@@ -12,6 +17,18 @@ const { Barbershop, Service, Review } = require('../../models');
 
 // Initialize the Gemini client with the server-side API key
 const ai = new GoogleGenAI({ apiKey: process.env.AI_API_KEY });
+
+// How long to wait for Gemini before giving up (milliseconds).
+const AI_TIMEOUT_MS = 11000;
+
+// Wrap any promise so it rejects if it takes longer than `ms`.
+function withTimeout(promise, ms, label = 'AI request') {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms} ms`)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
 
 // Build a compact text summary of all shops for the model to reason over.
 async function buildShopContext() {
@@ -53,12 +70,21 @@ Based ONLY on the barbershops listed above, recommend the single best match.
 Reply in 2-3 short sentences: name the shop, its city, and briefly explain why it fits
 (mention price, rating, or a relevant review). If nothing fits well, say so honestly.`;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-  });
+  // Race the model call against a timeout so a stuck response can't hang us.
+  const response = await withTimeout(
+    ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    }),
+    AI_TIMEOUT_MS,
+    'AI recommendation'
+  );
 
-  return response.text;
+  const text = response?.text;
+  if (!text || !text.trim()) {
+    throw new Error('The AI returned an empty response.');
+  }
+  return text;
 }
 
 module.exports = { recommendBarbershop };

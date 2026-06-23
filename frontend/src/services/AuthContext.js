@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
 
   // On mount: restore session + load theme from /settings
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       setLoading(false);
       return;
@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
   async function login(email, password) {
     const res = await apiClient.post('/auth/login', { email, password });
     const { token, user } = res.data;
-    localStorage.setItem('token', token);
+    sessionStorage.setItem('token', token);
     setCurrentUser(user);
 
     try {
@@ -74,7 +74,7 @@ export function AuthProvider({ children }) {
   async function register(form) {
     const res = await apiClient.post('/auth/register', form);
     const { token, user } = res.data;
-    localStorage.setItem('token', token);
+    sessionStorage.setItem('token', token);
     setCurrentUser(user);
 
     try {
@@ -87,7 +87,7 @@ export function AuthProvider({ children }) {
 
   async function logout() {
     try { await apiClient.post('/auth/logout'); } catch {}
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setCurrentUser(null);
     setThemeState('light');
   }

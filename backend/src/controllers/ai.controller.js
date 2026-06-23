@@ -33,11 +33,18 @@ module.exports = {
       const recommendation = await recommendBarbershop(request.trim());
       return sendSuccess(res, 200, { recommendation });
     } catch (err) {
-      // Surface a clean AI error instead of a 500 stack
+      // Surface a clean AI error instead of a 500 stack.
       console.error('AI error:', err.message);
-      return sendError(res, 502, 'AI_ERROR', 'The AI service is unavailable right now.', {
-        detail: err.message,
-      });
+      const timedOut = /timed out/i.test(err.message || '');
+      return sendError(
+        res,
+        timedOut ? 504 : 502,
+        timedOut ? 'AI_TIMEOUT' : 'AI_ERROR',
+        timedOut
+          ? 'The AI took too long to respond. Please try again.'
+          : 'The AI service is unavailable right now. Please try again.',
+        { detail: err.message }
+      );
     }
   },
 };

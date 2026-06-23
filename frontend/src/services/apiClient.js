@@ -2,7 +2,7 @@
  * Lightweight fetch wrapper for talking to the backend.
  *
  * - Prepends the base URL so callers use short paths like '/users/me'
- * - Attaches the auth token from localStorage to every request
+ * - Attaches the auth token from sessionStorage to every request
  * - Parses JSON automatically
  * - Throws on non-2xx responses (so try/catch works as expected)
  * - On 401, clears the local token and redirects to /login
@@ -18,7 +18,7 @@ const API_ORIGIN = isLocalDev ? 'http://localhost:3000' : '';
 const BASE_URL = `${API_ORIGIN}/api`;
 
 async function request(path, options = {}) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
 
   // Build headers: caller's headers, plus Content-Type if there's a body, plus auth
   const headers = {
@@ -44,7 +44,7 @@ async function request(path, options = {}) {
   if (!response.ok) {
     // On 401, the token is bad. Clear it and bounce to login (but avoid redirect loops).
     if (response.status === 401 && window.location.pathname !== '/login') {
-      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
       window.location.href = '/login';
     }
     // Throw an error with the backend's message if available
