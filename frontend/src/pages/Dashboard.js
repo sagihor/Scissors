@@ -10,6 +10,169 @@ import MyNextAppointment from '../components/MyNextAppointment';
 import BarbershopMap from '../components/BarbershopMap';
 import MapFilters from '../components/MapFilters';
 
+// Translate the "when" choice into an availability window [from, to].
+// Returns Date objects (or {} for "no time filter").
+function computeWindow(when, customFrom, customTo) {
+  const now = new Date();
+  switch (when) {
+    case '1h':
+      return { from: now, to: new Date(now.getTime() + 60 * 60 * 1000) };
+    case '2h':
+      return { from: now, to: new Date(now.getTime() + 2 * 60 * 60 * 1000) };
+    case 'today': {
+      const end = new Date(now);
+      end.setHours(23, 59, 59, 999);
+      return { from: now, to: end };
+    }
+    case 'tomorrow': {
+      const start = new Date(now);
+      start.setDate(start.getDate() + 1);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(start);
+      end.setHours(23, 59, 59, 999);
+      return { from: start, to: end };
+    }
+    case 'custom': {
+      if (!customFrom) return {};
+      const start = new Date(customFrom);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(customTo || customFrom);
+      end.setHours(23, 59, 59, 999);
+      return { from: start, to: end };
+    }
+    default:
+      return {};
+  }
+}
+
+function formatSlot(iso) {
+  return new Date(iso).toLocaleString('en-US', {
+    weekday: 'short', day: '2-digit', month: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  });
+}
+
+/**
+ * MapShopModal — full-screen overlay shown when a map marker is clicked.
+ * Displays the shop's name / address / phone and its free upcoming slots,
+ * and lets the user book a slot without leaving the map.
+ */
+function MapShopModal({ shop, onClose, onBooked }) {
+  const [slots, setSlots] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [bookingId, setBookingId] = useState(null);
+  const [successMsg, setSuccessMsg] = useState('');
+
+  // Close on Escape.
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  const loadSlots = useCallback(() => {
+    setLoading(true);
+    setError('');
+    apiClient
+      .get(`/appointments/available/${shop.barbershopId}`)
+      .then((res) => setSlots(res.data || []))
+      .catch((err) => setError(err.message || 'Could not load available times.'))
+      .finally(() => setLoading(false));
+  }, [shop.barbershopId]);
+
+  useEffect(() => { loadSlots(); }, [loadSlots]);
+
+  async function book(slot) {
+    setBookingId(slot.appointmentId);
+    setError('');
+    try {
+      const res = await apiClient.post(`/appointments/${slot.appointmentId}/book`);
+      setSlots((prev) => prev.filter((s) => s.appointmentId !== slot.appointmentId));
+      if (onBooked) onBooked(res.data);
+      setSuccessMsg(`Appointment confirmed — ${formatSlot(res.data.startTime)}`);
+      setTimeout(() => setSuccessMsg(''), 4000);
+    } catch (err) {
+      setError(err.message || 'Could not book this slot. It may have just been taken.');
+    } finally {
+      setBookingId(null);
+    }
+  }
+
+  const addressLine = [shop.address, shop.city].filter(Boolean).join(', ');
+
+  return (
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+      {/* backdrop */}
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+
+      {/* panel */}
+      <div className="relative z-10 w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl bg-white shadow-xl">
+        <div className="flex items-start justify-between gap-4 border-b border-gray-200 p-5">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">{shop.name}</h3>
+            {addressLine && <p className="mt-0.5 text-sm text-gray-600">{addressLine}</p>}
+            {shop.phone && (
+              <a href={`tel:${shop.phone}`} className="mt-1 inline-flex items-center gap-1.5 text-sm text-gray-700 hover:text-gray-900">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                {shop.phone}
+              </a>
+            )}
+            {shop.rating != null && (
+              <p className="mt-1 text-sm text-gray-500">
+                ★ {shop.rating.toFixed(1)} ({shop.reviewCount || 0} review{shop.reviewCount === 1 ? '' : 's'})
+                {shop.distanceKm != null ? ` · ${shop.distanceKm} km away` : ''}
+              </p>
+            )}
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="shrink-0 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="p-5">
+          {successMsg && (
+            <div className="mb-3 rounded border border-green-300 bg-green-50 px-3 py-2 text-sm font-medium text-green-800">
+              ✓ {successMsg}
+            </div>
+          )}
+
+          <p className="mb-2 text-sm font-semibold text-gray-800">Free appointments</p>
+
+          {loading ? (
+            <p className="text-sm text-gray-500">Loading available times…</p>
+          ) : error ? (
+            <p className="text-sm text-red-600">{error}</p>
+          ) : slots.length === 0 ? (
+            <p className="text-sm text-gray-500">No free slots right now.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {slots.map((slot) => (
+                <button
+                  key={slot.appointmentId}
+                  onClick={() => book(slot)}
+                  disabled={bookingId === slot.appointmentId}
+                  className="rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-900 hover:bg-gray-100 disabled:opacity-50"
+                >
+                  {bookingId === slot.appointmentId ? 'Booking…' : formatSlot(slot.startTime)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { effectiveLocation } = useAuth();
 
@@ -24,8 +187,8 @@ export default function Dashboard() {
   const [availFrom, setAvailFrom] = useState('');
   const [availTo, setAvailTo] = useState('');
 
-  // ---- My next appointment ----
-  const [myAppointment, setMyAppointment] = useState(null);
+  // ---- My upcoming appointments ----
+  const [myAppointments, setMyAppointments] = useState([]);
 
   // ---- Map section (its own filters; default shows NO shops) ----
   const [mapShops, setMapShops] = useState([]);     // shops plotted on the map
@@ -33,6 +196,10 @@ export default function Dashboard() {
   const [mapCity, setMapCity] = useState('');
   const [mapMinRating, setMapMinRating] = useState('');
   const [mapMaxDistance, setMapMaxDistance] = useState('');
+  const [mapWhen, setMapWhen] = useState('any'); // 'any'|'1h'|'2h'|'today'|'tomorrow'|'custom'
+  const [mapCustomFrom, setMapCustomFrom] = useState('');
+  const [mapCustomTo, setMapCustomTo] = useState('');
+  const [selectedShop, setSelectedShop] = useState(null); // shop whose modal is open
 
   const hasUserLocation = !!(effectiveLocation && effectiveLocation.latitude != null);
 
@@ -63,14 +230,14 @@ export default function Dashboard() {
       });
   }, [buildTableQuery]);
 
-  // Load the user's next appointment
-  const loadMyAppointment = useCallback(() => {
+  // Load all of the user's upcoming appointments
+  const loadMyAppointments = useCallback(() => {
     apiClient
-      .get('/appointments/me')
-      .then((res) => setMyAppointment(res.data))
-      .catch(() => setMyAppointment(null));
+      .get('/appointments/mine')
+      .then((res) => setMyAppointments(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setMyAppointments([]));
   }, []);
-  useEffect(() => { loadMyAppointment(); }, [loadMyAppointment]);
+  useEffect(() => { loadMyAppointments(); }, [loadMyAppointments]);
 
   function applyTableFilters() {
     setTableApplied(true); // reveal the table with whatever filters are set
@@ -89,6 +256,8 @@ export default function Dashboard() {
     const params = new URLSearchParams();
     if (opts.city) params.set('city', opts.city);
     if (opts.minRating) params.set('minRating', opts.minRating);
+    if (opts.availFrom) params.set('availFrom', opts.availFrom);
+    if (opts.availTo) params.set('availTo', opts.availTo);
     if (opts.maxDistanceKm && hasUserLocation) {
       params.set('lat', effectiveLocation.latitude);
       params.set('lng', effectiveLocation.longitude);
@@ -105,14 +274,23 @@ export default function Dashboard() {
   }, [effectiveLocation, hasUserLocation]);
 
   function applyMapFilters() {
-    fetchMapShops({ city: mapCity, minRating: mapMinRating, maxDistanceKm: mapMaxDistance });
+    const { from, to } = computeWindow(mapWhen, mapCustomFrom, mapCustomTo);
+    fetchMapShops({
+      city: mapCity,
+      minRating: mapMinRating,
+      maxDistanceKm: mapMaxDistance,
+      availFrom: from ? from.toISOString() : '',
+      availTo: to ? to.toISOString() : '',
+    });
   }
   function showAllOnMap() {
     setMapCity(''); setMapMinRating(''); setMapMaxDistance('');
+    setMapWhen('any'); setMapCustomFrom(''); setMapCustomTo('');
     fetchMapShops({}); // no filters -> all shops (with distance if location known)
   }
   function clearMap() {
     setMapCity(''); setMapMinRating(''); setMapMaxDistance('');
+    setMapWhen('any'); setMapCustomFrom(''); setMapCustomTo('');
     setMapShops([]);
     setMapApplied(false); // back to default empty state
   }
@@ -121,15 +299,16 @@ export default function Dashboard() {
   // but only after the user has interacted at least once.
   useEffect(() => {
     if (!mapApplied) return;
-    fetchMapShops({ city: mapCity, minRating: mapMinRating, maxDistanceKm: mapMaxDistance });
+    const { from, to } = computeWindow(mapWhen, mapCustomFrom, mapCustomTo);
+    fetchMapShops({
+      city: mapCity,
+      minRating: mapMinRating,
+      maxDistanceKm: mapMaxDistance,
+      availFrom: from ? from.toISOString() : '',
+      availTo: to ? to.toISOString() : '',
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapCity, mapMinRating, mapMaxDistance]);
-
-  // When a shop's "Book" is clicked on the map, scroll to the table.
-  function handleMapBook() {
-    const el = document.getElementById('all-barbershops');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  }
+  }, [mapCity, mapMinRating, mapMaxDistance, mapWhen, mapCustomFrom, mapCustomTo]);
 
   const topThree = useMemo(() => {
     if (!barbershops) return null;
@@ -154,41 +333,36 @@ export default function Dashboard() {
 
       {/* Map + map filters (below AI, above My Next Appointment) */}
       <section className="mb-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-1">Find Barbershops on the Map</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-1">Get the Nearest Appointment</h2>
         <p className="text-sm text-gray-500 mb-4">
-          Filter by city, rating, or distance from your location. Use “Show all” to see every shop.
-          {!hasUserLocation && ' Set your address in Settings to enable distance filtering.'}
+          Tell us when you want a haircut and how far you'll travel — we'll find barbershops
+          with open slots near you, sorted by distance. Use “Show all” to see every shop.
+          {!hasUserLocation && ' Set your address in Settings to enable distance sorting.'}
         </p>
 
         <MapFilters
           cities={allCities}
+          when={mapWhen} setWhen={setMapWhen}
+          customFrom={mapCustomFrom} setCustomFrom={setMapCustomFrom}
+          customTo={mapCustomTo} setCustomTo={setMapCustomTo}
           city={mapCity} setCity={setMapCity}
           minRating={mapMinRating} setMinRating={setMapMinRating}
           maxDistanceKm={mapMaxDistance} setMaxDistanceKm={setMapMaxDistance}
+          onApply={applyMapFilters}
           onShowAll={showAllOnMap}
           onClear={clearMap}
           hasUserLocation={hasUserLocation}
         />
 
-        {/* Apply button for the city/rating/distance combo */}
-        <div className="mb-4">
-          <button
-            onClick={applyMapFilters}
-            className="px-3 py-2 rounded border border-gray-900 text-sm font-medium text-gray-900 hover:bg-gray-100"
-          >
-            Apply filters
-          </button>
-        </div>
-
         <BarbershopMap
           shops={mapApplied ? mapShops : []}
           userLocation={effectiveLocation}
-          onBook={handleMapBook}
+          onSelectShop={setSelectedShop}
         />
 
         {!mapApplied ? (
           <p className="text-sm text-gray-500 mt-3">
-            No barbershops shown yet. Apply a filter or click “Show all”.
+            No barbershops shown yet. Pick a time and click “Find appointments”, or “Show all”.
           </p>
         ) : (
           <p className="text-sm text-gray-500 mt-3">
@@ -199,7 +373,7 @@ export default function Dashboard() {
 
       {/* My Next Appointment */}
       <section className="mb-10">
-        <MyNextAppointment appointment={myAppointment} onChanged={loadMyAppointment} />
+        <MyNextAppointment appointments={myAppointments} onChanged={loadMyAppointments} />
       </section>
 
       {/* Top Rated */}
@@ -263,7 +437,7 @@ export default function Dashboard() {
             shops={barbershops}
             availFrom={availFromIso}
             availTo={availToIso}
-            onBooked={() => loadMyAppointment()}
+            onBooked={() => loadMyAppointments()}
           />
         )}
       </section>
@@ -274,6 +448,15 @@ export default function Dashboard() {
         <p className="text-sm text-gray-500 mb-4">Real-time chat between everyone currently online.</p>
         <Chat />
       </section>
+
+      {/* Map marker details + booking modal */}
+      {selectedShop && (
+        <MapShopModal
+          shop={selectedShop}
+          onClose={() => setSelectedShop(null)}
+          onBooked={() => loadMyAppointments()}
+        />
+      )}
     </div>
   );
 }

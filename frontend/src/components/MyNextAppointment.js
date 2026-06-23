@@ -1,20 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import apiClient from '../services/apiClient';
 
 /**
- * MyNextAppointment — the logged-in user's next upcoming booked slot.
- * Rendered on the Dashboard. Allows cancelling, which frees the slot in the DB.
+ * MyNextAppointment — the logged-in user's upcoming booked slots.
+ * Rendered on the Dashboard. When the user has more than one upcoming
+ * appointment, it becomes a carousel: page through them with the
+ * arrows / dots and cancel each one individually.
  *
  * Props:
- *   appointment  — the next appointment object (or null)
+ *   appointments — array of upcoming appointment objects (also tolerates a
+ *                  single object or null for backwards compatibility)
  *   onChanged    — called after a successful cancel so the Dashboard refreshes
  */
-export default function MyNextAppointment({ appointment, onChanged }) {
-  const [cancelling, setCancelling] = useState(false);
+export default function MyNextAppointment({ appointments, onChanged }) {
+  // Normalise to an array so callers can pass an array, one object, or null.
+  const list = Array.isArray(appointments)
+    ? appointments
+    : appointments
+      ? [appointments]
+      : [];
+
+  const [index, setIndex] = useState(0);
+  const [cancellingId, setCancellingId] = useState(null);
   const [error, setError] = useState('');
 
+  // Keep the index in range when the list shrinks (e.g. after a cancel).
+  useEffect(() => {
+    if (index > list.length - 1) setIndex(Math.max(0, list.length - 1));
+  }, [list.length, index]);
+
   // Empty state — gentle, light card.
-  if (!appointment) {
+  if (list.length === 0) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white p-6">
         <div className="flex items-center gap-3">
@@ -36,6 +52,10 @@ export default function MyNextAppointment({ appointment, onChanged }) {
     );
   }
 
+  const idx = Math.min(index, list.length - 1);
+  const appointment = list[idx];
+  const multiple = list.length > 1;
+
   const start = new Date(appointment.startTime);
   const dateStr = start.toLocaleDateString('en-US', {
     weekday: 'long', day: 'numeric', month: 'long',
@@ -47,23 +67,60 @@ export default function MyNextAppointment({ appointment, onChanged }) {
   const shopCity = appointment.Barbershop?.city || '';
   const shopAddress = appointment.Barbershop?.address || '';
 
-  async function handleCancel() {
+  async function handleCancel(appt) {
     if (!window.confirm('Cancel this appointment? The slot will become available again.')) return;
-    setCancelling(true);
+    setCancellingId(appt.appointmentId);
     setError('');
     try {
-      await apiClient.delete(`/appointments/${appointment.appointmentId}/book`);
+      await apiClient.delete(`/appointments/${appt.appointmentId}/book`);
       if (onChanged) onChanged();
     } catch (err) {
       setError(err.message || 'Could not cancel. Please try again.');
-      setCancelling(false);
+    } finally {
+      setCancellingId(null);
     }
   }
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-900 to-gray-700 text-white shadow-sm">
       <div className="p-6">
-        <div className="flex items-start justify-between gap-4">
+        {/* header: label + carousel navigation */}
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-medium uppercase tracking-wide text-white/60">
+            {multiple ? 'My Appointments' : 'My Next Appointment'}
+          </p>
+
+          {multiple && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-white/60">{idx + 1} of {list.length}</span>
+              <button
+                type="button"
+                aria-label="Previous appointment"
+                onClick={() => setIndex((i) => Math.max(0, i - 1))}
+                disabled={idx === 0}
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-white/25 text-white/90 hover:bg-white/10 disabled:opacity-30"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                aria-label="Next appointment"
+                onClick={() => setIndex((i) => Math.min(list.length - 1, i + 1))}
+                disabled={idx === list.length - 1}
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-white/25 text-white/90 hover:bg-white/10 disabled:opacity-30"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* shop + cancel */}
+        <div className="mt-3 flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <div className="mt-0.5 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white/90">
               {/* calendar icon */}
@@ -74,10 +131,7 @@ export default function MyNextAppointment({ appointment, onChanged }) {
             </div>
 
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-white/60">
-                My Next Appointment
-              </p>
-              <p className="mt-1 text-lg font-semibold leading-tight">{shopName}</p>
+              <p className="text-lg font-semibold leading-tight">{shopName}</p>
               <p className="text-sm text-white/70">
                 {shopCity}{shopAddress ? ` · ${shopAddress}` : ''}
               </p>
@@ -85,12 +139,12 @@ export default function MyNextAppointment({ appointment, onChanged }) {
           </div>
 
           <button
-            onClick={handleCancel}
-            disabled={cancelling}
+            onClick={() => handleCancel(appointment)}
+            disabled={cancellingId === appointment.appointmentId}
             className="shrink-0 rounded-lg border border-white/25 px-3 py-1.5 text-xs font-medium text-white/90
                        hover:bg-white/10 disabled:opacity-50"
           >
-            {cancelling ? 'Cancelling…' : 'Cancel'}
+            {cancellingId === appointment.appointmentId ? 'Cancelling…' : 'Cancel'}
           </button>
         </div>
 
@@ -111,6 +165,23 @@ export default function MyNextAppointment({ appointment, onChanged }) {
             {timeStr}
           </span>
         </div>
+
+        {/* carousel dots */}
+        {multiple && (
+          <div className="mt-4 flex items-center gap-1.5">
+            {list.map((appt, i) => (
+              <button
+                key={appt.appointmentId}
+                type="button"
+                aria-label={`Go to appointment ${i + 1}`}
+                onClick={() => setIndex(i)}
+                className={`h-2 w-2 rounded-full transition-colors ${
+                  i === idx ? 'bg-white' : 'bg-white/30 hover:bg-white/50'
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
         {error && <p className="mt-3 text-sm text-red-200">{error}</p>}
       </div>

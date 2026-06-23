@@ -14,29 +14,29 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Fix Leaflet's default marker icon paths (CRA bundling breaks the defaults).
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+// Self-contained marker icons (embedded as data URIs). These load for every
+// visitor on the deployed URL, with NO dependence on Leaflet's default icon
+// images (whose bundled paths can fail and render the broken-image "Mark").
+const BLUE_PIN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNSIgaGVpZ2h0PSI0MSIgdmlld0JveD0iMCAwIDI1IDQxIj48cGF0aCBkPSJNMTIuNSAwQzUuNiAwIDAgNS42IDAgMTIuNWMwIDguNCAxMi41IDI4LjUgMTIuNSAyOC41UzI1IDIwLjkgMjUgMTIuNUMyNSA1LjYgMTkuNCAwIDEyLjUgMHoiIGZpbGw9IiMyYTZlZDQiLz48Y2lyY2xlIGN4PSIxMi41IiBjeT0iMTIuNSIgcj0iNSIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==';
+const GREEN_PIN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNSIgaGVpZ2h0PSI0MSIgdmlld0JveD0iMCAwIDI1IDQxIj48cGF0aCBkPSJNMTIuNSAwQzUuNiAwIDAgNS42IDAgMTIuNWMwIDguNCAxMi41IDI4LjUgMTIuNSAyOC41UzI1IDIwLjkgMjUgMTIuNUMyNSA1LjYgMTkuNCAwIDEyLjUgMHoiIGZpbGw9IiMyZWNjNDAiLz48Y2lyY2xlIGN4PSIxMi41IiBjeT0iMTIuNSIgcj0iNSIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==';
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
-
-// A green icon to make the user's own location stand out from shop pins.
 const userIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-  shadowUrl: markerShadow,
+  iconUrl: GREEN_PIN,
+  iconRetinaUrl: GREEN_PIN,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowSize: [41, 41],
 });
 
-export default function BarbershopMap({ shops, userLocation, onBook }) {
+const shopIcon = new L.Icon({
+  iconUrl: BLUE_PIN,
+  iconRetinaUrl: BLUE_PIN,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
+
+export default function BarbershopMap({ shops, userLocation, onSelectShop }) {
   const mapRef = useRef(null);     // the Leaflet map instance
   const containerRef = useRef(null); // the DOM node
   const layerRef = useRef(null);   // a layer group holding all markers
@@ -73,7 +73,7 @@ export default function BarbershopMap({ shops, userLocation, onBook }) {
     layer.clearLayers();
     const bounds = [];
 
-    // User marker
+    // User marker (green)
     if (userLocation && userLocation.latitude != null) {
       const m = L.marker([userLocation.latitude, userLocation.longitude], { icon: userIcon })
         .bindPopup(`<b>You are here</b><br/>${userLocation.addressLabel || 'Your location'}`);
@@ -81,30 +81,16 @@ export default function BarbershopMap({ shops, userLocation, onBook }) {
       bounds.push([userLocation.latitude, userLocation.longitude]);
     }
 
-    // Shop markers
+    // Shop markers (blue). Clicking a marker opens the full details panel
+    // (handled by the parent via onSelectShop) instead of a small popup.
     (shops || []).forEach((shop) => {
       if (shop.latitude == null || shop.longitude == null) return;
-      const dist = shop.distanceKm != null ? `<br/>${shop.distanceKm} km away` : '';
-      const rating = shop.rating != null ? `★ ${shop.rating.toFixed(1)} (${shop.reviewCount || 0})` : 'No rating';
 
-      const popupHtml = `
-        <div style="min-width:160px">
-          <b>${shop.name}</b><br/>
-          ${shop.address || shop.city}<br/>
-          ${rating}${dist}<br/>
-          <button id="book-${shop.barbershopId}"
-            style="margin-top:6px;padding:4px 10px;background:#111827;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px">
-            Book
-          </button>
-        </div>`;
-
-      const marker = L.marker([shop.latitude, shop.longitude]).bindPopup(popupHtml);
-
-      // Wire the Book button inside the popup once it opens.
-      marker.on('popupopen', () => {
-        const btn = document.getElementById(`book-${shop.barbershopId}`);
-        if (btn) btn.onclick = () => onBook && onBook(shop);
+      const marker = L.marker([shop.latitude, shop.longitude], {
+        icon: shopIcon,
+        title: shop.name,
       });
+      marker.on('click', () => onSelectShop && onSelectShop(shop));
 
       layer.addLayer(marker);
       bounds.push([shop.latitude, shop.longitude]);
@@ -116,7 +102,7 @@ export default function BarbershopMap({ shops, userLocation, onBook }) {
     } else if (bounds.length === 1) {
       map.setView(bounds[0], 13);
     }
-  }, [shops, userLocation, onBook]);
+  }, [shops, userLocation, onSelectShop]);
 
   return (
     <div

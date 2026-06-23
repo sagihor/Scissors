@@ -70,6 +70,21 @@ export function AuthProvider({ children }) {
     return user;
   }
 
+  // Register a new customer, then sign them in (same flow as login).
+  async function register(form) {
+    const res = await apiClient.post('/auth/register', form);
+    const { token, user } = res.data;
+    localStorage.setItem('token', token);
+    setCurrentUser(user);
+
+    try {
+      const settingsRes = await apiClient.get('/settings');
+      if (settingsRes?.data?.theme) setThemeState(settingsRes.data.theme);
+    } catch {}
+
+    return user;
+  }
+
   async function logout() {
     try { await apiClient.post('/auth/logout'); } catch {}
     localStorage.removeItem('token');
@@ -104,7 +119,7 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        currentUser, loading, login, logout, theme, setTheme,
+        currentUser, loading, login, register, logout, theme, setTheme,
         refreshUser, effectiveLocation,
       }}
     >

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import apiClient from '../services/apiClient';
 
 export default function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
@@ -9,6 +9,12 @@ export default function BarbershopTable({ shops, availFrom, availTo, onBooked })
   const [slotsError, setSlotsError] = useState('');
   const [bookingId, setBookingId] = useState(null);
   const [successMsg, setSuccessMsg] = useState('');
+
+  // Which shop row is expanded to show its barbers + services
+  const [openInfoShopId, setOpenInfoShopId] = useState(null);
+  const [info, setInfo] = useState(null);
+  const [infoLoading, setInfoLoading] = useState(false);
+  const [infoError, setInfoError] = useState('');
 
   if (!shops || shops.length === 0) {
     return (
@@ -53,6 +59,26 @@ export default function BarbershopTable({ shops, availFrom, availTo, onBooked })
       setSlotsError(err.message || 'Could not load available times.');
     } finally {
       setSlotsLoading(false);
+    }
+  }
+
+  // Expand/collapse a row's barbers + services (RELATIONAL JOIN endpoint).
+  async function toggleInfo(shopId) {
+    if (openInfoShopId === shopId) {
+      setOpenInfoShopId(null);
+      return;
+    }
+    setOpenInfoShopId(shopId);
+    setInfo(null);
+    setInfoError('');
+    setInfoLoading(true);
+    try {
+      const res = await apiClient.get(`/barbershops/${shopId}/barbers`);
+      setInfo(res.data);
+    } catch (err) {
+      setInfoError(err.message || 'Could not load shop details.');
+    } finally {
+      setInfoLoading(false);
     }
   }
 
@@ -102,10 +128,27 @@ export default function BarbershopTable({ shops, availFrom, availTo, onBooked })
           </thead>
           <tbody className="divide-y divide-gray-200">
             {shops.map((shop) => (
-              <>
-                <tr key={shop.barbershopId} className="hover:bg-gray-50">
+              <Fragment key={shop.barbershopId}>
+                <tr className="hover:bg-gray-50">
                   <td className="px-4 py-3 text-sm text-gray-900">{shop.barbershopId}</td>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900">{shop.name}</td>
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    <button
+                      type="button"
+                      onClick={() => toggleInfo(shop.barbershopId)}
+                      className="group inline-flex items-center gap-1 text-left font-medium text-gray-900 hover:text-gray-600"
+                      title="Show barbers & services"
+                    >
+                      <span className="underline decoration-dotted underline-offset-2 group-hover:decoration-solid">
+                        {shop.name}
+                      </span>
+                      <svg
+                        className={`h-3.5 w-3.5 text-gray-400 transition-transform ${openInfoShopId === shop.barbershopId ? 'rotate-180' : ''}`}
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                      >
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </button>
+                  </td>
                   <td className="px-4 py-3 text-sm text-gray-700">{shop.city}</td>
                   <td className="px-4 py-3 text-sm text-gray-700">{shop.address}</td>
                   <td className="px-4 py-3 text-sm text-gray-900">
@@ -122,8 +165,58 @@ export default function BarbershopTable({ shops, availFrom, availTo, onBooked })
                   </td>
                 </tr>
 
+                {openInfoShopId === shop.barbershopId && (
+                  <tr className="bg-gray-50">
+                    <td colSpan={6} className="px-4 py-4">
+                      {infoLoading ? (
+                        <p className="text-sm text-gray-500">Loading shop details…</p>
+                      ) : infoError ? (
+                        <p className="text-sm text-red-600">{infoError}</p>
+                      ) : info ? (
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                          {/* Barbers */}
+                          <div>
+                            <p className="mb-2 text-sm font-semibold text-gray-800">Barbers</p>
+                            {info.barbers && info.barbers.length > 0 ? (
+                              <ul className="space-y-1.5">
+                                {info.barbers.map((b) => (
+                                  <li key={b.userId} className="flex items-center gap-2 text-sm text-gray-700">
+                                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-700">
+                                      {`${b.firstName?.[0] || ''}${b.lastName?.[0] || ''}`.toUpperCase()}
+                                    </span>
+                                    {b.firstName} {b.lastName}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-sm text-gray-500">No barbers listed.</p>
+                            )}
+                          </div>
+
+                          {/* Services */}
+                          <div>
+                            <p className="mb-2 text-sm font-semibold text-gray-800">Services</p>
+                            {info.Services && info.Services.length > 0 ? (
+                              <ul className="space-y-1.5">
+                                {info.Services.map((s) => (
+                                  <li key={s.serviceId} className="flex items-center justify-between gap-3 text-sm text-gray-700">
+                                    <span>{s.name}</span>
+                                    <span className="font-medium text-gray-900">₪{s.price}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-sm text-gray-500">No services listed.</p>
+                            )}
+                          </div>
+                        </div>
+                      ) : null}
+                    </td>
+                  </tr>
+                )}
+
                 {openShopId === shop.barbershopId && (
-                  <tr key={`slots-${shop.barbershopId}`} className="bg-gray-50">
+                  <tr className="bg-gray-50">
                     <td colSpan={6} className="px-4 py-4">
                       <p className="text-sm font-semibold text-gray-800 mb-2">
                         Next available times — {shop.name}
@@ -152,7 +245,7 @@ export default function BarbershopTable({ shops, availFrom, availTo, onBooked })
                     </td>
                   </tr>
                 )}
-              </>
+              </Fragment>
             ))}
           </tbody>
         </table>

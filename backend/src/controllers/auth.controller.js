@@ -40,6 +40,44 @@ module.exports = {
     } catch (err) { next(err); }
   },
 
+  // POST /api/auth/register — self sign-up for a new customer.
+  // Only the non-automatic / non-default user fields are accepted here:
+  // firstName, lastName, username (optional), email, password. The role is
+  // fixed to "customer"; id/timestamps are set by the DB; location is left
+  // null (the user can set their address later in Settings).
+  register: async (req, res, next) => {
+    try {
+      const { firstName, lastName, username, email, password } = req.body;
+
+      if (!firstName || !lastName || !email || !password)
+        return sendError(res, 400, 'VALIDATION_ERROR', 'First name, last name, email and password are required.', {
+          required: ['firstName', 'lastName', 'email', 'password'],
+        });
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+        return sendError(res, 400, 'VALIDATION_ERROR', 'Invalid email format.', { field: 'email' });
+      if (password.length < 6)
+        return sendError(res, 400, 'VALIDATION_ERROR', 'Password must be at least 6 characters.', { field: 'password' });
+
+      // Enforce the table's unique constraints up front with friendly messages.
+      if (await User.findOne({ where: { email } }))
+        return sendError(res, 409, 'EMAIL_TAKEN', 'An account with that email already exists.', { field: 'email' });
+      if (username && (await User.findOne({ where: { username } })))
+        return sendError(res, 409, 'USERNAME_TAKEN', 'That username is already taken.', { field: 'username' });
+
+      const user = await User.create({
+        firstName,
+        lastName,
+        username: username || null,
+        email,
+        password,
+        userRole: 'customer',
+      });
+
+      const token = `mock-token-${user.userId}`;
+      return sendSuccess(res, 201, { token, user: publicUser(user) });
+    } catch (err) { next(err); }
+  },
+
   // POST /api/auth/logout
   logout: (req, res) => sendSuccess(res, 200, { message: 'Logged out.' }),
 
