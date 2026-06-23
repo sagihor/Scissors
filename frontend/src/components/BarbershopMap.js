@@ -26,9 +26,13 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-// A green icon to make the user's own location stand out from shop pins.
+// Green icon for the user's location — embedded directly (self-contained),
+// so it loads for everyone on the deployed URL with no external request.
+const GREEN_PIN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNSIgaGVpZ2h0PSI0MSIgdmlld0JveD0iMCAwIDI1IDQxIj48cGF0aCBkPSJNMTIuNSAwQzUuNiAwIDAgNS42IDAgMTIuNWMwIDguNCAxMi41IDI4LjUgMTIuNSAyOC41UzI1IDIwLjkgMjUgMTIuNUMyNSA1LjYgMTkuNCAwIDEyLjUgMHoiIGZpbGw9IiMyZWNjNDAiLz48Y2lyY2xlIGN4PSIxMi41IiBjeT0iMTIuNSIgcj0iNSIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==';
+
 const userIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  iconUrl: GREEN_PIN,
+  iconRetinaUrl: GREEN_PIN,
   shadowUrl: markerShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
