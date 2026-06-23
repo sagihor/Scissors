@@ -71,25 +71,72 @@ module.exports = {
         data = data.filter((s) => (s.rating ?? 0) >= min);
       }
 
-      // Availability filter: keep only shops with at least one free slot
-      // in [availFrom, availTo]. availFrom alone means "from then on".
+      // Availability filter: keep only shops with at least one FREE slot in
+      // [availFrom, availTo]. availFrom alone means "from then on".
+      //
+      // NOTE: rows in `appointments` exist ONLY when booked, so availability is
+      // COMPUTED, not stored. startTime is a wall-clock STRING, so all time
+      // comparisons here are string comparisons (format is sortable).
       if (availFrom) {
+        const OPEN_HOUR = 9;
+        const CLOSE_HOUR = 18;
+        const MAX_KEYS = 400;
+
+        const pad = (n) => String(n).padStart(2, '0');
+        const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+        const wallClock = (d) =>
+          `${ymd(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        const slotString = (day, h) => `${day} ${pad(h)}:00:00`;
+        const normalizeKey = (st) => {
+          if (typeof st === 'string') {
+            const sep = st.includes('T') ? 'T' : ' ';
+            const [dp, tp = '00'] = st.split(sep);
+            return slotString(dp, Number(tp.slice(0, 2)));
+          }
+          const d = new Date(st);
+          return slotString(ymd(d), d.getHours());
+        };
+
         const now = new Date();
         const from = new Date(availFrom);
         const lower = from < now ? now : from;
-        const slotWhere = {
-          userId: null,
-          startTime: availTo
-            ? { [Op.gte]: lower, [Op.lte]: new Date(availTo) }
-            : { [Op.gte]: lower },
-        };
-        const freeSlots = await Appointment.findAll({
-          where: slotWhere,
-          attributes: ['barbershopId'],
-          group: ['barbershopId'],
+        const to = availTo ? new Date(availTo) : new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000);
+        if (availTo && /^\d{4}-\d{2}-\d{2}$/.test(String(availTo))) {
+          to.setHours(23, 59, 59, 999);
+        }
+        const lowerStr = wallClock(lower);
+        const toStr = wallClock(to);
+
+        // All standard slot keys in the window (string-comparable).
+        const standardKeys = [];
+        const cur = new Date(lower); cur.setHours(0, 0, 0, 0);
+        const endDay = new Date(to); endDay.setHours(0, 0, 0, 0);
+        while (cur <= endDay && standardKeys.length < MAX_KEYS) {
+          const day = ymd(cur);
+          for (let h = OPEN_HOUR; h <= CLOSE_HOUR; h++) {
+            const key = slotString(day, h);
+            if (key >= lowerStr && key <= toStr) standardKeys.push(key);
+          }
+          cur.setDate(cur.getDate() + 1);
+        }
+
+        // Booked rows in the window, grouped by shop.
+        const bookedRows = await Appointment.findAll({
+          where: { startTime: { [Op.gte]: lowerStr, [Op.lte]: toStr } },
+          attributes: ['barbershopId', 'startTime'],
         });
-        const shopsWithFree = new Set(freeSlots.map((s) => s.barbershopId));
-        data = data.filter((s) => shopsWithFree.has(s.barbershopId));
+        const takenByShop = new Map();
+        for (const b of bookedRows) {
+          if (!takenByShop.has(b.barbershopId)) takenByShop.set(b.barbershopId, new Set());
+          takenByShop.get(b.barbershopId).add(normalizeKey(b.startTime));
+        }
+
+        // A shop is available if any standard key is not taken for that shop.
+        data = data.filter((s) => {
+          const taken = takenByShop.get(s.barbershopId);
+          if (!taken || taken.size === 0) return standardKeys.length > 0;
+          return standardKeys.some((k) => !taken.has(k));
+        });
       }
 
       // Distance filter + annotation. Requires a user point (lat/lng).

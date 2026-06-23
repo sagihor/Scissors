@@ -1,12 +1,18 @@
 /**
  * Appointment Model
  * -----------------
- * Defines the "appointments" table. Each row is a single 1-hour bookable slot
- * for a barbershop.
- *   - userId === null  -> slot is FREE
- *   - userId set        -> slot is BOOKED by that user
+ * A row exists ONLY when a booking exists (one row = one user's booked slot).
+ * Availability is computed in the controller (standard hours minus booked rows).
  *
- * Powers the booking feature and the availability filter on the Dashboard.
+ * TIMEZONE-SAFE startTime:
+ * The DB column is DATETIME, but we declare the model field as STRING so
+ * Sequelize passes the value straight through as "YYYY-MM-DD HH:00:00" with NO
+ * JS Date conversion. MySQL stores it verbatim (DATETIME is zoneless), and with
+ * dateStrings:true (config/database.js) it reads back as the same string.
+ * Result: what you book == what's in the DB == what's displayed. No drift,
+ * regardless of the server's timezone (local dev or UTC on Render).
+ *
+ * createDate / updateDate are managed automatically by Sequelize.
  */
 
 const { DataTypes } = require('sequelize');
@@ -19,13 +25,15 @@ const Appointment = sequelize.define('Appointment', {
     autoIncrement: true,
   },
 
-  // Start of the 1-hour slot
-  startTime: { type: DataTypes.DATE, allowNull: false },
+  // Wall-clock slot start "YYYY-MM-DD HH:00:00", stored as a plain string.
+  // (DB column remains DATETIME; STRING here just disables Sequelize's
+  // timezone conversion so the value is never shifted.)
+  startTime: { type: DataTypes.STRING, allowNull: false },
 
   // FK -> barbershop offering the slot
   barbershopId: { type: DataTypes.INTEGER, allowNull: false },
 
-  // FK -> user who booked it (null = still available)
+  // FK -> user who booked it
   userId: { type: DataTypes.INTEGER, allowNull: true },
 }, {
   tableName: 'appointments',

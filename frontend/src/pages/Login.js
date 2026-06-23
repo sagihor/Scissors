@@ -24,9 +24,33 @@ export default function Login() {
       if (!lastName.trim()) return 'Last name is required.';
     }
     if (!email.trim()) return 'Email is required.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Please enter a valid email.';
+    const emailError = validateEmailLikeBrowser(email.trim());
+    if (emailError) return emailError;
     if (!password) return 'Password is required.';
     if (password.length < 6) return 'Password must be at least 6 characters.';
+    return null;
+  }
+
+  // Reproduces the browser's native email hint, in English, e.g.:
+  //   "Please include an '@' in the email address. 'Oscar' is missing an '@'."
+  //   "Please enter a part following '@'. 'avi@' is incomplete."
+  function validateEmailLikeBrowser(value) {
+    const atIndex = value.indexOf('@');
+    if (atIndex === -1) {
+      return `Please include an '@' in the email address. '${value}' is missing an '@'.`;
+    }
+    const local = value.slice(0, atIndex);
+    const domain = value.slice(atIndex + 1);
+    if (!local) {
+      return `Please enter a part before '@'. '${value}' is incomplete.`;
+    }
+    if (!domain) {
+      return `Please enter a part following '@'. '${value}' is incomplete.`;
+    }
+    // Domain must contain a dot with text on both sides (e.g. example.com)
+    if (!/^[^\s@]+\.[^\s@]+$/.test(domain)) {
+      return `Please enter a valid email address. '${value}' is missing a domain like 'example.com'.`;
+    }
     return null;
   }
 

@@ -3,17 +3,53 @@ import apiClient from '../services/apiClient';
 
 /**
  * MyNextAppointment — the logged-in user's upcoming booked slots.
- * Rendered on the Dashboard. When the user has more than one upcoming
- * appointment, it becomes a carousel: page through them with the
- * arrows / dots and cancel each one individually.
+ * Carousel through them; each can be RESCHEDULED (UPDATE) or CANCELLED (DELETE).
  *
  * Props:
- *   appointments — array of upcoming appointment objects (also tolerates a
- *                  single object or null for backwards compatibility)
- *   onChanged    — called after a successful cancel so the Dashboard refreshes
+ *   appointments — array of upcoming appointment objects
+ *   onChanged    — called after a successful change so the Dashboard refreshes
  */
+
+// Slot strings are "YYYY-MM-DD HH:00:00". Parse to a local Date with no TZ shift.
+function parseSlot(s) {
+  const [datePart, timePart] = s.split(' ');
+  const [y, m, d] = datePart.split('-').map(Number);
+  const [hh, mm] = timePart.split(':');
+  return new Date(y, m - 1, d, Number(hh), Number(mm || 0));
+}
+
+function formatSlotShort(s) {
+  return parseSlot(s).toLocaleString('en-US', {
+    weekday: 'short', day: '2-digit', month: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  });
+}
+function dayKeyOf(s) {
+  return String(s).split(' ')[0];
+}
+function dayLabelOf(s) {
+  return parseSlot(s).toLocaleDateString('en-US', {
+    weekday: 'short', day: '2-digit', month: '2-digit',
+  });
+}
+function hourLabelOf(s) {
+  return parseSlot(s).toLocaleTimeString('en-US', {
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  });
+}
+function groupByDay(slots) {
+  const map = new Map();
+  for (const slot of slots) {
+    const k = dayKeyOf(slot.startTime);
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(slot);
+  }
+  return Array.from(map.entries())
+    .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+    .map(([k, items]) => ({ day: k, label: dayLabelOf(items[0].startTime), slots: items }));
+}
+
 export default function MyNextAppointment({ appointments, onChanged }) {
-  // Normalise to an array so callers can pass an array, one object, or null.
   const list = Array.isArray(appointments)
     ? appointments
     : appointments
@@ -24,18 +60,22 @@ export default function MyNextAppointment({ appointments, onChanged }) {
   const [cancellingId, setCancellingId] = useState(null);
   const [error, setError] = useState('');
 
-  // Keep the index in range when the list shrinks (e.g. after a cancel).
+  // Reschedule state
+  const [rescheduleOpenId, setRescheduleOpenId] = useState(null);
+  const [slots, setSlots] = useState([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [savingSlot, setSavingSlot] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
+
   useEffect(() => {
     if (index > list.length - 1) setIndex(Math.max(0, list.length - 1));
   }, [list.length, index]);
 
-  // Empty state — gentle, light card.
   if (list.length === 0) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white p-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-400">
-            {/* calendar icon */}
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" />
               <path d="M16 2v4M8 2v4M3 10h18" />
@@ -43,9 +83,7 @@ export default function MyNextAppointment({ appointments, onChanged }) {
           </div>
           <div>
             <h2 className="text-base font-semibold text-gray-800">My Next Appointment</h2>
-            <p className="text-sm text-gray-400">
-              You have no upcoming appointments yet.
-            </p>
+            <p className="text-sm text-gray-400">You have no upcoming appointments yet.</p>
           </div>
         </div>
       </div>
@@ -56,13 +94,9 @@ export default function MyNextAppointment({ appointments, onChanged }) {
   const appointment = list[idx];
   const multiple = list.length > 1;
 
-  const start = new Date(appointment.startTime);
-  const dateStr = start.toLocaleDateString('en-US', {
-    weekday: 'long', day: 'numeric', month: 'long',
-  });
-  const timeStr = start.toLocaleTimeString('en-US', {
-    hour: '2-digit', minute: '2-digit', hour12: false,
-  });
+  const start = parseSlot(appointment.startTime);
+  const dateStr = start.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
+  const timeStr = start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
   const shopName = appointment.Barbershop?.name || 'Barbershop';
   const shopCity = appointment.Barbershop?.city || '';
   const shopAddress = appointment.Barbershop?.address || '';
@@ -72,7 +106,7 @@ export default function MyNextAppointment({ appointments, onChanged }) {
     setCancellingId(appt.appointmentId);
     setError('');
     try {
-      await apiClient.delete(`/appointments/${appt.appointmentId}/book`);
+      await apiClient.delete(`/appointments/${appt.appointmentId}`); // DELETE
       if (onChanged) onChanged();
     } catch (err) {
       setError(err.message || 'Could not cancel. Please try again.');
@@ -81,10 +115,47 @@ export default function MyNextAppointment({ appointments, onChanged }) {
     }
   }
 
+  async function openReschedule(appt) {
+    if (rescheduleOpenId === appt.appointmentId) {
+      setRescheduleOpenId(null);
+      return;
+    }
+    setRescheduleOpenId(appt.appointmentId);
+    setSlots([]);
+    setSelectedDay(null);
+    setError('');
+    setSlotsLoading(true);
+    try {
+      const shopId = appt.Barbershop?.barbershopId ?? appt.barbershopId;
+      const res = await apiClient.get(`/appointments/available/${shopId}`);
+      const data = res.data || [];
+      setSlots(data);
+      const days = groupByDay(data);
+      if (days.length > 0) setSelectedDay(days[0].day);
+    } catch (err) {
+      setError(err.message || 'Could not load available times.');
+    } finally {
+      setSlotsLoading(false);
+    }
+  }
+
+  async function doReschedule(appt, slot) {
+    setSavingSlot(slot.startTime);
+    setError('');
+    try {
+      await apiClient.put(`/appointments/${appt.appointmentId}`, { startTime: slot.startTime }); // UPDATE
+      setRescheduleOpenId(null);
+      if (onChanged) onChanged();
+    } catch (err) {
+      setError(err.message || 'Could not reschedule. The time may have just been taken.');
+    } finally {
+      setSavingSlot(null);
+    }
+  }
+
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-900 to-gray-700 text-white shadow-sm">
       <div className="p-6">
-        {/* header: label + carousel navigation */}
         <div className="flex items-center justify-between">
           <p className="text-xs font-medium uppercase tracking-wide text-white/60">
             {multiple ? 'My Appointments' : 'My Next Appointment'}
@@ -119,11 +190,9 @@ export default function MyNextAppointment({ appointments, onChanged }) {
           )}
         </div>
 
-        {/* shop + cancel */}
         <div className="mt-3 flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <div className="mt-0.5 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white/90">
-              {/* calendar icon */}
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" />
                 <path d="M16 2v4M8 2v4M3 10h18" />
@@ -138,17 +207,23 @@ export default function MyNextAppointment({ appointments, onChanged }) {
             </div>
           </div>
 
-          <button
-            onClick={() => handleCancel(appointment)}
-            disabled={cancellingId === appointment.appointmentId}
-            className="shrink-0 rounded-lg border border-white/25 px-3 py-1.5 text-xs font-medium text-white/90
-                       hover:bg-white/10 disabled:opacity-50"
-          >
-            {cancellingId === appointment.appointmentId ? 'Cancelling…' : 'Cancel'}
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              onClick={() => openReschedule(appointment)}
+              className="rounded-lg border border-white/25 px-3 py-1.5 text-xs font-medium text-white/90 hover:bg-white/10"
+            >
+              {rescheduleOpenId === appointment.appointmentId ? 'Close' : 'Reschedule'}
+            </button>
+            <button
+              onClick={() => handleCancel(appointment)}
+              disabled={cancellingId === appointment.appointmentId}
+              className="rounded-lg border border-white/25 px-3 py-1.5 text-xs font-medium text-white/90 hover:bg-white/10 disabled:opacity-50"
+            >
+              {cancellingId === appointment.appointmentId ? 'Cancelling…' : 'Cancel'}
+            </button>
+          </div>
         </div>
 
-        {/* date / time row */}
         <div className="mt-5 flex items-center gap-6 border-t border-white/10 pt-4 text-sm">
           <span className="flex items-center gap-2 text-white/90">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -166,7 +241,63 @@ export default function MyNextAppointment({ appointments, onChanged }) {
           </span>
         </div>
 
-        {/* carousel dots */}
+        {/* Reschedule slot picker (day first, then hours) */}
+        {rescheduleOpenId === appointment.appointmentId && (
+          <div className="mt-4 rounded-lg border border-white/15 bg-white/5 p-3">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/70">
+              Pick a new day
+            </p>
+            {slotsLoading ? (
+              <p className="text-sm text-white/70">Loading available times…</p>
+            ) : slots.length === 0 ? (
+              <p className="text-sm text-white/70">No other free times right now.</p>
+            ) : (
+              (() => {
+                const days = groupByDay(slots);
+                const activeDay = days.find((d) => d.day === selectedDay) || days[0];
+                return (
+                  <div>
+                    <div className="flex flex-wrap gap-2">
+                      {days.map((d) => (
+                        <button
+                          key={d.day}
+                          onClick={() => setSelectedDay(d.day)}
+                          className={`rounded border px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                            activeDay && activeDay.day === d.day
+                              ? 'border-white bg-white text-gray-900'
+                              : 'border-white/25 bg-white/10 text-white hover:bg-white/20'
+                          }`}
+                        >
+                          {d.label}
+                        </button>
+                      ))}
+                    </div>
+                    {activeDay && (
+                      <div className="mt-3">
+                        <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-white/60">
+                          {activeDay.label}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {activeDay.slots.map((slot) => (
+                            <button
+                              key={slot.startTime}
+                              onClick={() => doReschedule(appointment, slot)}
+                              disabled={savingSlot === slot.startTime}
+                              className="rounded border border-white/25 bg-white/10 px-2.5 py-1.5 text-xs text-white hover:bg-white/20 disabled:opacity-50"
+                            >
+                              {savingSlot === slot.startTime ? 'Saving…' : hourLabelOf(slot.startTime)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()
+            )}
+          </div>
+        )}
+
         {multiple && (
           <div className="mt-4 flex items-center gap-1.5">
             {list.map((appt, i) => (

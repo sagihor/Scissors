@@ -1,16 +1,49 @@
 import { Fragment, useState } from 'react';
 import apiClient from '../services/apiClient';
 
+// Slots are plain "YYYY-MM-DD HH:00:00" wall-clock strings. We parse with
+// explicit local components (never new Date(isoString)) so there is no TZ shift.
+function parseSlot(s) {
+  const [datePart, timePart] = String(s).split(' ');
+  const [y, m, d] = datePart.split('-').map(Number);
+  const [hh, mm] = timePart.split(':');
+  return new Date(y, m - 1, d, Number(hh), Number(mm || 0));
+}
+function dayKey(s) {
+  return String(s).split(' ')[0]; // "YYYY-MM-DD"
+}
+function dayLabel(s) {
+  return parseSlot(s).toLocaleDateString('en-US', {
+    weekday: 'short', day: '2-digit', month: '2-digit',
+  });
+}
+function hourLabel(s) {
+  return parseSlot(s).toLocaleTimeString('en-US', {
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  });
+}
+// Group an array of slot objects into ordered days.
+function groupByDay(slots) {
+  const map = new Map();
+  for (const slot of slots) {
+    const k = dayKey(slot.startTime);
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(slot);
+  }
+  return Array.from(map.entries())
+    .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+    .map(([k, items]) => ({ day: k, label: dayLabel(items[0].startTime), slots: items }));
+}
+
 export default function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
-  // Which shop row is currently expanded to show its slots
   const [openShopId, setOpenShopId] = useState(null);
   const [slots, setSlots] = useState([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [slotsError, setSlotsError] = useState('');
-  const [bookingId, setBookingId] = useState(null);
+  const [bookingKey, setBookingKey] = useState(null);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedDay, setSelectedDay] = useState(null); // "YYYY-MM-DD"
 
-  // Which shop row is expanded to show its barbers + services
   const [openInfoShopId, setOpenInfoShopId] = useState(null);
   const [info, setInfo] = useState(null);
   const [infoLoading, setInfoLoading] = useState(false);
@@ -24,37 +57,27 @@ export default function BarbershopTable({ shops, availFrom, availTo, onBooked })
     );
   }
 
-  function formatDate(iso) {
-    if (!iso) return '-';
-    const d = new Date(iso);
-    return isNaN(d) ? '-' : d.toLocaleDateString('en-US');
-  }
-
-  function formatSlot(iso) {
-    const d = new Date(iso);
-    return d.toLocaleString('en-US', {
-      weekday: 'short', day: '2-digit', month: '2-digit',
-      hour: '2-digit', minute: '2-digit', hour12: false,
-    });
-  }
-
   async function toggleBook(shopId) {
     if (openShopId === shopId) {
       setOpenShopId(null);
+      setSelectedDay(null);
       return;
     }
     setOpenShopId(shopId);
+    setSelectedDay(null);
     setSlots([]);
     setSlotsError('');
     setSlotsLoading(true);
     try {
-      // Respect the active availability range filter, if any
       const params = new URLSearchParams();
       if (availFrom) params.set('from', availFrom);
       if (availTo) params.set('to', availTo);
       const qs = params.toString() ? `?${params.toString()}` : '';
       const res = await apiClient.get(`/appointments/available/${shopId}${qs}`);
-      setSlots(res.data || []);
+      const data = res.data || [];
+      setSlots(data);
+      const days = groupByDay(data);
+      if (days.length > 0) setSelectedDay(days[0].day); // preselect first day
     } catch (err) {
       setSlotsError(err.message || 'Could not load available times.');
     } finally {
@@ -62,7 +85,6 @@ export default function BarbershopTable({ shops, availFrom, availTo, onBooked })
     }
   }
 
-  // Expand/collapse a row's barbers + services (RELATIONAL JOIN endpoint).
   async function toggleInfo(shopId) {
     if (openInfoShopId === shopId) {
       setOpenInfoShopId(null);
@@ -83,29 +105,28 @@ export default function BarbershopTable({ shops, availFrom, availTo, onBooked })
   }
 
   async function confirmSlot(slot) {
-    setBookingId(slot.appointmentId);
+    setBookingKey(slot.startTime);
     setSuccessMsg('');
     try {
-      const res = await apiClient.post(`/appointments/${slot.appointmentId}/book`);
-      // Remove the now-booked slot from the list
-      setSlots((prev) => prev.filter((s) => s.appointmentId !== slot.appointmentId));
-      if (onBooked) onBooked(res.data); // let Dashboard refresh "my next appointment"
-      setOpenShopId(null);
-
-      // Small green confirmation, auto-dismiss after 4s
-      const shopName = res.data?.Barbershop?.name || 'the barbershop';
-      const when = new Date(res.data.startTime).toLocaleString('en-US', {
-        weekday: 'short', day: '2-digit', month: '2-digit',
-        hour: '2-digit', minute: '2-digit', hour12: false,
+      const res = await apiClient.post('/appointments/book', {
+        barbershopId: slot.barbershopId,
+        startTime: slot.startTime,
       });
-      setSuccessMsg(`Appointment confirmed at ${shopName} — ${when}`);
+      // Remove the booked slot locally so it disappears immediately.
+      setSlots((prev) => prev.filter((s) => s.startTime !== slot.startTime));
+      if (onBooked) onBooked(res.data);
+      const shopName = res.data?.Barbershop?.name || 'the barbershop';
+      setSuccessMsg(`Appointment confirmed at ${shopName} — ${dayLabel(slot.startTime)}, ${hourLabel(slot.startTime)}`);
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err) {
       setSlotsError(err.message || 'Could not book this slot. It may have just been taken.');
     } finally {
-      setBookingId(null);
+      setBookingKey(null);
     }
   }
+
+  const days = groupByDay(slots);
+  const activeDay = days.find((d) => d.day === selectedDay) || days[0];
 
   return (
     <div>
@@ -166,47 +187,61 @@ export default function BarbershopTable({ shops, availFrom, availTo, onBooked })
                 </tr>
 
                 {openInfoShopId === shop.barbershopId && (
-                  <tr className="bg-gray-50">
-                    <td colSpan={6} className="px-4 py-4">
+                  <tr className="bg-gray-50/70">
+                    <td colSpan={6} className="px-4 py-5">
                       {infoLoading ? (
                         <p className="text-sm text-gray-500">Loading shop details…</p>
                       ) : infoError ? (
                         <p className="text-sm text-red-600">{infoError}</p>
                       ) : info ? (
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                          {/* Barbers */}
-                          <div>
-                            <p className="mb-2 text-sm font-semibold text-gray-800">Barbers</p>
+                        <div className="mx-auto max-w-3xl grid grid-cols-1 gap-4 md:grid-cols-2">
+                          {/* Barbers card */}
+                          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                            <div className="mb-3 flex items-center gap-2">
+                              <svg className="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                              </svg>
+                              <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">Barbers</h4>
+                            </div>
                             {info.barbers && info.barbers.length > 0 ? (
-                              <ul className="space-y-1.5">
+                              <ul className="space-y-2">
                                 {info.barbers.map((b) => (
-                                  <li key={b.userId} className="flex items-center gap-2 text-sm text-gray-700">
-                                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-700">
+                                  <li key={b.userId} className="flex items-center gap-3 text-sm text-gray-800">
+                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-900 text-xs font-semibold text-white">
                                       {`${b.firstName?.[0] || ''}${b.lastName?.[0] || ''}`.toUpperCase()}
                                     </span>
-                                    {b.firstName} {b.lastName}
+                                    <span>{b.firstName} {b.lastName}</span>
                                   </li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="text-sm text-gray-500">No barbers listed.</p>
+                              <p className="text-sm text-gray-400">No barbers listed.</p>
                             )}
                           </div>
 
-                          {/* Services */}
-                          <div>
-                            <p className="mb-2 text-sm font-semibold text-gray-800">Services</p>
+                          {/* Services card */}
+                          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                            <div className="mb-3 flex items-center gap-2">
+                              <svg className="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
+                                <path d="M4 6v12c0 1.1.9 2 2 2h14v-4" />
+                                <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+                              </svg>
+                              <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">Services</h4>
+                            </div>
                             {info.Services && info.Services.length > 0 ? (
-                              <ul className="space-y-1.5">
+                              <ul className="space-y-1">
                                 {info.Services.map((s) => (
-                                  <li key={s.serviceId} className="flex items-center justify-between gap-3 text-sm text-gray-700">
-                                    <span>{s.name}</span>
-                                    <span className="font-medium text-gray-900">₪{s.price}</span>
+                                  <li key={s.serviceId} className="flex items-baseline justify-between gap-3 border-b border-gray-100 py-1.5 last:border-0 text-sm">
+                                    <span className="text-gray-800">{s.name}</span>
+                                    <span className="shrink-0 font-semibold text-gray-900 tabular-nums">₪{s.price}</span>
                                   </li>
                                 ))}
                               </ul>
                             ) : (
-                              <p className="text-sm text-gray-500">No services listed.</p>
+                              <p className="text-sm text-gray-400">No services listed.</p>
                             )}
                           </div>
                         </div>
@@ -218,28 +253,58 @@ export default function BarbershopTable({ shops, availFrom, availTo, onBooked })
                 {openShopId === shop.barbershopId && (
                   <tr className="bg-gray-50">
                     <td colSpan={6} className="px-4 py-4">
-                      <p className="text-sm font-semibold text-gray-800 mb-2">
-                        Next available times — {shop.name}
+                      <p className="text-sm font-semibold text-gray-800 mb-3">
+                        Pick a day — {shop.name}
                       </p>
 
                       {slotsLoading ? (
                         <p className="text-sm text-gray-500">Loading available times…</p>
                       ) : slotsError ? (
                         <p className="text-sm text-red-600">{slotsError}</p>
-                      ) : slots.length === 0 ? (
+                      ) : days.length === 0 ? (
                         <p className="text-sm text-gray-500">No free slots in this range.</p>
                       ) : (
-                        <div className="flex flex-wrap gap-2">
-                          {slots.map((slot) => (
-                            <button
-                              key={slot.appointmentId}
-                              onClick={() => confirmSlot(slot)}
-                              disabled={bookingId === slot.appointmentId}
-                              className="px-3 py-2 rounded border border-gray-300 bg-white text-sm text-gray-800 hover:border-gray-900 hover:bg-gray-100 disabled:opacity-50"
-                            >
-                              {bookingId === slot.appointmentId ? 'Booking…' : formatSlot(slot.startTime)}
-                            </button>
-                          ))}
+                        <div>
+                          {/* Step 1: day chips */}
+                          <div className="flex flex-wrap gap-2">
+                            {days.map((d) => (
+                              <button
+                                key={d.day}
+                                onClick={() => setSelectedDay(d.day)}
+                                className={`px-3 py-2 rounded border text-sm font-medium transition-colors ${
+                                  activeDay && activeDay.day === d.day
+                                    ? 'border-gray-900 bg-gray-900 text-white'
+                                    : 'border-gray-300 bg-white text-gray-800 hover:border-gray-900'
+                                }`}
+                              >
+                                {d.label}
+                                <span className={`ml-1.5 text-xs ${activeDay && activeDay.day === d.day ? 'text-white/70' : 'text-gray-400'}`}>
+                                  {d.slots.length}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Step 2: hours for the selected day */}
+                          {activeDay && (
+                            <div className="mt-4">
+                              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                                Available times — {activeDay.label}
+                              </p>
+                              <div className="flex flex-wrap gap-2">
+                                {activeDay.slots.map((slot) => (
+                                  <button
+                                    key={slot.startTime}
+                                    onClick={() => confirmSlot(slot)}
+                                    disabled={bookingKey === slot.startTime}
+                                    className="px-3 py-2 rounded border border-gray-300 bg-white text-sm text-gray-800 hover:border-gray-900 hover:bg-gray-100 disabled:opacity-50"
+                                  >
+                                    {bookingKey === slot.startTime ? 'Booking…' : hourLabel(slot.startTime)}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </td>

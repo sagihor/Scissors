@@ -5,6 +5,12 @@
  * get an AI-powered barbershop recommendation. The frontend calls the backend
  * endpoint POST /api/ai/recommend — it never talks to the AI provider directly,
  * so the API key stays hidden on the server.
+ *
+ * Empty/invalid input handling (assignment requirement):
+ *   - If the box is empty (or only spaces), we show a clear inline message
+ *     instead of silently doing nothing, so the behaviour is demonstrable.
+ *   - The backend ALSO validates and returns 400 for empty input, so the
+ *     protection exists on both ends.
  */
 
 import { useState } from 'react';
@@ -18,7 +24,20 @@ export default function AiRecommender() {
 
   async function handleSubmit() {
     const trimmed = request.trim();
-    if (!trimmed) return;
+
+    // Empty / whitespace-only input: show a visible message (do NOT silently return).
+    if (!trimmed) {
+      setRecommendation('');
+      setError('Please type what you are looking for first (e.g. "cheap fade in Tel Aviv").');
+      return;
+    }
+
+    // Too short to be a meaningful request (e.g. "." or "ab").
+    if (trimmed.length < 3) {
+      setRecommendation('');
+      setError('Please enter at least 3 characters describing what you want.');
+      return;
+    }
 
     setLoading(true);
     setError('');
@@ -50,7 +69,10 @@ export default function AiRecommender() {
         <input
           type="text"
           value={request}
-          onChange={(e) => setRequest(e.target.value)}
+          onChange={(e) => {
+            setRequest(e.target.value);
+            if (error) setError(''); // clear the empty-input message once they type
+          }}
           onKeyDown={handleKeyDown}
           placeholder='e.g. "cheap fade in Tel Aviv with great reviews"'
           className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
@@ -64,7 +86,7 @@ export default function AiRecommender() {
         </button>
       </div>
 
-      {/* Error */}
+      {/* Error / empty-input message */}
       {error && (
         <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded text-sm">
           {error}

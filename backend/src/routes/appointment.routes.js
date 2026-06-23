@@ -10,12 +10,18 @@ router.get('/me', authMock, appointmentController.getMyNext);
 // GET /api/appointments/mine — all of the user's upcoming appointments
 router.get('/mine', authMock, appointmentController.getMine);
 
-// GET /api/appointments/available/:shopId — nearest free slots for a shop (public)
+// GET /api/appointments/available/:shopId — computed free slots for a shop (public)
 router.get('/available/:shopId', appointmentController.getAvailableForShop);
 
-// POST   /api/appointments/:appointmentId/book — book a slot
-// DELETE /api/appointments/:appointmentId/book — cancel a booking (frees the slot)
-router.post('/:appointmentId/book', authMock, appointmentController.bookAppointment);
-router.delete('/:appointmentId/book', authMock, appointmentController.cancelAppointment);
+// POST   /api/appointments/book              — CREATE a new booking
+//        body: { barbershopId, startTime: "YYYY-MM-DD HH:00:00" }
+router.post('/book', authMock, appointmentController.bookAppointment);
+
+// PUT    /api/appointments/:appointmentId    — UPDATE (reschedule) own booking
+//        body: { startTime: "YYYY-MM-DD HH:00:00" }
+router.put('/:appointmentId', authMock, appointmentController.rescheduleAppointment);
+
+// DELETE /api/appointments/:appointmentId    — DELETE own booking
+router.delete('/:appointmentId', authMock, appointmentController.cancelAppointment);
 
 module.exports = router;

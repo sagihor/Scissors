@@ -35249,9 +35249,24 @@ function Login() {
             if (!lastName.trim()) return 'Last name is required.';
         }
         if (!email.trim()) return 'Email is required.';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Please enter a valid email.';
+        const emailError = validateEmailLikeBrowser(email.trim());
+        if (emailError) return emailError;
         if (!password) return 'Password is required.';
         if (password.length < 6) return 'Password must be at least 6 characters.';
+        return null;
+    }
+    // Reproduces the browser's native email hint, in English, e.g.:
+    //   "Please include an '@' in the email address. 'Oscar' is missing an '@'."
+    //   "Please enter a part following '@'. 'avi@' is incomplete."
+    function validateEmailLikeBrowser(value) {
+        const atIndex = value.indexOf('@');
+        if (atIndex === -1) return `Please include an '@' in the email address. '${value}' is missing an '@'.`;
+        const local = value.slice(0, atIndex);
+        const domain = value.slice(atIndex + 1);
+        if (!local) return `Please enter a part before '@'. '${value}' is incomplete.`;
+        if (!domain) return `Please enter a part following '@'. '${value}' is incomplete.`;
+        // Domain must contain a dot with text on both sides (e.g. example.com)
+        if (!/^[^\s@]+\.[^\s@]+$/.test(domain)) return `Please enter a valid email address. '${value}' is missing a domain like 'example.com'.`;
         return null;
     }
     function switchMode(next) {
@@ -35297,7 +35312,7 @@ function Login() {
                             children: "Scissors \u2702\uFE0F"
                         }, void 0, false, {
                             fileName: "src/pages/Login.js",
-                            lineNumber: 81,
+                            lineNumber: 105,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -35305,7 +35320,7 @@ function Login() {
                             children: isRegister ? 'Create an account to book appointments' : 'Sign in to manage your appointments'
                         }, void 0, false, {
                             fileName: "src/pages/Login.js",
-                            lineNumber: 84,
+                            lineNumber: 108,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
@@ -35325,7 +35340,7 @@ function Login() {
                                                             children: "First name"
                                                         }, void 0, false, {
                                                             fileName: "src/pages/Login.js",
-                                                            lineNumber: 93,
+                                                            lineNumber: 117,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -35338,13 +35353,13 @@ function Login() {
                                                             placeholder: "Avi"
                                                         }, void 0, false, {
                                                             fileName: "src/pages/Login.js",
-                                                            lineNumber: 96,
+                                                            lineNumber: 120,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/pages/Login.js",
-                                                    lineNumber: 92,
+                                                    lineNumber: 116,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -35355,7 +35370,7 @@ function Login() {
                                                             children: "Last name"
                                                         }, void 0, false, {
                                                             fileName: "src/pages/Login.js",
-                                                            lineNumber: 107,
+                                                            lineNumber: 131,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -35368,19 +35383,19 @@ function Login() {
                                                             placeholder: "Mizrahi"
                                                         }, void 0, false, {
                                                             fileName: "src/pages/Login.js",
-                                                            lineNumber: 110,
+                                                            lineNumber: 134,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/pages/Login.js",
-                                                    lineNumber: 106,
+                                                    lineNumber: 130,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/pages/Login.js",
-                                            lineNumber: 91,
+                                            lineNumber: 115,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -35395,13 +35410,13 @@ function Login() {
                                                             children: "(optional)"
                                                         }, void 0, false, {
                                                             fileName: "src/pages/Login.js",
-                                                            lineNumber: 124,
+                                                            lineNumber: 148,
                                                             columnNumber: 30
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/pages/Login.js",
-                                                    lineNumber: 123,
+                                                    lineNumber: 147,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -35414,13 +35429,13 @@ function Login() {
                                                     placeholder: "avi_h"
                                                 }, void 0, false, {
                                                     fileName: "src/pages/Login.js",
-                                                    lineNumber: 126,
+                                                    lineNumber: 150,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/pages/Login.js",
-                                            lineNumber: 122,
+                                            lineNumber: 146,
                                             columnNumber: 17
                                         }, this)
                                     ]
@@ -35433,7 +35448,7 @@ function Login() {
                                             children: "Email"
                                         }, void 0, false, {
                                             fileName: "src/pages/Login.js",
-                                            lineNumber: 140,
+                                            lineNumber: 164,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -35446,13 +35461,13 @@ function Login() {
                                             placeholder: "you@example.com"
                                         }, void 0, false, {
                                             fileName: "src/pages/Login.js",
-                                            lineNumber: 143,
+                                            lineNumber: 167,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/pages/Login.js",
-                                    lineNumber: 139,
+                                    lineNumber: 163,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -35463,7 +35478,7 @@ function Login() {
                                             children: "Password"
                                         }, void 0, false, {
                                             fileName: "src/pages/Login.js",
-                                            lineNumber: 155,
+                                            lineNumber: 179,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -35476,13 +35491,13 @@ function Login() {
                                             placeholder: "At least 6 characters"
                                         }, void 0, false, {
                                             fileName: "src/pages/Login.js",
-                                            lineNumber: 158,
+                                            lineNumber: 182,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/pages/Login.js",
-                                    lineNumber: 154,
+                                    lineNumber: 178,
                                     columnNumber: 13
                                 }, this),
                                 error && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -35490,23 +35505,23 @@ function Login() {
                                     children: error
                                 }, void 0, false, {
                                     fileName: "src/pages/Login.js",
-                                    lineNumber: 170,
+                                    lineNumber: 194,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                                     type: "submit",
                                     disabled: loading,
-                                    className: "w-full bg-gray-900 hover:bg-gray-700 text-white font-medium py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed",
+                                    className: "w-full bg-gray-900 hover:bg-gray-700 text-white font-medium py-2 rounded-md   disabled:opacity-50 disabled:cursor-not-allowed",
                                     children: loading ? isRegister ? 'Creating account...' : 'Signing in...' : isRegister ? 'Create account' : 'Sign in'
                                 }, void 0, false, {
                                     fileName: "src/pages/Login.js",
-                                    lineNumber: 173,
+                                    lineNumber: 197,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "src/pages/Login.js",
-                            lineNumber: 88,
+                            lineNumber: 112,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -35522,7 +35537,7 @@ function Login() {
                                         children: "Sign in"
                                     }, void 0, false, {
                                         fileName: "src/pages/Login.js",
-                                        lineNumber: 189,
+                                        lineNumber: 213,
                                         columnNumber: 17
                                     }, this)
                                 ]
@@ -35537,36 +35552,36 @@ function Login() {
                                         children: "Register"
                                     }, void 0, false, {
                                         fileName: "src/pages/Login.js",
-                                        lineNumber: 200,
+                                        lineNumber: 224,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true)
                         }, void 0, false, {
                             fileName: "src/pages/Login.js",
-                            lineNumber: 185,
+                            lineNumber: 209,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "src/pages/Login.js",
-                    lineNumber: 79,
+                    lineNumber: 103,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "src/pages/Login.js",
-                lineNumber: 78,
+                lineNumber: 102,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _footerDefault.default), {}, void 0, false, {
                 fileName: "src/pages/Login.js",
-                lineNumber: 212,
+                lineNumber: 236,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/pages/Login.js",
-        lineNumber: 77,
+        lineNumber: 101,
         columnNumber: 5
     }, this);
 }
@@ -35670,8 +35685,12 @@ function computeWindow(when, customFrom, customTo) {
             return {};
     }
 }
-function formatSlot(iso) {
-    return new Date(iso).toLocaleString('en-US', {
+function formatSlot(s) {
+    const [datePart, timePart] = String(s).split(' ');
+    const [y, m, d] = datePart.split('-').map(Number);
+    const [hh, mm] = timePart.split(':');
+    const local = new Date(y, m - 1, d, Number(hh), Number(mm || 0));
+    return local.toLocaleString('en-US', {
         weekday: 'short',
         day: '2-digit',
         month: '2-digit',
@@ -35679,6 +35698,43 @@ function formatSlot(iso) {
         minute: '2-digit',
         hour12: false
     });
+}
+// Day-first picker helpers (wall-clock strings, no TZ conversion).
+function parseSlotLocal(s) {
+    const [datePart, timePart] = String(s).split(' ');
+    const [y, m, d] = datePart.split('-').map(Number);
+    const [hh, mm] = timePart.split(':');
+    return new Date(y, m - 1, d, Number(hh), Number(mm || 0));
+}
+function slotDayKey(s) {
+    return String(s).split(' ')[0];
+}
+function slotDayLabel(s) {
+    return parseSlotLocal(s).toLocaleDateString('en-US', {
+        weekday: 'short',
+        day: '2-digit',
+        month: '2-digit'
+    });
+}
+function slotHourLabel(s) {
+    return parseSlotLocal(s).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+}
+function groupSlotsByDay(slots) {
+    const map = new Map();
+    for (const slot of slots){
+        const k = slotDayKey(slot.startTime);
+        if (!map.has(k)) map.set(k, []);
+        map.get(k).push(slot);
+    }
+    return Array.from(map.entries()).sort((a, b)=>a[0] < b[0] ? -1 : 1).map(([k, items])=>({
+            day: k,
+            label: slotDayLabel(items[0].startTime),
+            slots: items
+        }));
 }
 /**
  * MapShopModal — full-screen overlay shown when a map marker is clicked.
@@ -35691,6 +35747,7 @@ function formatSlot(iso) {
     const [error, setError] = (0, _react.useState)('');
     const [bookingId, setBookingId] = (0, _react.useState)(null);
     const [successMsg, setSuccessMsg] = (0, _react.useState)('');
+    const [selectedDay, setSelectedDay] = (0, _react.useState)(null);
     // Close on Escape.
     (0, _react.useEffect)(()=>{
         const onKey = (e)=>{
@@ -35704,7 +35761,12 @@ function formatSlot(iso) {
     const loadSlots = (0, _react.useCallback)(()=>{
         setLoading(true);
         setError('');
-        (0, _apiClientDefault.default).get(`/appointments/available/${shop.barbershopId}`).then((res)=>setSlots(res.data || [])).catch((err)=>setError(err.message || 'Could not load available times.')).finally(()=>setLoading(false));
+        (0, _apiClientDefault.default).get(`/appointments/available/${shop.barbershopId}`).then((res)=>{
+            const data = res.data || [];
+            setSlots(data);
+            const days = groupSlotsByDay(data);
+            if (days.length > 0) setSelectedDay(days[0].day);
+        }).catch((err)=>setError(err.message || 'Could not load available times.')).finally(()=>setLoading(false));
     }, [
         shop.barbershopId
     ]);
@@ -35714,13 +35776,16 @@ function formatSlot(iso) {
         loadSlots
     ]);
     async function book(slot) {
-        setBookingId(slot.appointmentId);
+        setBookingId(slot.startTime);
         setError('');
         try {
-            const res = await (0, _apiClientDefault.default).post(`/appointments/${slot.appointmentId}/book`);
-            setSlots((prev)=>prev.filter((s)=>s.appointmentId !== slot.appointmentId));
+            const res = await (0, _apiClientDefault.default).post('/appointments/book', {
+                barbershopId: slot.barbershopId,
+                startTime: slot.startTime
+            });
+            setSlots((prev)=>prev.filter((s)=>s.startTime !== slot.startTime));
             if (onBooked) onBooked(res.data);
-            setSuccessMsg(`Appointment confirmed \u{2014} ${formatSlot(res.data.startTime)}`);
+            setSuccessMsg(`Appointment confirmed \u{2014} ${slotDayLabel(slot.startTime)}, ${slotHourLabel(slot.startTime)}`);
             setTimeout(()=>setSuccessMsg(''), 4000);
         } catch (err) {
             setError(err.message || 'Could not book this slot. It may have just been taken.');
@@ -35740,7 +35805,7 @@ function formatSlot(iso) {
                 onClick: onClose
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 107,
+                lineNumber: 152,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -35756,7 +35821,7 @@ function formatSlot(iso) {
                                         children: shop.name
                                     }, void 0, false, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 113,
+                                        lineNumber: 158,
                                         columnNumber: 13
                                     }, this),
                                     addressLine && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -35764,7 +35829,7 @@ function formatSlot(iso) {
                                         children: addressLine
                                     }, void 0, false, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 114,
+                                        lineNumber: 159,
                                         columnNumber: 29
                                     }, this),
                                     shop.phone && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("a", {
@@ -35784,19 +35849,19 @@ function formatSlot(iso) {
                                                     d: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"
                                                 }, void 0, false, {
                                                     fileName: "src/pages/Dashboard.js",
-                                                    lineNumber: 118,
+                                                    lineNumber: 163,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "src/pages/Dashboard.js",
-                                                lineNumber: 117,
+                                                lineNumber: 162,
                                                 columnNumber: 17
                                             }, this),
                                             shop.phone
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 116,
+                                        lineNumber: 161,
                                         columnNumber: 15
                                     }, this),
                                     shop.rating != null && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -35813,13 +35878,13 @@ function formatSlot(iso) {
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 124,
+                                        lineNumber: 169,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 112,
+                                lineNumber: 157,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -35839,23 +35904,23 @@ function formatSlot(iso) {
                                         d: "M18 6 6 18M6 6l12 12"
                                     }, void 0, false, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 136,
+                                        lineNumber: 181,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "src/pages/Dashboard.js",
-                                    lineNumber: 135,
+                                    lineNumber: 180,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 130,
+                                lineNumber: 175,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 111,
+                        lineNumber: 156,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -35869,15 +35934,15 @@ function formatSlot(iso) {
                                 ]
                             }, void 0, true, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 143,
+                                lineNumber: 188,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                                 className: "mb-2 text-sm font-semibold text-gray-800",
-                                children: "Free appointments"
+                                children: "Pick a day"
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 148,
+                                lineNumber: 193,
                                 columnNumber: 11
                             }, this),
                             loading ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -35885,59 +35950,117 @@ function formatSlot(iso) {
                                 children: "Loading available times\u2026"
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 151,
+                                lineNumber: 196,
                                 columnNumber: 13
                             }, this) : error ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                                 className: "text-sm text-red-600",
                                 children: error
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 153,
+                                lineNumber: 198,
                                 columnNumber: 13
                             }, this) : slots.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                                 className: "text-sm text-gray-500",
                                 children: "No free slots right now."
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 155,
+                                lineNumber: 200,
                                 columnNumber: 13
-                            }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                className: "grid grid-cols-2 gap-2 sm:grid-cols-3",
-                                children: slots.map((slot)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                                        onClick: ()=>book(slot),
-                                        disabled: bookingId === slot.appointmentId,
-                                        className: "rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-900 hover:bg-gray-100 disabled:opacity-50",
-                                        children: bookingId === slot.appointmentId ? "Booking\u2026" : formatSlot(slot.startTime)
-                                    }, slot.appointmentId, false, {
-                                        fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 159,
-                                        columnNumber: 17
-                                    }, this))
-                            }, void 0, false, {
-                                fileName: "src/pages/Dashboard.js",
-                                lineNumber: 157,
-                                columnNumber: 13
-                            }, this)
+                            }, this) : (()=>{
+                                const days = groupSlotsByDay(slots);
+                                const activeDay = days.find((d)=>d.day === selectedDay) || days[0];
+                                return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                    children: [
+                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                            className: "flex flex-wrap gap-2",
+                                            children: days.map((d)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                                    onClick: ()=>setSelectedDay(d.day),
+                                                    className: `px-3 py-2 rounded border text-sm font-medium transition-colors ${activeDay && activeDay.day === d.day ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-300 bg-white text-gray-800 hover:border-gray-900'}`,
+                                                    children: [
+                                                        d.label,
+                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                            className: `ml-1.5 text-xs ${activeDay && activeDay.day === d.day ? 'text-white/70' : 'text-gray-400'}`,
+                                                            children: d.slots.length
+                                                        }, void 0, false, {
+                                                            fileName: "src/pages/Dashboard.js",
+                                                            lineNumber: 220,
+                                                            columnNumber: 25
+                                                        }, this)
+                                                    ]
+                                                }, d.day, true, {
+                                                    fileName: "src/pages/Dashboard.js",
+                                                    lineNumber: 210,
+                                                    columnNumber: 23
+                                                }, this))
+                                        }, void 0, false, {
+                                            fileName: "src/pages/Dashboard.js",
+                                            lineNumber: 208,
+                                            columnNumber: 19
+                                        }, this),
+                                        activeDay && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                            className: "mt-4",
+                                            children: [
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                    className: "mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500",
+                                                    children: [
+                                                        "Available times \u2014 ",
+                                                        activeDay.label
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "src/pages/Dashboard.js",
+                                                    lineNumber: 230,
+                                                    columnNumber: 23
+                                                }, this),
+                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                    className: "grid grid-cols-3 gap-2 sm:grid-cols-4",
+                                                    children: activeDay.slots.map((slot)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                                            onClick: ()=>book(slot),
+                                                            disabled: bookingId === slot.startTime,
+                                                            className: "rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-900 hover:bg-gray-100 disabled:opacity-50",
+                                                            children: bookingId === slot.startTime ? "\u2026" : slotHourLabel(slot.startTime)
+                                                        }, slot.startTime, false, {
+                                                            fileName: "src/pages/Dashboard.js",
+                                                            lineNumber: 235,
+                                                            columnNumber: 27
+                                                        }, this))
+                                                }, void 0, false, {
+                                                    fileName: "src/pages/Dashboard.js",
+                                                    lineNumber: 233,
+                                                    columnNumber: 23
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "src/pages/Dashboard.js",
+                                            lineNumber: 229,
+                                            columnNumber: 21
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "src/pages/Dashboard.js",
+                                    lineNumber: 206,
+                                    columnNumber: 17
+                                }, this);
+                            })()
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 141,
+                        lineNumber: 186,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 110,
+                lineNumber: 155,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/pages/Dashboard.js",
-        lineNumber: 105,
+        lineNumber: 150,
         columnNumber: 5
     }, this);
 }
-_s(MapShopModal, "3WTsRcZ5fklHX8mERafpa1r1isE=");
+_s(MapShopModal, "+G6zzNIyTVP31L3r75oFJvtolys=");
 _c = MapShopModal;
 function Dashboard() {
     _s1();
@@ -35969,8 +36092,12 @@ function Dashboard() {
         const params = new URLSearchParams();
         if (city) params.set('city', city);
         if (minRating) params.set('minRating', minRating);
-        if (availFrom) params.set('availFrom', new Date(availFrom).toISOString());
-        if (availTo) params.set('availTo', new Date(availTo).toISOString());
+        // Pass dates as bare YYYY-MM-DD (the date inputs' native format). The
+        // backend treats availFrom as start-of-day and availTo as end-of-day, so
+        // the whole "to" day is included. Sending a UTC ISO timestamp here would
+        // chop the last day off in +offset timezones.
+        if (availFrom) params.set('availFrom', availFrom);
+        if (availTo) params.set('availTo', availTo);
         const qs = params.toString();
         return qs ? `?${qs}` : '';
     }, [
@@ -36103,8 +36230,10 @@ function Dashboard() {
     }, [
         barbershops
     ]);
-    const availFromIso = availFrom ? new Date(availFrom).toISOString() : '';
-    const availToIso = availTo ? new Date(availTo).toISOString() : '';
+    // Bare YYYY-MM-DD (date-input format). The backend applies start-of-day /
+    // end-of-day so the full range — including the final day — is covered.
+    const availFromIso = availFrom || '';
+    const availToIso = availTo || '';
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
@@ -36112,7 +36241,7 @@ function Dashboard() {
                 children: "Dashboard"
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 323,
+                lineNumber: 410,
                 columnNumber: 7
             }, this),
             error && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36120,19 +36249,19 @@ function Dashboard() {
                 children: error
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 326,
+                lineNumber: 413,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
                 className: "mb-10",
                 children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _aiRecommenderDefault.default), {}, void 0, false, {
                     fileName: "src/pages/Dashboard.js",
-                    lineNumber: 331,
+                    lineNumber: 418,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 330,
+                lineNumber: 417,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -36143,7 +36272,7 @@ function Dashboard() {
                         children: "Get the Nearest Appointment"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 336,
+                        lineNumber: 423,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -36154,7 +36283,7 @@ function Dashboard() {
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 337,
+                        lineNumber: 424,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _mapFiltersDefault.default), {
@@ -36177,7 +36306,7 @@ function Dashboard() {
                         hasUserLocation: hasUserLocation
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 343,
+                        lineNumber: 430,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _barbershopMapDefault.default), {
@@ -36186,7 +36315,7 @@ function Dashboard() {
                         onSelectShop: setSelectedShop
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 357,
+                        lineNumber: 444,
                         columnNumber: 9
                     }, this),
                     !mapApplied ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -36194,7 +36323,7 @@ function Dashboard() {
                         children: "No barbershops shown yet. Pick a time and click \u201CFind appointments\u201D, or \u201CShow all\u201D."
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 364,
+                        lineNumber: 451,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                         className: "text-sm text-gray-500 mt-3",
@@ -36207,13 +36336,13 @@ function Dashboard() {
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 368,
+                        lineNumber: 455,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 335,
+                lineNumber: 422,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -36223,12 +36352,12 @@ function Dashboard() {
                     onChanged: loadMyAppointments
                 }, void 0, false, {
                     fileName: "src/pages/Dashboard.js",
-                    lineNumber: 376,
+                    lineNumber: 463,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 375,
+                lineNumber: 462,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -36239,7 +36368,7 @@ function Dashboard() {
                         children: "Top Rated Barbershops"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 381,
+                        lineNumber: 468,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -36247,7 +36376,7 @@ function Dashboard() {
                         children: "Our three highest-rated shops, based on customer reviews."
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 382,
+                        lineNumber: 469,
                         columnNumber: 9
                     }, this),
                     topThree === null ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36255,14 +36384,14 @@ function Dashboard() {
                         children: "Loading barbershops\u2026"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 385,
+                        lineNumber: 472,
                         columnNumber: 11
                     }, this) : topThree.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         className: "bg-white shadow rounded-lg p-8 text-center text-gray-500",
                         children: "No barbershops to display."
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 387,
+                        lineNumber: 474,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
@@ -36270,18 +36399,18 @@ function Dashboard() {
                                 shop: shop
                             }, shop.barbershopId, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 391,
+                                lineNumber: 478,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 389,
+                        lineNumber: 476,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 380,
+                lineNumber: 467,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -36292,7 +36421,7 @@ function Dashboard() {
                         children: "All Barbershops"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 399,
+                        lineNumber: 486,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -36303,7 +36432,7 @@ function Dashboard() {
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 400,
+                        lineNumber: 487,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _searchFiltersDefault.default), {
@@ -36319,7 +36448,7 @@ function Dashboard() {
                         onClear: clearTableFilters
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 405,
+                        lineNumber: 492,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36331,7 +36460,7 @@ function Dashboard() {
                                 children: "Apply filters"
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 415,
+                                lineNumber: 502,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -36340,13 +36469,13 @@ function Dashboard() {
                                 children: "Show all"
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 421,
+                                lineNumber: 508,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 414,
+                        lineNumber: 501,
                         columnNumber: 9
                     }, this),
                     !tableApplied ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36354,14 +36483,14 @@ function Dashboard() {
                         children: "No barbershops shown yet. Apply a filter or click \u201CShow all\u201D."
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 430,
+                        lineNumber: 517,
                         columnNumber: 11
                     }, this) : barbershops === null ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         className: "bg-white shadow rounded-lg p-8 text-center text-gray-500",
                         children: "Loading data\u2026"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 434,
+                        lineNumber: 521,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _barbershopTableDefault.default), {
                         shops: barbershops,
@@ -36370,13 +36499,13 @@ function Dashboard() {
                         onBooked: ()=>loadMyAppointments()
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 436,
+                        lineNumber: 523,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 398,
+                lineNumber: 485,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -36387,7 +36516,7 @@ function Dashboard() {
                         children: "Community Chat"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 447,
+                        lineNumber: 534,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -36395,18 +36524,18 @@ function Dashboard() {
                         children: "Real-time chat between everyone currently online."
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 448,
+                        lineNumber: 535,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _chatDefault.default), {}, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 449,
+                        lineNumber: 536,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 446,
+                lineNumber: 533,
                 columnNumber: 7
             }, this),
             selectedShop && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(MapShopModal, {
@@ -36415,13 +36544,13 @@ function Dashboard() {
                 onBooked: ()=>loadMyAppointments()
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 454,
+                lineNumber: 541,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/pages/Dashboard.js",
-        lineNumber: 322,
+        lineNumber: 409,
         columnNumber: 5
     }, this);
 }
@@ -36619,16 +36748,54 @@ var _react = require("react");
 var _apiClient = require("../services/apiClient");
 var _apiClientDefault = parcelHelpers.interopDefault(_apiClient);
 var _s = $RefreshSig$();
+// Slots are plain "YYYY-MM-DD HH:00:00" wall-clock strings. We parse with
+// explicit local components (never new Date(isoString)) so there is no TZ shift.
+function parseSlot(s) {
+    const [datePart, timePart] = String(s).split(' ');
+    const [y, m, d] = datePart.split('-').map(Number);
+    const [hh, mm] = timePart.split(':');
+    return new Date(y, m - 1, d, Number(hh), Number(mm || 0));
+}
+function dayKey(s) {
+    return String(s).split(' ')[0]; // "YYYY-MM-DD"
+}
+function dayLabel(s) {
+    return parseSlot(s).toLocaleDateString('en-US', {
+        weekday: 'short',
+        day: '2-digit',
+        month: '2-digit'
+    });
+}
+function hourLabel(s) {
+    return parseSlot(s).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+}
+// Group an array of slot objects into ordered days.
+function groupByDay(slots) {
+    const map = new Map();
+    for (const slot of slots){
+        const k = dayKey(slot.startTime);
+        if (!map.has(k)) map.set(k, []);
+        map.get(k).push(slot);
+    }
+    return Array.from(map.entries()).sort((a, b)=>a[0] < b[0] ? -1 : 1).map(([k, items])=>({
+            day: k,
+            label: dayLabel(items[0].startTime),
+            slots: items
+        }));
+}
 function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
     _s();
-    // Which shop row is currently expanded to show its slots
     const [openShopId, setOpenShopId] = (0, _react.useState)(null);
     const [slots, setSlots] = (0, _react.useState)([]);
     const [slotsLoading, setSlotsLoading] = (0, _react.useState)(false);
     const [slotsError, setSlotsError] = (0, _react.useState)('');
-    const [bookingId, setBookingId] = (0, _react.useState)(null);
+    const [bookingKey, setBookingKey] = (0, _react.useState)(null);
     const [successMsg, setSuccessMsg] = (0, _react.useState)('');
-    // Which shop row is expanded to show its barbers + services
+    const [selectedDay, setSelectedDay] = (0, _react.useState)(null); // "YYYY-MM-DD"
     const [openInfoShopId, setOpenInfoShopId] = (0, _react.useState)(null);
     const [info, setInfo] = (0, _react.useState)(null);
     const [infoLoading, setInfoLoading] = (0, _react.useState)(false);
@@ -36638,49 +36805,36 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
         children: "No barbershops to display."
     }, void 0, false, {
         fileName: "src/components/BarbershopTable.js",
-        lineNumber: 21,
+        lineNumber: 54,
         columnNumber: 7
     }, this);
-    function formatDate(iso) {
-        if (!iso) return '-';
-        const d = new Date(iso);
-        return isNaN(d) ? '-' : d.toLocaleDateString('en-US');
-    }
-    function formatSlot(iso) {
-        const d = new Date(iso);
-        return d.toLocaleString('en-US', {
-            weekday: 'short',
-            day: '2-digit',
-            month: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        });
-    }
     async function toggleBook(shopId) {
         if (openShopId === shopId) {
             setOpenShopId(null);
+            setSelectedDay(null);
             return;
         }
         setOpenShopId(shopId);
+        setSelectedDay(null);
         setSlots([]);
         setSlotsError('');
         setSlotsLoading(true);
         try {
-            // Respect the active availability range filter, if any
             const params = new URLSearchParams();
             if (availFrom) params.set('from', availFrom);
             if (availTo) params.set('to', availTo);
             const qs = params.toString() ? `?${params.toString()}` : '';
             const res = await (0, _apiClientDefault.default).get(`/appointments/available/${shopId}${qs}`);
-            setSlots(res.data || []);
+            const data = res.data || [];
+            setSlots(data);
+            const days = groupByDay(data);
+            if (days.length > 0) setSelectedDay(days[0].day); // preselect first day
         } catch (err) {
             setSlotsError(err.message || 'Could not load available times.');
         } finally{
             setSlotsLoading(false);
         }
     }
-    // Expand/collapse a row's barbers + services (RELATIONAL JOIN endpoint).
     async function toggleInfo(shopId) {
         if (openInfoShopId === shopId) {
             setOpenInfoShopId(null);
@@ -36700,32 +36854,27 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
         }
     }
     async function confirmSlot(slot) {
-        setBookingId(slot.appointmentId);
+        setBookingKey(slot.startTime);
         setSuccessMsg('');
         try {
-            const res = await (0, _apiClientDefault.default).post(`/appointments/${slot.appointmentId}/book`);
-            // Remove the now-booked slot from the list
-            setSlots((prev)=>prev.filter((s)=>s.appointmentId !== slot.appointmentId));
-            if (onBooked) onBooked(res.data); // let Dashboard refresh "my next appointment"
-            setOpenShopId(null);
-            // Small green confirmation, auto-dismiss after 4s
-            const shopName = res.data?.Barbershop?.name || 'the barbershop';
-            const when = new Date(res.data.startTime).toLocaleString('en-US', {
-                weekday: 'short',
-                day: '2-digit',
-                month: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
+            const res = await (0, _apiClientDefault.default).post('/appointments/book', {
+                barbershopId: slot.barbershopId,
+                startTime: slot.startTime
             });
-            setSuccessMsg(`Appointment confirmed at ${shopName} \u{2014} ${when}`);
+            // Remove the booked slot locally so it disappears immediately.
+            setSlots((prev)=>prev.filter((s)=>s.startTime !== slot.startTime));
+            if (onBooked) onBooked(res.data);
+            const shopName = res.data?.Barbershop?.name || 'the barbershop';
+            setSuccessMsg(`Appointment confirmed at ${shopName} \u{2014} ${dayLabel(slot.startTime)}, ${hourLabel(slot.startTime)}`);
             setTimeout(()=>setSuccessMsg(''), 4000);
         } catch (err) {
             setSlotsError(err.message || 'Could not book this slot. It may have just been taken.');
         } finally{
-            setBookingId(null);
+            setBookingKey(null);
         }
     }
+    const days = groupByDay(slots);
+    const activeDay = days.find((d)=>d.day === selectedDay) || days[0];
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         children: [
             successMsg && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36736,7 +36885,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                 ]
             }, void 0, true, {
                 fileName: "src/components/BarbershopTable.js",
-                lineNumber: 113,
+                lineNumber: 134,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36753,7 +36902,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                         children: "ID"
                                     }, void 0, false, {
                                         fileName: "src/components/BarbershopTable.js",
-                                        lineNumber: 121,
+                                        lineNumber: 142,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -36761,7 +36910,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                         children: "Name"
                                     }, void 0, false, {
                                         fileName: "src/components/BarbershopTable.js",
-                                        lineNumber: 122,
+                                        lineNumber: 143,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -36769,7 +36918,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                         children: "City"
                                     }, void 0, false, {
                                         fileName: "src/components/BarbershopTable.js",
-                                        lineNumber: 123,
+                                        lineNumber: 144,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -36777,7 +36926,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                         children: "Address"
                                     }, void 0, false, {
                                         fileName: "src/components/BarbershopTable.js",
-                                        lineNumber: 124,
+                                        lineNumber: 145,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -36785,7 +36934,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                         children: "Rating"
                                     }, void 0, false, {
                                         fileName: "src/components/BarbershopTable.js",
-                                        lineNumber: 125,
+                                        lineNumber: 146,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -36793,18 +36942,18 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                         children: "Book"
                                     }, void 0, false, {
                                         fileName: "src/components/BarbershopTable.js",
-                                        lineNumber: 126,
+                                        lineNumber: 147,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/BarbershopTable.js",
-                                lineNumber: 120,
+                                lineNumber: 141,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "src/components/BarbershopTable.js",
-                            lineNumber: 119,
+                            lineNumber: 140,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tbody", {
@@ -36819,7 +36968,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                                     children: shop.barbershopId
                                                 }, void 0, false, {
                                                     fileName: "src/components/BarbershopTable.js",
-                                                    lineNumber: 133,
+                                                    lineNumber: 154,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -36835,7 +36984,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                                                 children: shop.name
                                                             }, void 0, false, {
                                                                 fileName: "src/components/BarbershopTable.js",
-                                                                lineNumber: 141,
+                                                                lineNumber: 162,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("svg", {
@@ -36850,23 +36999,23 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                                                     d: "M6 9l6 6 6-6"
                                                                 }, void 0, false, {
                                                                     fileName: "src/components/BarbershopTable.js",
-                                                                    lineNumber: 148,
+                                                                    lineNumber: 169,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "src/components/BarbershopTable.js",
-                                                                lineNumber: 144,
+                                                                lineNumber: 165,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/components/BarbershopTable.js",
-                                                        lineNumber: 135,
+                                                        lineNumber: 156,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "src/components/BarbershopTable.js",
-                                                    lineNumber: 134,
+                                                    lineNumber: 155,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -36874,7 +37023,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                                     children: shop.city
                                                 }, void 0, false, {
                                                     fileName: "src/components/BarbershopTable.js",
-                                                    lineNumber: 152,
+                                                    lineNumber: 173,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -36882,7 +37031,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                                     children: shop.address
                                                 }, void 0, false, {
                                                     fileName: "src/components/BarbershopTable.js",
-                                                    lineNumber: 153,
+                                                    lineNumber: 174,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -36893,7 +37042,7 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                                             children: shop.rating?.toFixed(1) ?? "\u2014"
                                                         }, void 0, false, {
                                                             fileName: "src/components/BarbershopTable.js",
-                                                            lineNumber: 155,
+                                                            lineNumber: 176,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -36905,13 +37054,13 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "src/components/BarbershopTable.js",
-                                                            lineNumber: 156,
+                                                            lineNumber: 177,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/components/BarbershopTable.js",
-                                                    lineNumber: 154,
+                                                    lineNumber: 175,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -36922,163 +37071,266 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                                         children: openShopId === shop.barbershopId ? 'Close' : 'Book'
                                                     }, void 0, false, {
                                                         fileName: "src/components/BarbershopTable.js",
-                                                        lineNumber: 159,
+                                                        lineNumber: 180,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "src/components/BarbershopTable.js",
-                                                    lineNumber: 158,
+                                                    lineNumber: 179,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/BarbershopTable.js",
-                                            lineNumber: 132,
+                                            lineNumber: 153,
                                             columnNumber: 17
                                         }, this),
                                         openInfoShopId === shop.barbershopId && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
-                                            className: "bg-gray-50",
+                                            className: "bg-gray-50/70",
                                             children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
                                                 colSpan: 6,
-                                                className: "px-4 py-4",
+                                                className: "px-4 py-5",
                                                 children: infoLoading ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                                                     className: "text-sm text-gray-500",
                                                     children: "Loading shop details\u2026"
                                                 }, void 0, false, {
                                                     fileName: "src/components/BarbershopTable.js",
-                                                    lineNumber: 172,
+                                                    lineNumber: 193,
                                                     columnNumber: 25
                                                 }, this) : infoError ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                                                     className: "text-sm text-red-600",
                                                     children: infoError
                                                 }, void 0, false, {
                                                     fileName: "src/components/BarbershopTable.js",
-                                                    lineNumber: 174,
+                                                    lineNumber: 195,
                                                     columnNumber: 25
                                                 }, this) : info ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: "grid grid-cols-1 gap-6 sm:grid-cols-2",
+                                                    className: "mx-auto max-w-3xl grid grid-cols-1 gap-4 md:grid-cols-2",
                                                     children: [
                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                            className: "rounded-xl border border-gray-200 bg-white p-4 shadow-sm",
                                                             children: [
-                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                                                                    className: "mb-2 text-sm font-semibold text-gray-800",
-                                                                    children: "Barbers"
-                                                                }, void 0, false, {
+                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                                    className: "mb-3 flex items-center gap-2",
+                                                                    children: [
+                                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("svg", {
+                                                                            className: "h-4 w-4 text-gray-400",
+                                                                            viewBox: "0 0 24 24",
+                                                                            fill: "none",
+                                                                            stroke: "currentColor",
+                                                                            strokeWidth: "2",
+                                                                            strokeLinecap: "round",
+                                                                            strokeLinejoin: "round",
+                                                                            children: [
+                                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("path", {
+                                                                                    d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+                                                                                }, void 0, false, {
+                                                                                    fileName: "src/components/BarbershopTable.js",
+                                                                                    lineNumber: 202,
+                                                                                    columnNumber: 33
+                                                                                }, this),
+                                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("circle", {
+                                                                                    cx: "9",
+                                                                                    cy: "7",
+                                                                                    r: "4"
+                                                                                }, void 0, false, {
+                                                                                    fileName: "src/components/BarbershopTable.js",
+                                                                                    lineNumber: 203,
+                                                                                    columnNumber: 33
+                                                                                }, this),
+                                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("path", {
+                                                                                    d: "M22 21v-2a4 4 0 0 0-3-3.87"
+                                                                                }, void 0, false, {
+                                                                                    fileName: "src/components/BarbershopTable.js",
+                                                                                    lineNumber: 204,
+                                                                                    columnNumber: 33
+                                                                                }, this)
+                                                                            ]
+                                                                        }, void 0, true, {
+                                                                            fileName: "src/components/BarbershopTable.js",
+                                                                            lineNumber: 201,
+                                                                            columnNumber: 31
+                                                                        }, this),
+                                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                                                                            className: "text-xs font-semibold uppercase tracking-wide text-gray-500",
+                                                                            children: "Barbers"
+                                                                        }, void 0, false, {
+                                                                            fileName: "src/components/BarbershopTable.js",
+                                                                            lineNumber: 206,
+                                                                            columnNumber: 31
+                                                                        }, this)
+                                                                    ]
+                                                                }, void 0, true, {
                                                                     fileName: "src/components/BarbershopTable.js",
-                                                                    lineNumber: 179,
+                                                                    lineNumber: 200,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 info.barbers && info.barbers.length > 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
-                                                                    className: "space-y-1.5",
+                                                                    className: "space-y-2",
                                                                     children: info.barbers.map((b)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-                                                                            className: "flex items-center gap-2 text-sm text-gray-700",
+                                                                            className: "flex items-center gap-3 text-sm text-gray-800",
                                                                             children: [
                                                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                                    className: "flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-700",
+                                                                                    className: "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-900 text-xs font-semibold text-white",
                                                                                     children: `${b.firstName?.[0] || ''}${b.lastName?.[0] || ''}`.toUpperCase()
                                                                                 }, void 0, false, {
                                                                                     fileName: "src/components/BarbershopTable.js",
-                                                                                    lineNumber: 184,
+                                                                                    lineNumber: 212,
                                                                                     columnNumber: 37
                                                                                 }, this),
-                                                                                b.firstName,
-                                                                                " ",
-                                                                                b.lastName
+                                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                                    children: [
+                                                                                        b.firstName,
+                                                                                        " ",
+                                                                                        b.lastName
+                                                                                    ]
+                                                                                }, void 0, true, {
+                                                                                    fileName: "src/components/BarbershopTable.js",
+                                                                                    lineNumber: 215,
+                                                                                    columnNumber: 37
+                                                                                }, this)
                                                                             ]
                                                                         }, b.userId, true, {
                                                                             fileName: "src/components/BarbershopTable.js",
-                                                                            lineNumber: 183,
+                                                                            lineNumber: 211,
                                                                             columnNumber: 35
                                                                         }, this))
                                                                 }, void 0, false, {
                                                                     fileName: "src/components/BarbershopTable.js",
-                                                                    lineNumber: 181,
+                                                                    lineNumber: 209,
                                                                     columnNumber: 31
                                                                 }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                                                                    className: "text-sm text-gray-500",
+                                                                    className: "text-sm text-gray-400",
                                                                     children: "No barbers listed."
                                                                 }, void 0, false, {
                                                                     fileName: "src/components/BarbershopTable.js",
-                                                                    lineNumber: 192,
+                                                                    lineNumber: 220,
                                                                     columnNumber: 31
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "src/components/BarbershopTable.js",
-                                                            lineNumber: 178,
+                                                            lineNumber: 199,
                                                             columnNumber: 27
                                                         }, this),
                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                            className: "rounded-xl border border-gray-200 bg-white p-4 shadow-sm",
                                                             children: [
-                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                                                                    className: "mb-2 text-sm font-semibold text-gray-800",
-                                                                    children: "Services"
-                                                                }, void 0, false, {
+                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                                    className: "mb-3 flex items-center gap-2",
+                                                                    children: [
+                                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("svg", {
+                                                                            className: "h-4 w-4 text-gray-400",
+                                                                            viewBox: "0 0 24 24",
+                                                                            fill: "none",
+                                                                            stroke: "currentColor",
+                                                                            strokeWidth: "2",
+                                                                            strokeLinecap: "round",
+                                                                            strokeLinejoin: "round",
+                                                                            children: [
+                                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("path", {
+                                                                                    d: "M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"
+                                                                                }, void 0, false, {
+                                                                                    fileName: "src/components/BarbershopTable.js",
+                                                                                    lineNumber: 228,
+                                                                                    columnNumber: 33
+                                                                                }, this),
+                                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("path", {
+                                                                                    d: "M4 6v12c0 1.1.9 2 2 2h14v-4"
+                                                                                }, void 0, false, {
+                                                                                    fileName: "src/components/BarbershopTable.js",
+                                                                                    lineNumber: 229,
+                                                                                    columnNumber: 33
+                                                                                }, this),
+                                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("path", {
+                                                                                    d: "M18 12a2 2 0 0 0 0 4h4v-4Z"
+                                                                                }, void 0, false, {
+                                                                                    fileName: "src/components/BarbershopTable.js",
+                                                                                    lineNumber: 230,
+                                                                                    columnNumber: 33
+                                                                                }, this)
+                                                                            ]
+                                                                        }, void 0, true, {
+                                                                            fileName: "src/components/BarbershopTable.js",
+                                                                            lineNumber: 227,
+                                                                            columnNumber: 31
+                                                                        }, this),
+                                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                                                                            className: "text-xs font-semibold uppercase tracking-wide text-gray-500",
+                                                                            children: "Services"
+                                                                        }, void 0, false, {
+                                                                            fileName: "src/components/BarbershopTable.js",
+                                                                            lineNumber: 232,
+                                                                            columnNumber: 31
+                                                                        }, this)
+                                                                    ]
+                                                                }, void 0, true, {
                                                                     fileName: "src/components/BarbershopTable.js",
-                                                                    lineNumber: 198,
+                                                                    lineNumber: 226,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 info.Services && info.Services.length > 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ul", {
-                                                                    className: "space-y-1.5",
+                                                                    className: "space-y-1",
                                                                     children: info.Services.map((s)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
-                                                                            className: "flex items-center justify-between gap-3 text-sm text-gray-700",
+                                                                            className: "flex items-baseline justify-between gap-3 border-b border-gray-100 py-1.5 last:border-0 text-sm",
                                                                             children: [
                                                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                                    className: "text-gray-800",
                                                                                     children: s.name
                                                                                 }, void 0, false, {
                                                                                     fileName: "src/components/BarbershopTable.js",
-                                                                                    lineNumber: 203,
+                                                                                    lineNumber: 238,
                                                                                     columnNumber: 37
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                                    className: "font-medium text-gray-900",
+                                                                                    className: "shrink-0 font-semibold text-gray-900 tabular-nums",
                                                                                     children: [
                                                                                         "\u20AA",
                                                                                         s.price
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "src/components/BarbershopTable.js",
-                                                                                    lineNumber: 204,
+                                                                                    lineNumber: 239,
                                                                                     columnNumber: 37
                                                                                 }, this)
                                                                             ]
                                                                         }, s.serviceId, true, {
                                                                             fileName: "src/components/BarbershopTable.js",
-                                                                            lineNumber: 202,
+                                                                            lineNumber: 237,
                                                                             columnNumber: 35
                                                                         }, this))
                                                                 }, void 0, false, {
                                                                     fileName: "src/components/BarbershopTable.js",
-                                                                    lineNumber: 200,
+                                                                    lineNumber: 235,
                                                                     columnNumber: 31
                                                                 }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                                                                    className: "text-sm text-gray-500",
+                                                                    className: "text-sm text-gray-400",
                                                                     children: "No services listed."
                                                                 }, void 0, false, {
                                                                     fileName: "src/components/BarbershopTable.js",
-                                                                    lineNumber: 209,
+                                                                    lineNumber: 244,
                                                                     columnNumber: 31
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "src/components/BarbershopTable.js",
-                                                            lineNumber: 197,
+                                                            lineNumber: 225,
                                                             columnNumber: 27
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/components/BarbershopTable.js",
-                                                    lineNumber: 176,
+                                                    lineNumber: 197,
                                                     columnNumber: 25
                                                 }, this) : null
                                             }, void 0, false, {
                                                 fileName: "src/components/BarbershopTable.js",
-                                                lineNumber: 170,
+                                                lineNumber: 191,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "src/components/BarbershopTable.js",
-                                            lineNumber: 169,
+                                            lineNumber: 190,
                                             columnNumber: 19
                                         }, this),
                                         openShopId === shop.barbershopId && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -37088,14 +37340,14 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                                 className: "px-4 py-4",
                                                 children: [
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                                                        className: "text-sm font-semibold text-gray-800 mb-2",
+                                                        className: "text-sm font-semibold text-gray-800 mb-3",
                                                         children: [
-                                                            "Next available times \u2014 ",
+                                                            "Pick a day \u2014 ",
                                                             shop.name
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/components/BarbershopTable.js",
-                                                        lineNumber: 221,
+                                                        lineNumber: 256,
                                                         columnNumber: 23
                                                     }, this),
                                                     slotsLoading ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -37103,80 +37355,134 @@ function BarbershopTable({ shops, availFrom, availTo, onBooked }) {
                                                         children: "Loading available times\u2026"
                                                     }, void 0, false, {
                                                         fileName: "src/components/BarbershopTable.js",
-                                                        lineNumber: 226,
+                                                        lineNumber: 261,
                                                         columnNumber: 25
                                                     }, this) : slotsError ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                                                         className: "text-sm text-red-600",
                                                         children: slotsError
                                                     }, void 0, false, {
                                                         fileName: "src/components/BarbershopTable.js",
-                                                        lineNumber: 228,
+                                                        lineNumber: 263,
                                                         columnNumber: 25
-                                                    }, this) : slots.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                    }, this) : days.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                                                         className: "text-sm text-gray-500",
                                                         children: "No free slots in this range."
                                                     }, void 0, false, {
                                                         fileName: "src/components/BarbershopTable.js",
-                                                        lineNumber: 230,
+                                                        lineNumber: 265,
                                                         columnNumber: 25
                                                     }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: "flex flex-wrap gap-2",
-                                                        children: slots.map((slot)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                                                                onClick: ()=>confirmSlot(slot),
-                                                                disabled: bookingId === slot.appointmentId,
-                                                                className: "px-3 py-2 rounded border border-gray-300 bg-white text-sm text-gray-800 hover:border-gray-900 hover:bg-gray-100 disabled:opacity-50",
-                                                                children: bookingId === slot.appointmentId ? "Booking\u2026" : formatSlot(slot.startTime)
-                                                            }, slot.appointmentId, false, {
+                                                        children: [
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                                className: "flex flex-wrap gap-2",
+                                                                children: days.map((d)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                                                        onClick: ()=>setSelectedDay(d.day),
+                                                                        className: `px-3 py-2 rounded border text-sm font-medium transition-colors ${activeDay && activeDay.day === d.day ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-300 bg-white text-gray-800 hover:border-gray-900'}`,
+                                                                        children: [
+                                                                            d.label,
+                                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                                className: `ml-1.5 text-xs ${activeDay && activeDay.day === d.day ? 'text-white/70' : 'text-gray-400'}`,
+                                                                                children: d.slots.length
+                                                                            }, void 0, false, {
+                                                                                fileName: "src/components/BarbershopTable.js",
+                                                                                lineNumber: 281,
+                                                                                columnNumber: 33
+                                                                            }, this)
+                                                                        ]
+                                                                    }, d.day, true, {
+                                                                        fileName: "src/components/BarbershopTable.js",
+                                                                        lineNumber: 271,
+                                                                        columnNumber: 31
+                                                                    }, this))
+                                                            }, void 0, false, {
                                                                 fileName: "src/components/BarbershopTable.js",
-                                                                lineNumber: 234,
+                                                                lineNumber: 269,
+                                                                columnNumber: 27
+                                                            }, this),
+                                                            activeDay && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                                className: "mt-4",
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                                        className: "text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2",
+                                                                        children: [
+                                                                            "Available times \u2014 ",
+                                                                            activeDay.label
+                                                                        ]
+                                                                    }, void 0, true, {
+                                                                        fileName: "src/components/BarbershopTable.js",
+                                                                        lineNumber: 291,
+                                                                        columnNumber: 31
+                                                                    }, this),
+                                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                                        className: "flex flex-wrap gap-2",
+                                                                        children: activeDay.slots.map((slot)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                                                                onClick: ()=>confirmSlot(slot),
+                                                                                disabled: bookingKey === slot.startTime,
+                                                                                className: "px-3 py-2 rounded border border-gray-300 bg-white text-sm text-gray-800 hover:border-gray-900 hover:bg-gray-100 disabled:opacity-50",
+                                                                                children: bookingKey === slot.startTime ? "Booking\u2026" : hourLabel(slot.startTime)
+                                                                            }, slot.startTime, false, {
+                                                                                fileName: "src/components/BarbershopTable.js",
+                                                                                lineNumber: 296,
+                                                                                columnNumber: 35
+                                                                            }, this))
+                                                                    }, void 0, false, {
+                                                                        fileName: "src/components/BarbershopTable.js",
+                                                                        lineNumber: 294,
+                                                                        columnNumber: 31
+                                                                    }, this)
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "src/components/BarbershopTable.js",
+                                                                lineNumber: 290,
                                                                 columnNumber: 29
-                                                            }, this))
-                                                    }, void 0, false, {
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
                                                         fileName: "src/components/BarbershopTable.js",
-                                                        lineNumber: 232,
+                                                        lineNumber: 267,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "src/components/BarbershopTable.js",
-                                                lineNumber: 220,
+                                                lineNumber: 255,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "src/components/BarbershopTable.js",
-                                            lineNumber: 219,
+                                            lineNumber: 254,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, shop.barbershopId, true, {
                                     fileName: "src/components/BarbershopTable.js",
-                                    lineNumber: 131,
+                                    lineNumber: 152,
                                     columnNumber: 15
                                 }, this))
                         }, void 0, false, {
                             fileName: "src/components/BarbershopTable.js",
-                            lineNumber: 129,
+                            lineNumber: 150,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "src/components/BarbershopTable.js",
-                    lineNumber: 118,
+                    lineNumber: 139,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "src/components/BarbershopTable.js",
-                lineNumber: 117,
+                lineNumber: 138,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/BarbershopTable.js",
-        lineNumber: 111,
+        lineNumber: 132,
         columnNumber: 5
     }, this);
 }
-_s(BarbershopTable, "67MBoccYwiGKci9nW84XgFg1zqU=");
+_s(BarbershopTable, "D6a176SCQ+iZOfow204usABGrd8=");
 _c = BarbershopTable;
 var _c;
 $RefreshReg$(_c, "BarbershopTable");
@@ -41141,6 +41447,12 @@ try {
  * get an AI-powered barbershop recommendation. The frontend calls the backend
  * endpoint POST /api/ai/recommend — it never talks to the AI provider directly,
  * so the API key stays hidden on the server.
+ *
+ * Empty/invalid input handling (assignment requirement):
+ *   - If the box is empty (or only spaces), we show a clear inline message
+ *     instead of silently doing nothing, so the behaviour is demonstrable.
+ *   - The backend ALSO validates and returns 400 for empty input, so the
+ *     protection exists on both ends.
  */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>AiRecommender);
@@ -41157,7 +41469,18 @@ function AiRecommender() {
     const [error, setError] = (0, _react.useState)('');
     async function handleSubmit() {
         const trimmed = request.trim();
-        if (!trimmed) return;
+        // Empty / whitespace-only input: show a visible message (do NOT silently return).
+        if (!trimmed) {
+            setRecommendation('');
+            setError('Please type what you are looking for first (e.g. "cheap fade in Tel Aviv").');
+            return;
+        }
+        // Too short to be a meaningful request (e.g. "." or "ab").
+        if (trimmed.length < 3) {
+            setRecommendation('');
+            setError('Please enter at least 3 characters describing what you want.');
+            return;
+        }
         setLoading(true);
         setError('');
         setRecommendation('');
@@ -41183,7 +41506,7 @@ function AiRecommender() {
                 children: "AI Barbershop Finder"
             }, void 0, false, {
                 fileName: "src/components/AiRecommender.js",
-                lineNumber: 43,
+                lineNumber: 62,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -41191,7 +41514,7 @@ function AiRecommender() {
                 children: "Describe what you want and our AI will recommend the best shop for you."
             }, void 0, false, {
                 fileName: "src/components/AiRecommender.js",
-                lineNumber: 44,
+                lineNumber: 63,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -41200,13 +41523,16 @@ function AiRecommender() {
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
                         type: "text",
                         value: request,
-                        onChange: (e)=>setRequest(e.target.value),
+                        onChange: (e)=>{
+                            setRequest(e.target.value);
+                            if (error) setError(''); // clear the empty-input message once they type
+                        },
                         onKeyDown: handleKeyDown,
                         placeholder: 'e.g. "cheap fade in Tel Aviv with great reviews"',
                         className: "flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
                     }, void 0, false, {
                         fileName: "src/components/AiRecommender.js",
-                        lineNumber: 50,
+                        lineNumber: 69,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -41216,13 +41542,13 @@ function AiRecommender() {
                         children: loading ? "Thinking\u2026" : 'Recommend'
                     }, void 0, false, {
                         fileName: "src/components/AiRecommender.js",
-                        lineNumber: 58,
+                        lineNumber: 80,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/AiRecommender.js",
-                lineNumber: 49,
+                lineNumber: 68,
                 columnNumber: 7
             }, this),
             error && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -41230,7 +41556,7 @@ function AiRecommender() {
                 children: error
             }, void 0, false, {
                 fileName: "src/components/AiRecommender.js",
-                lineNumber: 69,
+                lineNumber: 91,
                 columnNumber: 9
             }, this),
             recommendation && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -41241,20 +41567,20 @@ function AiRecommender() {
                         children: "Recommendation: "
                     }, void 0, false, {
                         fileName: "src/components/AiRecommender.js",
-                        lineNumber: 77,
+                        lineNumber: 99,
                         columnNumber: 11
                     }, this),
                     recommendation
                 ]
             }, void 0, true, {
                 fileName: "src/components/AiRecommender.js",
-                lineNumber: 76,
+                lineNumber: 98,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/AiRecommender.js",
-        lineNumber: 42,
+        lineNumber: 61,
         columnNumber: 5
     }, this);
 }
@@ -41482,23 +41808,80 @@ var _react = require("react");
 var _apiClient = require("../services/apiClient");
 var _apiClientDefault = parcelHelpers.interopDefault(_apiClient);
 var _s = $RefreshSig$();
+/**
+ * MyNextAppointment — the logged-in user's upcoming booked slots.
+ * Carousel through them; each can be RESCHEDULED (UPDATE) or CANCELLED (DELETE).
+ *
+ * Props:
+ *   appointments — array of upcoming appointment objects
+ *   onChanged    — called after a successful change so the Dashboard refreshes
+ */ // Slot strings are "YYYY-MM-DD HH:00:00". Parse to a local Date with no TZ shift.
+function parseSlot(s) {
+    const [datePart, timePart] = s.split(' ');
+    const [y, m, d] = datePart.split('-').map(Number);
+    const [hh, mm] = timePart.split(':');
+    return new Date(y, m - 1, d, Number(hh), Number(mm || 0));
+}
+function formatSlotShort(s) {
+    return parseSlot(s).toLocaleString('en-US', {
+        weekday: 'short',
+        day: '2-digit',
+        month: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+}
+function dayKeyOf(s) {
+    return String(s).split(' ')[0];
+}
+function dayLabelOf(s) {
+    return parseSlot(s).toLocaleDateString('en-US', {
+        weekday: 'short',
+        day: '2-digit',
+        month: '2-digit'
+    });
+}
+function hourLabelOf(s) {
+    return parseSlot(s).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+}
+function groupByDay(slots) {
+    const map = new Map();
+    for (const slot of slots){
+        const k = dayKeyOf(slot.startTime);
+        if (!map.has(k)) map.set(k, []);
+        map.get(k).push(slot);
+    }
+    return Array.from(map.entries()).sort((a, b)=>a[0] < b[0] ? -1 : 1).map(([k, items])=>({
+            day: k,
+            label: dayLabelOf(items[0].startTime),
+            slots: items
+        }));
+}
 function MyNextAppointment({ appointments, onChanged }) {
     _s();
-    // Normalise to an array so callers can pass an array, one object, or null.
     const list = Array.isArray(appointments) ? appointments : appointments ? [
         appointments
     ] : [];
     const [index, setIndex] = (0, _react.useState)(0);
     const [cancellingId, setCancellingId] = (0, _react.useState)(null);
     const [error, setError] = (0, _react.useState)('');
-    // Keep the index in range when the list shrinks (e.g. after a cancel).
+    // Reschedule state
+    const [rescheduleOpenId, setRescheduleOpenId] = (0, _react.useState)(null);
+    const [slots, setSlots] = (0, _react.useState)([]);
+    const [slotsLoading, setSlotsLoading] = (0, _react.useState)(false);
+    const [savingSlot, setSavingSlot] = (0, _react.useState)(null);
+    const [selectedDay, setSelectedDay] = (0, _react.useState)(null);
     (0, _react.useEffect)(()=>{
         if (index > list.length - 1) setIndex(Math.max(0, list.length - 1));
     }, [
         list.length,
         index
     ]);
-    // Empty state — gentle, light card.
     if (list.length === 0) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "rounded-2xl border border-gray-200 bg-white p-6",
         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -41524,25 +41907,25 @@ function MyNextAppointment({ appointments, onChanged }) {
                                 rx: "2"
                             }, void 0, false, {
                                 fileName: "src/components/MyNextAppointment.js",
-                                lineNumber: 40,
+                                lineNumber: 80,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("path", {
                                 d: "M16 2v4M8 2v4M3 10h18"
                             }, void 0, false, {
                                 fileName: "src/components/MyNextAppointment.js",
-                                lineNumber: 41,
+                                lineNumber: 81,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/MyNextAppointment.js",
-                        lineNumber: 39,
+                        lineNumber: 79,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "src/components/MyNextAppointment.js",
-                    lineNumber: 37,
+                    lineNumber: 78,
                     columnNumber: 11
                 }, this),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -41552,7 +41935,7 @@ function MyNextAppointment({ appointments, onChanged }) {
                             children: "My Next Appointment"
                         }, void 0, false, {
                             fileName: "src/components/MyNextAppointment.js",
-                            lineNumber: 45,
+                            lineNumber: 85,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -41560,30 +41943,30 @@ function MyNextAppointment({ appointments, onChanged }) {
                             children: "You have no upcoming appointments yet."
                         }, void 0, false, {
                             fileName: "src/components/MyNextAppointment.js",
-                            lineNumber: 46,
+                            lineNumber: 86,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "src/components/MyNextAppointment.js",
-                    lineNumber: 44,
+                    lineNumber: 84,
                     columnNumber: 11
                 }, this)
             ]
         }, void 0, true, {
             fileName: "src/components/MyNextAppointment.js",
-            lineNumber: 36,
+            lineNumber: 77,
             columnNumber: 9
         }, this)
     }, void 0, false, {
         fileName: "src/components/MyNextAppointment.js",
-        lineNumber: 35,
+        lineNumber: 76,
         columnNumber: 7
     }, this);
     const idx = Math.min(index, list.length - 1);
     const appointment = list[idx];
     const multiple = list.length > 1;
-    const start = new Date(appointment.startTime);
+    const start = parseSlot(appointment.startTime);
     const dateStr = start.toLocaleDateString('en-US', {
         weekday: 'long',
         day: 'numeric',
@@ -41602,12 +41985,50 @@ function MyNextAppointment({ appointments, onChanged }) {
         setCancellingId(appt.appointmentId);
         setError('');
         try {
-            await (0, _apiClientDefault.default).delete(`/appointments/${appt.appointmentId}/book`);
+            await (0, _apiClientDefault.default).delete(`/appointments/${appt.appointmentId}`); // DELETE
             if (onChanged) onChanged();
         } catch (err) {
             setError(err.message || 'Could not cancel. Please try again.');
         } finally{
             setCancellingId(null);
+        }
+    }
+    async function openReschedule(appt) {
+        if (rescheduleOpenId === appt.appointmentId) {
+            setRescheduleOpenId(null);
+            return;
+        }
+        setRescheduleOpenId(appt.appointmentId);
+        setSlots([]);
+        setSelectedDay(null);
+        setError('');
+        setSlotsLoading(true);
+        try {
+            const shopId = appt.Barbershop?.barbershopId ?? appt.barbershopId;
+            const res = await (0, _apiClientDefault.default).get(`/appointments/available/${shopId}`);
+            const data = res.data || [];
+            setSlots(data);
+            const days = groupByDay(data);
+            if (days.length > 0) setSelectedDay(days[0].day);
+        } catch (err) {
+            setError(err.message || 'Could not load available times.');
+        } finally{
+            setSlotsLoading(false);
+        }
+    }
+    async function doReschedule(appt, slot) {
+        setSavingSlot(slot.startTime);
+        setError('');
+        try {
+            await (0, _apiClientDefault.default).put(`/appointments/${appt.appointmentId}`, {
+                startTime: slot.startTime
+            }); // UPDATE
+            setRescheduleOpenId(null);
+            if (onChanged) onChanged();
+        } catch (err) {
+            setError(err.message || 'Could not reschedule. The time may have just been taken.');
+        } finally{
+            setSavingSlot(null);
         }
     }
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -41623,7 +42044,7 @@ function MyNextAppointment({ appointments, onChanged }) {
                             children: multiple ? 'My Appointments' : 'My Next Appointment'
                         }, void 0, false, {
                             fileName: "src/components/MyNextAppointment.js",
-                            lineNumber: 89,
+                            lineNumber: 160,
                             columnNumber: 11
                         }, this),
                         multiple && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -41638,7 +42059,7 @@ function MyNextAppointment({ appointments, onChanged }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/MyNextAppointment.js",
-                                    lineNumber: 95,
+                                    lineNumber: 166,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -41660,17 +42081,17 @@ function MyNextAppointment({ appointments, onChanged }) {
                                             d: "M15 18l-6-6 6-6"
                                         }, void 0, false, {
                                             fileName: "src/components/MyNextAppointment.js",
-                                            lineNumber: 104,
+                                            lineNumber: 175,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "src/components/MyNextAppointment.js",
-                                        lineNumber: 103,
+                                        lineNumber: 174,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "src/components/MyNextAppointment.js",
-                                    lineNumber: 96,
+                                    lineNumber: 167,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -41692,29 +42113,29 @@ function MyNextAppointment({ appointments, onChanged }) {
                                             d: "M9 18l6-6-6-6"
                                         }, void 0, false, {
                                             fileName: "src/components/MyNextAppointment.js",
-                                            lineNumber: 115,
+                                            lineNumber: 186,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "src/components/MyNextAppointment.js",
-                                        lineNumber: 114,
+                                        lineNumber: 185,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "src/components/MyNextAppointment.js",
-                                    lineNumber: 107,
+                                    lineNumber: 178,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "src/components/MyNextAppointment.js",
-                            lineNumber: 94,
+                            lineNumber: 165,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "src/components/MyNextAppointment.js",
-                    lineNumber: 88,
+                    lineNumber: 159,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -41743,25 +42164,25 @@ function MyNextAppointment({ appointments, onChanged }) {
                                                 rx: "2"
                                             }, void 0, false, {
                                                 fileName: "src/components/MyNextAppointment.js",
-                                                lineNumber: 128,
+                                                lineNumber: 197,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("path", {
                                                 d: "M16 2v4M8 2v4M3 10h18"
                                             }, void 0, false, {
                                                 fileName: "src/components/MyNextAppointment.js",
-                                                lineNumber: 129,
+                                                lineNumber: 198,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/components/MyNextAppointment.js",
-                                        lineNumber: 127,
+                                        lineNumber: 196,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "src/components/MyNextAppointment.js",
-                                    lineNumber: 125,
+                                    lineNumber: 195,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -41771,7 +42192,7 @@ function MyNextAppointment({ appointments, onChanged }) {
                                             children: shopName
                                         }, void 0, false, {
                                             fileName: "src/components/MyNextAppointment.js",
-                                            lineNumber: 134,
+                                            lineNumber: 203,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -41782,35 +42203,53 @@ function MyNextAppointment({ appointments, onChanged }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/components/MyNextAppointment.js",
-                                            lineNumber: 135,
+                                            lineNumber: 204,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/MyNextAppointment.js",
-                                    lineNumber: 133,
+                                    lineNumber: 202,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "src/components/MyNextAppointment.js",
-                            lineNumber: 124,
+                            lineNumber: 194,
                             columnNumber: 11
                         }, this),
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                            onClick: ()=>handleCancel(appointment),
-                            disabled: cancellingId === appointment.appointmentId,
-                            className: "shrink-0 rounded-lg border border-white/25 px-3 py-1.5 text-xs font-medium text-white/90 hover:bg-white/10 disabled:opacity-50",
-                            children: cancellingId === appointment.appointmentId ? "Cancelling\u2026" : 'Cancel'
-                        }, void 0, false, {
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                            className: "flex shrink-0 items-center gap-2",
+                            children: [
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                    onClick: ()=>openReschedule(appointment),
+                                    className: "rounded-lg border border-white/25 px-3 py-1.5 text-xs font-medium text-white/90 hover:bg-white/10",
+                                    children: rescheduleOpenId === appointment.appointmentId ? 'Close' : 'Reschedule'
+                                }, void 0, false, {
+                                    fileName: "src/components/MyNextAppointment.js",
+                                    lineNumber: 211,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                    onClick: ()=>handleCancel(appointment),
+                                    disabled: cancellingId === appointment.appointmentId,
+                                    className: "rounded-lg border border-white/25 px-3 py-1.5 text-xs font-medium text-white/90 hover:bg-white/10 disabled:opacity-50",
+                                    children: cancellingId === appointment.appointmentId ? "Cancelling\u2026" : 'Cancel'
+                                }, void 0, false, {
+                                    fileName: "src/components/MyNextAppointment.js",
+                                    lineNumber: 217,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
                             fileName: "src/components/MyNextAppointment.js",
-                            lineNumber: 141,
+                            lineNumber: 210,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "src/components/MyNextAppointment.js",
-                    lineNumber: 123,
+                    lineNumber: 193,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -41837,27 +42276,27 @@ function MyNextAppointment({ appointments, onChanged }) {
                                             rx: "2"
                                         }, void 0, false, {
                                             fileName: "src/components/MyNextAppointment.js",
-                                            lineNumber: 155,
+                                            lineNumber: 230,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("path", {
                                             d: "M16 2v4M8 2v4M3 10h18"
                                         }, void 0, false, {
                                             fileName: "src/components/MyNextAppointment.js",
-                                            lineNumber: 156,
+                                            lineNumber: 231,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/MyNextAppointment.js",
-                                    lineNumber: 154,
+                                    lineNumber: 229,
                                     columnNumber: 13
                                 }, this),
                                 dateStr
                             ]
                         }, void 0, true, {
                             fileName: "src/components/MyNextAppointment.js",
-                            lineNumber: 153,
+                            lineNumber: 228,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -41879,34 +42318,127 @@ function MyNextAppointment({ appointments, onChanged }) {
                                             r: "9"
                                         }, void 0, false, {
                                             fileName: "src/components/MyNextAppointment.js",
-                                            lineNumber: 162,
+                                            lineNumber: 237,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("path", {
                                             d: "M12 7v5l3 2"
                                         }, void 0, false, {
                                             fileName: "src/components/MyNextAppointment.js",
-                                            lineNumber: 163,
+                                            lineNumber: 238,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/components/MyNextAppointment.js",
-                                    lineNumber: 161,
+                                    lineNumber: 236,
                                     columnNumber: 13
                                 }, this),
                                 timeStr
                             ]
                         }, void 0, true, {
                             fileName: "src/components/MyNextAppointment.js",
-                            lineNumber: 160,
+                            lineNumber: 235,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "src/components/MyNextAppointment.js",
-                    lineNumber: 152,
+                    lineNumber: 227,
                     columnNumber: 9
+                }, this),
+                rescheduleOpenId === appointment.appointmentId && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                    className: "mt-4 rounded-lg border border-white/15 bg-white/5 p-3",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                            className: "mb-2 text-xs font-semibold uppercase tracking-wide text-white/70",
+                            children: "Pick a new day"
+                        }, void 0, false, {
+                            fileName: "src/components/MyNextAppointment.js",
+                            lineNumber: 247,
+                            columnNumber: 13
+                        }, this),
+                        slotsLoading ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                            className: "text-sm text-white/70",
+                            children: "Loading available times\u2026"
+                        }, void 0, false, {
+                            fileName: "src/components/MyNextAppointment.js",
+                            lineNumber: 251,
+                            columnNumber: 15
+                        }, this) : slots.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                            className: "text-sm text-white/70",
+                            children: "No other free times right now."
+                        }, void 0, false, {
+                            fileName: "src/components/MyNextAppointment.js",
+                            lineNumber: 253,
+                            columnNumber: 15
+                        }, this) : (()=>{
+                            const days = groupByDay(slots);
+                            const activeDay = days.find((d)=>d.day === selectedDay) || days[0];
+                            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "flex flex-wrap gap-2",
+                                        children: days.map((d)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                                onClick: ()=>setSelectedDay(d.day),
+                                                className: `rounded border px-2.5 py-1.5 text-xs font-medium transition-colors ${activeDay && activeDay.day === d.day ? 'border-white bg-white text-gray-900' : 'border-white/25 bg-white/10 text-white hover:bg-white/20'}`,
+                                                children: d.label
+                                            }, d.day, false, {
+                                                fileName: "src/components/MyNextAppointment.js",
+                                                lineNumber: 262,
+                                                columnNumber: 25
+                                            }, this))
+                                    }, void 0, false, {
+                                        fileName: "src/components/MyNextAppointment.js",
+                                        lineNumber: 260,
+                                        columnNumber: 21
+                                    }, this),
+                                    activeDay && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "mt-3",
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                className: "mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-white/60",
+                                                children: activeDay.label
+                                            }, void 0, false, {
+                                                fileName: "src/components/MyNextAppointment.js",
+                                                lineNumber: 277,
+                                                columnNumber: 25
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                className: "flex flex-wrap gap-2",
+                                                children: activeDay.slots.map((slot)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                                        onClick: ()=>doReschedule(appointment, slot),
+                                                        disabled: savingSlot === slot.startTime,
+                                                        className: "rounded border border-white/25 bg-white/10 px-2.5 py-1.5 text-xs text-white hover:bg-white/20 disabled:opacity-50",
+                                                        children: savingSlot === slot.startTime ? "Saving\u2026" : hourLabelOf(slot.startTime)
+                                                    }, slot.startTime, false, {
+                                                        fileName: "src/components/MyNextAppointment.js",
+                                                        lineNumber: 282,
+                                                        columnNumber: 29
+                                                    }, this))
+                                            }, void 0, false, {
+                                                fileName: "src/components/MyNextAppointment.js",
+                                                lineNumber: 280,
+                                                columnNumber: 25
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/components/MyNextAppointment.js",
+                                        lineNumber: 276,
+                                        columnNumber: 23
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/MyNextAppointment.js",
+                                lineNumber: 259,
+                                columnNumber: 19
+                            }, this);
+                        })()
+                    ]
+                }, void 0, true, {
+                    fileName: "src/components/MyNextAppointment.js",
+                    lineNumber: 246,
+                    columnNumber: 11
                 }, this),
                 multiple && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                     className: "mt-4 flex items-center gap-1.5",
@@ -41917,12 +42449,12 @@ function MyNextAppointment({ appointments, onChanged }) {
                             className: `h-2 w-2 rounded-full transition-colors ${i === idx ? 'bg-white' : 'bg-white/30 hover:bg-white/50'}`
                         }, appt.appointmentId, false, {
                             fileName: "src/components/MyNextAppointment.js",
-                            lineNumber: 173,
+                            lineNumber: 304,
                             columnNumber: 15
                         }, this))
                 }, void 0, false, {
                     fileName: "src/components/MyNextAppointment.js",
-                    lineNumber: 171,
+                    lineNumber: 302,
                     columnNumber: 11
                 }, this),
                 error && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -41930,22 +42462,22 @@ function MyNextAppointment({ appointments, onChanged }) {
                     children: error
                 }, void 0, false, {
                     fileName: "src/components/MyNextAppointment.js",
-                    lineNumber: 186,
+                    lineNumber: 317,
                     columnNumber: 19
                 }, this)
             ]
         }, void 0, true, {
             fileName: "src/components/MyNextAppointment.js",
-            lineNumber: 86,
+            lineNumber: 158,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "src/components/MyNextAppointment.js",
-        lineNumber: 85,
+        lineNumber: 157,
         columnNumber: 5
     }, this);
 }
-_s(MyNextAppointment, "oswz7YkG5TtCfgPLh4MMN4H22t4=");
+_s(MyNextAppointment, "SWAvM1tACuIYkkJaIvV+OCmC0+U=");
 _c = MyNextAppointment;
 var _c;
 $RefreshReg$(_c, "MyNextAppointment");

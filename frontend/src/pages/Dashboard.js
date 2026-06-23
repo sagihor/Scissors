@@ -45,11 +45,47 @@ function computeWindow(when, customFrom, customTo) {
   }
 }
 
-function formatSlot(iso) {
-  return new Date(iso).toLocaleString('en-US', {
+function formatSlot(s) {
+  const [datePart, timePart] = String(s).split(' ');
+  const [y, m, d] = datePart.split('-').map(Number);
+  const [hh, mm] = timePart.split(':');
+  const local = new Date(y, m - 1, d, Number(hh), Number(mm || 0));
+  return local.toLocaleString('en-US', {
     weekday: 'short', day: '2-digit', month: '2-digit',
     hour: '2-digit', minute: '2-digit', hour12: false,
   });
+}
+
+// Day-first picker helpers (wall-clock strings, no TZ conversion).
+function parseSlotLocal(s) {
+  const [datePart, timePart] = String(s).split(' ');
+  const [y, m, d] = datePart.split('-').map(Number);
+  const [hh, mm] = timePart.split(':');
+  return new Date(y, m - 1, d, Number(hh), Number(mm || 0));
+}
+function slotDayKey(s) {
+  return String(s).split(' ')[0];
+}
+function slotDayLabel(s) {
+  return parseSlotLocal(s).toLocaleDateString('en-US', {
+    weekday: 'short', day: '2-digit', month: '2-digit',
+  });
+}
+function slotHourLabel(s) {
+  return parseSlotLocal(s).toLocaleTimeString('en-US', {
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  });
+}
+function groupSlotsByDay(slots) {
+  const map = new Map();
+  for (const slot of slots) {
+    const k = slotDayKey(slot.startTime);
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(slot);
+  }
+  return Array.from(map.entries())
+    .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+    .map(([k, items]) => ({ day: k, label: slotDayLabel(items[0].startTime), slots: items }));
 }
 
 /**
@@ -63,6 +99,7 @@ function MapShopModal({ shop, onClose, onBooked }) {
   const [error, setError] = useState('');
   const [bookingId, setBookingId] = useState(null);
   const [successMsg, setSuccessMsg] = useState('');
+  const [selectedDay, setSelectedDay] = useState(null);
 
   // Close on Escape.
   useEffect(() => {
@@ -76,7 +113,12 @@ function MapShopModal({ shop, onClose, onBooked }) {
     setError('');
     apiClient
       .get(`/appointments/available/${shop.barbershopId}`)
-      .then((res) => setSlots(res.data || []))
+      .then((res) => {
+        const data = res.data || [];
+        setSlots(data);
+        const days = groupSlotsByDay(data);
+        if (days.length > 0) setSelectedDay(days[0].day);
+      })
       .catch((err) => setError(err.message || 'Could not load available times.'))
       .finally(() => setLoading(false));
   }, [shop.barbershopId]);
@@ -84,13 +126,16 @@ function MapShopModal({ shop, onClose, onBooked }) {
   useEffect(() => { loadSlots(); }, [loadSlots]);
 
   async function book(slot) {
-    setBookingId(slot.appointmentId);
+    setBookingId(slot.startTime);
     setError('');
     try {
-      const res = await apiClient.post(`/appointments/${slot.appointmentId}/book`);
-      setSlots((prev) => prev.filter((s) => s.appointmentId !== slot.appointmentId));
+      const res = await apiClient.post('/appointments/book', {
+        barbershopId: slot.barbershopId,
+        startTime: slot.startTime,
+      });
+      setSlots((prev) => prev.filter((s) => s.startTime !== slot.startTime));
       if (onBooked) onBooked(res.data);
-      setSuccessMsg(`Appointment confirmed — ${formatSlot(res.data.startTime)}`);
+      setSuccessMsg(`Appointment confirmed — ${slotDayLabel(slot.startTime)}, ${slotHourLabel(slot.startTime)}`);
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err) {
       setError(err.message || 'Could not book this slot. It may have just been taken.');
@@ -145,7 +190,7 @@ function MapShopModal({ shop, onClose, onBooked }) {
             </div>
           )}
 
-          <p className="mb-2 text-sm font-semibold text-gray-800">Free appointments</p>
+          <p className="mb-2 text-sm font-semibold text-gray-800">Pick a day</p>
 
           {loading ? (
             <p className="text-sm text-gray-500">Loading available times…</p>
@@ -154,18 +199,54 @@ function MapShopModal({ shop, onClose, onBooked }) {
           ) : slots.length === 0 ? (
             <p className="text-sm text-gray-500">No free slots right now.</p>
           ) : (
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {slots.map((slot) => (
-                <button
-                  key={slot.appointmentId}
-                  onClick={() => book(slot)}
-                  disabled={bookingId === slot.appointmentId}
-                  className="rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-900 hover:bg-gray-100 disabled:opacity-50"
-                >
-                  {bookingId === slot.appointmentId ? 'Booking…' : formatSlot(slot.startTime)}
-                </button>
-              ))}
-            </div>
+            (() => {
+              const days = groupSlotsByDay(slots);
+              const activeDay = days.find((d) => d.day === selectedDay) || days[0];
+              return (
+                <div>
+                  {/* Step 1: day chips */}
+                  <div className="flex flex-wrap gap-2">
+                    {days.map((d) => (
+                      <button
+                        key={d.day}
+                        onClick={() => setSelectedDay(d.day)}
+                        className={`px-3 py-2 rounded border text-sm font-medium transition-colors ${
+                          activeDay && activeDay.day === d.day
+                            ? 'border-gray-900 bg-gray-900 text-white'
+                            : 'border-gray-300 bg-white text-gray-800 hover:border-gray-900'
+                        }`}
+                      >
+                        {d.label}
+                        <span className={`ml-1.5 text-xs ${activeDay && activeDay.day === d.day ? 'text-white/70' : 'text-gray-400'}`}>
+                          {d.slots.length}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Step 2: hours for the selected day */}
+                  {activeDay && (
+                    <div className="mt-4">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        Available times — {activeDay.label}
+                      </p>
+                      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                        {activeDay.slots.map((slot) => (
+                          <button
+                            key={slot.startTime}
+                            onClick={() => book(slot)}
+                            disabled={bookingId === slot.startTime}
+                            className="rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-900 hover:bg-gray-100 disabled:opacity-50"
+                          >
+                            {bookingId === slot.startTime ? '…' : slotHourLabel(slot.startTime)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()
           )}
         </div>
       </div>
@@ -208,8 +289,12 @@ export default function Dashboard() {
     const params = new URLSearchParams();
     if (city) params.set('city', city);
     if (minRating) params.set('minRating', minRating);
-    if (availFrom) params.set('availFrom', new Date(availFrom).toISOString());
-    if (availTo) params.set('availTo', new Date(availTo).toISOString());
+    // Pass dates as bare YYYY-MM-DD (the date inputs' native format). The
+    // backend treats availFrom as start-of-day and availTo as end-of-day, so
+    // the whole "to" day is included. Sending a UTC ISO timestamp here would
+    // chop the last day off in +offset timezones.
+    if (availFrom) params.set('availFrom', availFrom);
+    if (availTo) params.set('availTo', availTo);
     const qs = params.toString();
     return qs ? `?${qs}` : '';
   }, [city, minRating, availFrom, availTo]);
@@ -315,8 +400,10 @@ export default function Dashboard() {
     return [...barbershops].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0)).slice(0, 3);
   }, [barbershops]);
 
-  const availFromIso = availFrom ? new Date(availFrom).toISOString() : '';
-  const availToIso = availTo ? new Date(availTo).toISOString() : '';
+  // Bare YYYY-MM-DD (date-input format). The backend applies start-of-day /
+  // end-of-day so the full range — including the final day — is covered.
+  const availFromIso = availFrom || '';
+  const availToIso = availTo || '';
 
   return (
     <div>

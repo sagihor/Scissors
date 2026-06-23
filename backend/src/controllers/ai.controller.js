@@ -24,6 +24,11 @@ module.exports = {
           field: 'request',
         });
       }
+      if (request.trim().length < 3) {
+        return sendError(res, 400, 'VALIDATION_ERROR', 'The request must be at least 3 characters.', {
+          field: 'request',
+        });
+      }
 
       const recommendation = await recommendBarbershop(request.trim());
       return sendSuccess(res, 200, { recommendation });
