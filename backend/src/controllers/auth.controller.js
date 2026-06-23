@@ -7,6 +7,16 @@
 
 const { User } = require('../../models');
 
+// Default location for brand-new users — identical to the value seeded for
+// existing users (Dizengoff Square, Tel Aviv). The user does not enter this at
+// registration; it can later be changed on the Settings page. Keeping it in
+// sync with the seed means every account starts from the same point on the map.
+const DEFAULT_LOCATION = {
+  latitude: 32.0786,
+  longitude: 34.7741,
+  addressLabel: 'Dizengoff Square, Tel Aviv',
+};
+
 const sendError = (res, status, code, message, details = {}) =>
   res.status(status).json({ success: false, data: null, error: { code, message, details } });
 
@@ -71,6 +81,9 @@ module.exports = {
         email,
         password,
         userRole: 'customer',
+        latitude: DEFAULT_LOCATION.latitude,
+        longitude: DEFAULT_LOCATION.longitude,
+        addressLabel: DEFAULT_LOCATION.addressLabel,
       });
 
       const token = `mock-token-${user.userId}`;

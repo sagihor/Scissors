@@ -46,7 +46,15 @@ module.exports = {
           required: ['firstName', 'lastName', 'userRole'],
         });
       }
-      const newUser = await User.create({ firstName, lastName, userRole });
+      const newUser = await User.create({
+        firstName,
+        lastName,
+        userRole,
+        // Same default location every user starts with (Dizengoff Square, Tel Aviv).
+        latitude: 32.0786,
+        longitude: 34.7741,
+        addressLabel: 'Dizengoff Square, Tel Aviv',
+      });
       return sendSuccess(res, 201, { userId: newUser.userId });
     } catch (err) { next(err); }
   },
