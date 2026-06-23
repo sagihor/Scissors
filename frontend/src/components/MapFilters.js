@@ -10,14 +10,15 @@ const WHEN_OPTIONS = [
   { value: '2h', label: 'Next 2 hours' },
   { value: 'today', label: 'Today' },
   { value: 'tomorrow', label: 'Tomorrow' },
-  { value: 'custom', label: 'Pick dates' },
+  { value: 'custom', label: 'Pick date' },
 ];
 
 export default function MapFilters({
   cities,
   when, setWhen,
-  customFrom, setCustomFrom,
-  customTo, setCustomTo,
+  customDate, setCustomDate,
+  fromHour, setFromHour,
+  toHour, setToHour,
   city, setCity,
   minRating, setMinRating,
   maxDistanceKm, setMaxDistanceKm,
@@ -54,21 +55,30 @@ export default function MapFilters({
         {when === 'custom' && (
           <div className="mt-3 flex flex-wrap gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">From date</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Date</label>
               <input
                 type="date"
-                value={customFrom}
-                onChange={(e) => setCustomFrom(e.target.value)}
+                value={customDate}
+                onChange={(e) => setCustomDate(e.target.value)}
                 className="border border-gray-300 rounded px-2 py-1.5 text-sm"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">To date</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">From hour</label>
               <input
-                type="date"
-                value={customTo}
-                min={customFrom || undefined}
-                onChange={(e) => setCustomTo(e.target.value)}
+                type="time"
+                value={fromHour}
+                onChange={(e) => setFromHour(e.target.value)}
+                className="border border-gray-300 rounded px-2 py-1.5 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">To hour</label>
+              <input
+                type="time"
+                value={toHour}
+                min={fromHour || undefined}
+                onChange={(e) => setToHour(e.target.value)}
                 className="border border-gray-300 rounded px-2 py-1.5 text-sm"
               />
             </div>

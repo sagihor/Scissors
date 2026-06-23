@@ -350,12 +350,12 @@ img, video {
   margin-top: 1.25rem;
 }
 
-.mt-auto {
-  margin-top: auto;
-}
-
 .mt-6 {
   margin-top: 1.5rem;
+}
+
+.mt-auto {
+  margin-top: auto;
 }
 
 .block {
@@ -390,6 +390,14 @@ img, video {
   height: 2.75rem;
 }
 
+.h-2 {
+  height: .5rem;
+}
+
+.h-3\.5 {
+  height: .875rem;
+}
+
 .h-4 {
   height: 1rem;
 }
@@ -398,20 +406,12 @@ img, video {
   height: 1.25rem;
 }
 
-.h-96 {
-  height: 24rem;
-}
-
-.h-2 {
-  height: .5rem;
-}
-
 .h-7 {
   height: 1.75rem;
 }
 
-.h-3\.5 {
-  height: .875rem;
+.h-96 {
+  height: 24rem;
 }
 
 .max-h-\[85vh\] {
@@ -430,24 +430,24 @@ img, video {
   width: 2.75rem;
 }
 
-.w-4 {
-  width: 1rem;
-}
-
-.w-full {
-  width: 100%;
-}
-
 .w-2 {
   width: .5rem;
+}
+
+.w-3\.5 {
+  width: .875rem;
+}
+
+.w-4 {
+  width: 1rem;
 }
 
 .w-7 {
   width: 1.75rem;
 }
 
-.w-3\.5 {
-  width: .875rem;
+.w-full {
+  width: 100%;
 }
 
 .min-w-full {
@@ -458,16 +458,16 @@ img, video {
   max-width: 72rem;
 }
 
+.max-w-lg {
+  max-width: 32rem;
+}
+
 .max-w-md {
   max-width: 28rem;
 }
 
 .max-w-xl {
   max-width: 36rem;
-}
-
-.max-w-lg {
-  max-width: 32rem;
 }
 
 .flex-1 {
@@ -531,6 +531,10 @@ img, video {
   gap: .25rem;
 }
 
+.gap-1\.5 {
+  gap: .375rem;
+}
+
 .gap-2 {
   gap: .5rem;
 }
@@ -547,14 +551,16 @@ img, video {
   gap: 1.5rem;
 }
 
-.gap-1\.5 {
-  gap: .375rem;
-}
-
 .space-y-1 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(.25rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(.25rem * var(--tw-space-y-reverse));
+}
+
+.space-y-1\.5 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(.375rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(.375rem * var(--tw-space-y-reverse));
 }
 
 .space-y-2 > :not([hidden]) ~ :not([hidden]) {
@@ -579,12 +585,6 @@ img, video {
   --tw-space-y-reverse: 0;
   margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
-}
-
-.space-y-1\.5 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(.375rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(.375rem * var(--tw-space-y-reverse));
 }
 
 .divide-y > :not([hidden]) ~ :not([hidden]) {
@@ -680,9 +680,18 @@ img, video {
   border-color: #ffffff40;
 }
 
+.bg-black\/50 {
+  background-color: #00000080;
+}
+
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+}
+
+.bg-gray-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gray-50 {
@@ -733,15 +742,6 @@ img, video {
   background-color: #ffffff4d;
 }
 
-.bg-black\/50 {
-  background-color: #00000080;
-}
-
-.bg-gray-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
-}
-
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }
@@ -754,6 +754,10 @@ img, video {
 
 .to-gray-700 {
   --tw-gradient-to: #374151 var(--tw-gradient-to-position);
+}
+
+.p-1 {
+  padding: .25rem;
 }
 
 .p-2 {
@@ -778,10 +782,6 @@ img, video {
 
 .p-8 {
   padding: 2rem;
-}
-
-.p-1 {
-  padding: .25rem;
 }
 
 .px-2 {
@@ -1157,9 +1157,9 @@ html.dark input::placeholder {
   background-color: #ffffff80;
 }
 
-.hover\:text-gray-900:hover {
+.hover\:text-gray-600:hover {
   --tw-text-opacity: 1;
-  color: rgb(17 24 39 / var(--tw-text-opacity, 1));
+  color: rgb(75 85 99 / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-gray-700:hover {
@@ -1167,9 +1167,9 @@ html.dark input::placeholder {
   color: rgb(55 65 81 / var(--tw-text-opacity, 1));
 }
 
-.hover\:text-gray-600:hover {
+.hover\:text-gray-900:hover {
   --tw-text-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-text-opacity, 1));
+  color: rgb(17 24 39 / var(--tw-text-opacity, 1));
 }
 
 .hover\:underline:hover {
@@ -1216,12 +1216,12 @@ html.dark input::placeholder {
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
 }
 
-.disabled\:opacity-50:disabled {
-  opacity: .5;
-}
-
 .disabled\:opacity-30:disabled {
   opacity: .3;
+}
+
+.disabled\:opacity-50:disabled {
+  opacity: .5;
 }
 
 .group:hover .group-hover\:decoration-solid {

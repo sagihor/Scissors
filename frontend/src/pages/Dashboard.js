@@ -12,7 +12,7 @@ import MapFilters from '../components/MapFilters';
 
 // Translate the "when" choice into an availability window [from, to].
 // Returns Date objects (or {} for "no time filter").
-function computeWindow(when, customFrom, customTo) {
+function computeWindow(when, customDate, fromHour, toHour) {
   const now = new Date();
   switch (when) {
     case '1h':
@@ -33,11 +33,21 @@ function computeWindow(when, customFrom, customTo) {
       return { from: start, to: end };
     }
     case 'custom': {
-      if (!customFrom) return {};
-      const start = new Date(customFrom);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(customTo || customFrom);
-      end.setHours(23, 59, 59, 999);
+      if (!customDate) return {};
+      const start = new Date(customDate);
+      if (fromHour) {
+        const [h, m] = fromHour.split(':').map(Number);
+        start.setHours(h, m, 0, 0);
+      } else {
+        start.setHours(0, 0, 0, 0);
+      }
+      const end = new Date(customDate);
+      if (toHour) {
+        const [h, m] = toHour.split(':').map(Number);
+        end.setHours(h, m, 59, 999);
+      } else {
+        end.setHours(23, 59, 59, 999);
+      }
       return { from: start, to: end };
     }
     default:
@@ -197,8 +207,9 @@ export default function Dashboard() {
   const [mapMinRating, setMapMinRating] = useState('');
   const [mapMaxDistance, setMapMaxDistance] = useState('');
   const [mapWhen, setMapWhen] = useState('any'); // 'any'|'1h'|'2h'|'today'|'tomorrow'|'custom'
-  const [mapCustomFrom, setMapCustomFrom] = useState('');
-  const [mapCustomTo, setMapCustomTo] = useState('');
+  const [mapCustomDate, setMapCustomDate] = useState('');
+  const [mapFromHour, setMapFromHour] = useState('');
+  const [mapToHour, setMapToHour] = useState('');
   const [selectedShop, setSelectedShop] = useState(null); // shop whose modal is open
 
   const hasUserLocation = !!(effectiveLocation && effectiveLocation.latitude != null);
@@ -274,7 +285,7 @@ export default function Dashboard() {
   }, [effectiveLocation, hasUserLocation]);
 
   function applyMapFilters() {
-    const { from, to } = computeWindow(mapWhen, mapCustomFrom, mapCustomTo);
+    const { from, to } = computeWindow(mapWhen, mapCustomDate, mapFromHour, mapToHour);
     fetchMapShops({
       city: mapCity,
       minRating: mapMinRating,
@@ -285,12 +296,12 @@ export default function Dashboard() {
   }
   function showAllOnMap() {
     setMapCity(''); setMapMinRating(''); setMapMaxDistance('');
-    setMapWhen('any'); setMapCustomFrom(''); setMapCustomTo('');
+    setMapWhen('any'); setMapCustomDate(''); setMapFromHour(''); setMapToHour('');
     fetchMapShops({}); // no filters -> all shops (with distance if location known)
   }
   function clearMap() {
     setMapCity(''); setMapMinRating(''); setMapMaxDistance('');
-    setMapWhen('any'); setMapCustomFrom(''); setMapCustomTo('');
+    setMapWhen('any'); setMapCustomDate(''); setMapFromHour(''); setMapToHour('');
     setMapShops([]);
     setMapApplied(false); // back to default empty state
   }
@@ -299,7 +310,7 @@ export default function Dashboard() {
   // but only after the user has interacted at least once.
   useEffect(() => {
     if (!mapApplied) return;
-    const { from, to } = computeWindow(mapWhen, mapCustomFrom, mapCustomTo);
+    const { from, to } = computeWindow(mapWhen, mapCustomDate, mapFromHour, mapToHour);
     fetchMapShops({
       city: mapCity,
       minRating: mapMinRating,
@@ -308,7 +319,7 @@ export default function Dashboard() {
       availTo: to ? to.toISOString() : '',
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapCity, mapMinRating, mapMaxDistance, mapWhen, mapCustomFrom, mapCustomTo]);
+  }, [mapCity, mapMinRating, mapMaxDistance, mapWhen, mapCustomDate, mapFromHour, mapToHour]);
 
   const topThree = useMemo(() => {
     if (!barbershops) return null;
@@ -343,8 +354,9 @@ export default function Dashboard() {
         <MapFilters
           cities={allCities}
           when={mapWhen} setWhen={setMapWhen}
-          customFrom={mapCustomFrom} setCustomFrom={setMapCustomFrom}
-          customTo={mapCustomTo} setCustomTo={setMapCustomTo}
+          customDate={mapCustomDate} setCustomDate={setMapCustomDate}
+          fromHour={mapFromHour} setFromHour={setMapFromHour}
+          toHour={mapToHour} setToHour={setMapToHour}
           city={mapCity} setCity={setMapCity}
           minRating={mapMinRating} setMinRating={setMapMinRating}
           maxDistanceKm={mapMaxDistance} setMaxDistanceKm={setMapMaxDistance}

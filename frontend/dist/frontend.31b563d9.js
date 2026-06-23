@@ -35620,7 +35620,7 @@ var _mapFiltersDefault = parcelHelpers.interopDefault(_mapFilters);
 var _s = $RefreshSig$(), _s1 = $RefreshSig$();
 // Translate the "when" choice into an availability window [from, to].
 // Returns Date objects (or {} for "no time filter").
-function computeWindow(when, customFrom, customTo) {
+function computeWindow(when, customDate, fromHour, toHour) {
     const now = new Date();
     switch(when){
         case '1h':
@@ -35656,11 +35656,17 @@ function computeWindow(when, customFrom, customTo) {
             }
         case 'custom':
             {
-                if (!customFrom) return {};
-                const start = new Date(customFrom);
-                start.setHours(0, 0, 0, 0);
-                const end = new Date(customTo || customFrom);
-                end.setHours(23, 59, 59, 999);
+                if (!customDate) return {};
+                const start = new Date(customDate);
+                if (fromHour) {
+                    const [h, m] = fromHour.split(':').map(Number);
+                    start.setHours(h, m, 0, 0);
+                } else start.setHours(0, 0, 0, 0);
+                const end = new Date(customDate);
+                if (toHour) {
+                    const [h, m] = toHour.split(':').map(Number);
+                    end.setHours(h, m, 59, 999);
+                } else end.setHours(23, 59, 59, 999);
                 return {
                     from: start,
                     to: end
@@ -35740,7 +35746,7 @@ function formatSlot(iso) {
                 onClick: onClose
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 107,
+                lineNumber: 117,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -35756,7 +35762,7 @@ function formatSlot(iso) {
                                         children: shop.name
                                     }, void 0, false, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 113,
+                                        lineNumber: 123,
                                         columnNumber: 13
                                     }, this),
                                     addressLine && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -35764,7 +35770,7 @@ function formatSlot(iso) {
                                         children: addressLine
                                     }, void 0, false, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 114,
+                                        lineNumber: 124,
                                         columnNumber: 29
                                     }, this),
                                     shop.phone && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("a", {
@@ -35784,19 +35790,19 @@ function formatSlot(iso) {
                                                     d: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"
                                                 }, void 0, false, {
                                                     fileName: "src/pages/Dashboard.js",
-                                                    lineNumber: 118,
+                                                    lineNumber: 128,
                                                     columnNumber: 19
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "src/pages/Dashboard.js",
-                                                lineNumber: 117,
+                                                lineNumber: 127,
                                                 columnNumber: 17
                                             }, this),
                                             shop.phone
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 116,
+                                        lineNumber: 126,
                                         columnNumber: 15
                                     }, this),
                                     shop.rating != null && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -35813,13 +35819,13 @@ function formatSlot(iso) {
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 124,
+                                        lineNumber: 134,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 112,
+                                lineNumber: 122,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -35839,23 +35845,23 @@ function formatSlot(iso) {
                                         d: "M18 6 6 18M6 6l12 12"
                                     }, void 0, false, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 136,
+                                        lineNumber: 146,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "src/pages/Dashboard.js",
-                                    lineNumber: 135,
+                                    lineNumber: 145,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 130,
+                                lineNumber: 140,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 111,
+                        lineNumber: 121,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -35869,7 +35875,7 @@ function formatSlot(iso) {
                                 ]
                             }, void 0, true, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 143,
+                                lineNumber: 153,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -35877,7 +35883,7 @@ function formatSlot(iso) {
                                 children: "Free appointments"
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 148,
+                                lineNumber: 158,
                                 columnNumber: 11
                             }, this),
                             loading ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -35885,21 +35891,21 @@ function formatSlot(iso) {
                                 children: "Loading available times\u2026"
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 151,
+                                lineNumber: 161,
                                 columnNumber: 13
                             }, this) : error ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                                 className: "text-sm text-red-600",
                                 children: error
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 153,
+                                lineNumber: 163,
                                 columnNumber: 13
                             }, this) : slots.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                                 className: "text-sm text-gray-500",
                                 children: "No free slots right now."
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 155,
+                                lineNumber: 165,
                                 columnNumber: 13
                             }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                                 className: "grid grid-cols-2 gap-2 sm:grid-cols-3",
@@ -35910,30 +35916,30 @@ function formatSlot(iso) {
                                         children: bookingId === slot.appointmentId ? "Booking\u2026" : formatSlot(slot.startTime)
                                     }, slot.appointmentId, false, {
                                         fileName: "src/pages/Dashboard.js",
-                                        lineNumber: 159,
+                                        lineNumber: 169,
                                         columnNumber: 17
                                     }, this))
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 157,
+                                lineNumber: 167,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 141,
+                        lineNumber: 151,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 110,
+                lineNumber: 120,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/pages/Dashboard.js",
-        lineNumber: 105,
+        lineNumber: 115,
         columnNumber: 5
     }, this);
 }
@@ -35960,8 +35966,9 @@ function Dashboard() {
     const [mapMinRating, setMapMinRating] = (0, _react.useState)('');
     const [mapMaxDistance, setMapMaxDistance] = (0, _react.useState)('');
     const [mapWhen, setMapWhen] = (0, _react.useState)('any'); // 'any'|'1h'|'2h'|'today'|'tomorrow'|'custom'
-    const [mapCustomFrom, setMapCustomFrom] = (0, _react.useState)('');
-    const [mapCustomTo, setMapCustomTo] = (0, _react.useState)('');
+    const [mapCustomDate, setMapCustomDate] = (0, _react.useState)('');
+    const [mapFromHour, setMapFromHour] = (0, _react.useState)('');
+    const [mapToHour, setMapToHour] = (0, _react.useState)('');
     const [selectedShop, setSelectedShop] = (0, _react.useState)(null); // shop whose modal is open
     const hasUserLocation = !!(effectiveLocation && effectiveLocation.latitude != null);
     // Build query string for the All Barbershops table
@@ -36046,7 +36053,7 @@ function Dashboard() {
         hasUserLocation
     ]);
     function applyMapFilters() {
-        const { from, to } = computeWindow(mapWhen, mapCustomFrom, mapCustomTo);
+        const { from, to } = computeWindow(mapWhen, mapCustomDate, mapFromHour, mapToHour);
         fetchMapShops({
             city: mapCity,
             minRating: mapMinRating,
@@ -36060,8 +36067,9 @@ function Dashboard() {
         setMapMinRating('');
         setMapMaxDistance('');
         setMapWhen('any');
-        setMapCustomFrom('');
-        setMapCustomTo('');
+        setMapCustomDate('');
+        setMapFromHour('');
+        setMapToHour('');
         fetchMapShops({}); // no filters -> all shops (with distance if location known)
     }
     function clearMap() {
@@ -36069,8 +36077,9 @@ function Dashboard() {
         setMapMinRating('');
         setMapMaxDistance('');
         setMapWhen('any');
-        setMapCustomFrom('');
-        setMapCustomTo('');
+        setMapCustomDate('');
+        setMapFromHour('');
+        setMapToHour('');
         setMapShops([]);
         setMapApplied(false); // back to default empty state
     }
@@ -36078,7 +36087,7 @@ function Dashboard() {
     // but only after the user has interacted at least once.
     (0, _react.useEffect)(()=>{
         if (!mapApplied) return;
-        const { from, to } = computeWindow(mapWhen, mapCustomFrom, mapCustomTo);
+        const { from, to } = computeWindow(mapWhen, mapCustomDate, mapFromHour, mapToHour);
         fetchMapShops({
             city: mapCity,
             minRating: mapMinRating,
@@ -36092,8 +36101,9 @@ function Dashboard() {
         mapMinRating,
         mapMaxDistance,
         mapWhen,
-        mapCustomFrom,
-        mapCustomTo
+        mapCustomDate,
+        mapFromHour,
+        mapToHour
     ]);
     const topThree = (0, _react.useMemo)(()=>{
         if (!barbershops) return null;
@@ -36112,7 +36122,7 @@ function Dashboard() {
                 children: "Dashboard"
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 323,
+                lineNumber: 334,
                 columnNumber: 7
             }, this),
             error && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36120,19 +36130,19 @@ function Dashboard() {
                 children: error
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 326,
+                lineNumber: 337,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
                 className: "mb-10",
                 children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _aiRecommenderDefault.default), {}, void 0, false, {
                     fileName: "src/pages/Dashboard.js",
-                    lineNumber: 331,
+                    lineNumber: 342,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 330,
+                lineNumber: 341,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -36143,7 +36153,7 @@ function Dashboard() {
                         children: "Get the Nearest Appointment"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 336,
+                        lineNumber: 347,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -36154,17 +36164,19 @@ function Dashboard() {
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 337,
+                        lineNumber: 348,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _mapFiltersDefault.default), {
                         cities: allCities,
                         when: mapWhen,
                         setWhen: setMapWhen,
-                        customFrom: mapCustomFrom,
-                        setCustomFrom: setMapCustomFrom,
-                        customTo: mapCustomTo,
-                        setCustomTo: setMapCustomTo,
+                        customDate: mapCustomDate,
+                        setCustomDate: setMapCustomDate,
+                        fromHour: mapFromHour,
+                        setFromHour: setMapFromHour,
+                        toHour: mapToHour,
+                        setToHour: setMapToHour,
                         city: mapCity,
                         setCity: setMapCity,
                         minRating: mapMinRating,
@@ -36177,7 +36189,7 @@ function Dashboard() {
                         hasUserLocation: hasUserLocation
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 343,
+                        lineNumber: 354,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _barbershopMapDefault.default), {
@@ -36186,7 +36198,7 @@ function Dashboard() {
                         onSelectShop: setSelectedShop
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 357,
+                        lineNumber: 369,
                         columnNumber: 9
                     }, this),
                     !mapApplied ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -36194,7 +36206,7 @@ function Dashboard() {
                         children: "No barbershops shown yet. Pick a time and click \u201CFind appointments\u201D, or \u201CShow all\u201D."
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 364,
+                        lineNumber: 376,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                         className: "text-sm text-gray-500 mt-3",
@@ -36207,13 +36219,13 @@ function Dashboard() {
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 368,
+                        lineNumber: 380,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 335,
+                lineNumber: 346,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -36223,12 +36235,12 @@ function Dashboard() {
                     onChanged: loadMyAppointments
                 }, void 0, false, {
                     fileName: "src/pages/Dashboard.js",
-                    lineNumber: 376,
+                    lineNumber: 388,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 375,
+                lineNumber: 387,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -36239,7 +36251,7 @@ function Dashboard() {
                         children: "Top Rated Barbershops"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 381,
+                        lineNumber: 393,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -36247,7 +36259,7 @@ function Dashboard() {
                         children: "Our three highest-rated shops, based on customer reviews."
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 382,
+                        lineNumber: 394,
                         columnNumber: 9
                     }, this),
                     topThree === null ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36255,14 +36267,14 @@ function Dashboard() {
                         children: "Loading barbershops\u2026"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 385,
+                        lineNumber: 397,
                         columnNumber: 11
                     }, this) : topThree.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         className: "bg-white shadow rounded-lg p-8 text-center text-gray-500",
                         children: "No barbershops to display."
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 387,
+                        lineNumber: 399,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
@@ -36270,18 +36282,18 @@ function Dashboard() {
                                 shop: shop
                             }, shop.barbershopId, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 391,
+                                lineNumber: 403,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 389,
+                        lineNumber: 401,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 380,
+                lineNumber: 392,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -36292,7 +36304,7 @@ function Dashboard() {
                         children: "All Barbershops"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 399,
+                        lineNumber: 411,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -36303,7 +36315,7 @@ function Dashboard() {
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 400,
+                        lineNumber: 412,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _searchFiltersDefault.default), {
@@ -36319,7 +36331,7 @@ function Dashboard() {
                         onClear: clearTableFilters
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 405,
+                        lineNumber: 417,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36331,7 +36343,7 @@ function Dashboard() {
                                 children: "Apply filters"
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 415,
+                                lineNumber: 427,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -36340,13 +36352,13 @@ function Dashboard() {
                                 children: "Show all"
                             }, void 0, false, {
                                 fileName: "src/pages/Dashboard.js",
-                                lineNumber: 421,
+                                lineNumber: 433,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 414,
+                        lineNumber: 426,
                         columnNumber: 9
                     }, this),
                     !tableApplied ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -36354,14 +36366,14 @@ function Dashboard() {
                         children: "No barbershops shown yet. Apply a filter or click \u201CShow all\u201D."
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 430,
+                        lineNumber: 442,
                         columnNumber: 11
                     }, this) : barbershops === null ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                         className: "bg-white shadow rounded-lg p-8 text-center text-gray-500",
                         children: "Loading data\u2026"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 434,
+                        lineNumber: 446,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _barbershopTableDefault.default), {
                         shops: barbershops,
@@ -36370,13 +36382,13 @@ function Dashboard() {
                         onBooked: ()=>loadMyAppointments()
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 436,
+                        lineNumber: 448,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 398,
+                lineNumber: 410,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
@@ -36387,7 +36399,7 @@ function Dashboard() {
                         children: "Community Chat"
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 447,
+                        lineNumber: 459,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -36395,18 +36407,18 @@ function Dashboard() {
                         children: "Real-time chat between everyone currently online."
                     }, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 448,
+                        lineNumber: 460,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _chatDefault.default), {}, void 0, false, {
                         fileName: "src/pages/Dashboard.js",
-                        lineNumber: 449,
+                        lineNumber: 461,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 446,
+                lineNumber: 458,
                 columnNumber: 7
             }, this),
             selectedShop && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(MapShopModal, {
@@ -36415,17 +36427,17 @@ function Dashboard() {
                 onBooked: ()=>loadMyAppointments()
             }, void 0, false, {
                 fileName: "src/pages/Dashboard.js",
-                lineNumber: 454,
+                lineNumber: 466,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/pages/Dashboard.js",
-        lineNumber: 322,
+        lineNumber: 333,
         columnNumber: 5
     }, this);
 }
-_s1(Dashboard, "Gk/qpC0nc1PAgSZ23W6wbLIsgH8=", false, function() {
+_s1(Dashboard, "0XO3DhipDeErMbxQ1cDt3r9qvJo=", false, function() {
     return [
         (0, _authContext.useAuth)
     ];
@@ -52757,10 +52769,10 @@ const WHEN_OPTIONS = [
     },
     {
         value: 'custom',
-        label: 'Pick dates'
+        label: 'Pick date'
     }
 ];
-function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo, setCustomTo, city, setCity, minRating, setMinRating, maxDistanceKm, setMaxDistanceKm, onApply, onShowAll, onClear, hasUserLocation }) {
+function MapFilters({ cities, when, setWhen, customDate, setCustomDate, fromHour, setFromHour, toHour, setToHour, city, setCity, minRating, setMinRating, maxDistanceKm, setMaxDistanceKm, onApply, onShowAll, onClear, hasUserLocation }) {
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "bg-white shadow rounded-lg p-5 mb-4",
         children: [
@@ -52772,7 +52784,7 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                         children: "When do you want an appointment?"
                     }, void 0, false, {
                         fileName: "src/components/MapFilters.js",
-                        lineNumber: 31,
+                        lineNumber: 32,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -52786,13 +52798,13 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                 children: opt.label
                             }, opt.value, false, {
                                 fileName: "src/components/MapFilters.js",
-                                lineNumber: 38,
+                                lineNumber: 39,
                                 columnNumber: 15
                             }, this);
                         })
                     }, void 0, false, {
                         fileName: "src/components/MapFilters.js",
-                        lineNumber: 34,
+                        lineNumber: 35,
                         columnNumber: 9
                     }, this),
                     when === 'custom' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -52802,65 +52814,91 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                 children: [
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
                                         className: "block text-xs font-medium text-gray-600 mb-1",
-                                        children: "From date"
+                                        children: "Date"
                                     }, void 0, false, {
                                         fileName: "src/components/MapFilters.js",
-                                        lineNumber: 57,
+                                        lineNumber: 58,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
                                         type: "date",
-                                        value: customFrom,
-                                        onChange: (e)=>setCustomFrom(e.target.value),
+                                        value: customDate,
+                                        onChange: (e)=>setCustomDate(e.target.value),
                                         className: "border border-gray-300 rounded px-2 py-1.5 text-sm"
                                     }, void 0, false, {
                                         fileName: "src/components/MapFilters.js",
-                                        lineNumber: 58,
+                                        lineNumber: 59,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/MapFilters.js",
-                                lineNumber: 56,
+                                lineNumber: 57,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                                 children: [
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
                                         className: "block text-xs font-medium text-gray-600 mb-1",
-                                        children: "To date"
-                                    }, void 0, false, {
-                                        fileName: "src/components/MapFilters.js",
-                                        lineNumber: 66,
-                                        columnNumber: 15
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                        type: "date",
-                                        value: customTo,
-                                        min: customFrom || undefined,
-                                        onChange: (e)=>setCustomTo(e.target.value),
-                                        className: "border border-gray-300 rounded px-2 py-1.5 text-sm"
+                                        children: "From hour"
                                     }, void 0, false, {
                                         fileName: "src/components/MapFilters.js",
                                         lineNumber: 67,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                        type: "time",
+                                        value: fromHour,
+                                        onChange: (e)=>setFromHour(e.target.value),
+                                        className: "border border-gray-300 rounded px-2 py-1.5 text-sm"
+                                    }, void 0, false, {
+                                        fileName: "src/components/MapFilters.js",
+                                        lineNumber: 68,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/MapFilters.js",
-                                lineNumber: 65,
+                                lineNumber: 66,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                                        className: "block text-xs font-medium text-gray-600 mb-1",
+                                        children: "To hour"
+                                    }, void 0, false, {
+                                        fileName: "src/components/MapFilters.js",
+                                        lineNumber: 76,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                        type: "time",
+                                        value: toHour,
+                                        min: fromHour || undefined,
+                                        onChange: (e)=>setToHour(e.target.value),
+                                        className: "border border-gray-300 rounded px-2 py-1.5 text-sm"
+                                    }, void 0, false, {
+                                        fileName: "src/components/MapFilters.js",
+                                        lineNumber: 77,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/MapFilters.js",
+                                lineNumber: 75,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/MapFilters.js",
-                        lineNumber: 55,
+                        lineNumber: 56,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/MapFilters.js",
-                lineNumber: 30,
+                lineNumber: 31,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -52873,7 +52911,7 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                 children: "Max distance (km)"
                             }, void 0, false, {
                                 fileName: "src/components/MapFilters.js",
-                                lineNumber: 82,
+                                lineNumber: 92,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -52887,13 +52925,13 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                 className: "w-full border border-gray-300 rounded px-2 py-1.5 text-sm disabled:bg-gray-100"
                             }, void 0, false, {
                                 fileName: "src/components/MapFilters.js",
-                                lineNumber: 83,
+                                lineNumber: 93,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/MapFilters.js",
-                        lineNumber: 81,
+                        lineNumber: 91,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -52907,13 +52945,13 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                         children: "(optional)"
                                     }, void 0, false, {
                                         fileName: "src/components/MapFilters.js",
-                                        lineNumber: 97,
+                                        lineNumber: 107,
                                         columnNumber: 18
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/MapFilters.js",
-                                lineNumber: 96,
+                                lineNumber: 106,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("select", {
@@ -52926,7 +52964,7 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                         children: "All cities"
                                     }, void 0, false, {
                                         fileName: "src/components/MapFilters.js",
-                                        lineNumber: 104,
+                                        lineNumber: 114,
                                         columnNumber: 13
                                     }, this),
                                     cities.map((c)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -52934,19 +52972,19 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                             children: c
                                         }, c, false, {
                                             fileName: "src/components/MapFilters.js",
-                                            lineNumber: 106,
+                                            lineNumber: 116,
                                             columnNumber: 15
                                         }, this))
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/MapFilters.js",
-                                lineNumber: 99,
+                                lineNumber: 109,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/MapFilters.js",
-                        lineNumber: 95,
+                        lineNumber: 105,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -52960,13 +52998,13 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                         children: "(optional)"
                                     }, void 0, false, {
                                         fileName: "src/components/MapFilters.js",
-                                        lineNumber: 113,
+                                        lineNumber: 123,
                                         columnNumber: 24
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/MapFilters.js",
-                                lineNumber: 112,
+                                lineNumber: 122,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("select", {
@@ -52979,7 +53017,7 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                         children: "Any"
                                     }, void 0, false, {
                                         fileName: "src/components/MapFilters.js",
-                                        lineNumber: 120,
+                                        lineNumber: 130,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -52987,7 +53025,7 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                         children: "3+"
                                     }, void 0, false, {
                                         fileName: "src/components/MapFilters.js",
-                                        lineNumber: 121,
+                                        lineNumber: 131,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -52995,7 +53033,7 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                         children: "4+"
                                     }, void 0, false, {
                                         fileName: "src/components/MapFilters.js",
-                                        lineNumber: 122,
+                                        lineNumber: 132,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("option", {
@@ -53003,25 +53041,25 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                                         children: "4.5+"
                                     }, void 0, false, {
                                         fileName: "src/components/MapFilters.js",
-                                        lineNumber: 123,
+                                        lineNumber: 133,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/components/MapFilters.js",
-                                lineNumber: 115,
+                                lineNumber: 125,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/MapFilters.js",
-                        lineNumber: 111,
+                        lineNumber: 121,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/MapFilters.js",
-                lineNumber: 80,
+                lineNumber: 90,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -53033,7 +53071,7 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                         children: "Find appointments"
                     }, void 0, false, {
                         fileName: "src/components/MapFilters.js",
-                        lineNumber: 130,
+                        lineNumber: 140,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -53042,7 +53080,7 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                         children: "Show all"
                     }, void 0, false, {
                         fileName: "src/components/MapFilters.js",
-                        lineNumber: 136,
+                        lineNumber: 146,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -53051,19 +53089,19 @@ function MapFilters({ cities, when, setWhen, customFrom, setCustomFrom, customTo
                         children: "Clear"
                     }, void 0, false, {
                         fileName: "src/components/MapFilters.js",
-                        lineNumber: 142,
+                        lineNumber: 152,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/MapFilters.js",
-                lineNumber: 129,
+                lineNumber: 139,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/MapFilters.js",
-        lineNumber: 28,
+        lineNumber: 29,
         columnNumber: 5
     }, this);
 }
