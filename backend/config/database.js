@@ -14,21 +14,27 @@ const sequelize = new Sequelize(
     dialect: 'mysql',
     logging: false,
 
-    // ---- Timezone-safe DATETIME handling ----
-    // Appointment startTime is stored/compared as a plain wall-clock STRING
-    // ("YYYY-MM-DD HH:00:00"); the model declares that field as STRING so
-    // Sequelize never converts it to a JS Date. dateStrings:true makes mysql2
-    // return any DATETIME column as a literal string on read, so there is no
-    // UTC conversion in either direction.
+    // ---- Timezone handling ----
+    // Two kinds of time values live in this DB:
     //
-    // IMPORTANT: do NOT set a `timezone` option here. Forcing timezone:'+00:00'
-    // makes Sequelize rewrite DATE values into UTC on write, which on an
-    // Israel-time server turns a booked 09:00 into a stored 06:00. Leaving it
-    // unset + STRING field + dateStrings is what keeps times exact.
+    // 1. Appointment startTime: a wall-clock time the user picked ("09:00").
+    //    It is declared as a STRING model field (see appointment.model.js), so
+    //    Sequelize passes it through verbatim and the `timezone` option below
+    //    does NOT affect it. What the user books is exactly what is stored.
+    //
+    // 2. createDate / updateDate: audit timestamps Sequelize fills automatically.
+    //    These ARE real DATE columns, so the `timezone` option controls the
+    //    wall-clock they are written/read in. We set it to the app's local zone
+    //    so the audit times match real local time instead of being UTC
+    //    (which on an Israel server looked ~3 hours behind).
+    //
+    // DB_TIMEZONE defaults to '+03:00' (Israel summer / IDT). In winter Israel
+    // is '+02:00' — set DB_TIMEZONE in your .env to override if needed.
     dialectOptions: {
       dateStrings: true,
       typeCast: true,
     },
+    timezone: process.env.DB_TIMEZONE || '+03:00',
   }
 );
 

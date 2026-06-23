@@ -1,9 +1,7 @@
 /**
  * Database configuration for the Sequelize CLI (migrations & seeders).
- * Reads the same .env values used by the app's runtime connection.
- *
- * dateStrings mirrors config/database.js. We deliberately do NOT set a
- * `timezone` option (see the note in config/database.js).
+ * Reads the same .env values used by the app's runtime connection, and mirrors
+ * the timezone settings in config/database.js so the CLI behaves identically.
  */
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
@@ -19,6 +17,7 @@ const base = {
     dateStrings: true,
     typeCast: true,
   },
+  timezone: process.env.DB_TIMEZONE || '+03:00',
 };
 
 module.exports = {
