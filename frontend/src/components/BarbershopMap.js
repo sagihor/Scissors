@@ -14,30 +14,26 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Fix Leaflet's default marker icon paths (CRA bundling breaks the defaults).
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
-
-// Green icon for the user's location — embedded directly (self-contained),
-// so it loads for everyone on the deployed URL with no external request.
+// Self-contained marker icons (embedded as data URIs). These load for every
+// visitor on the deployed URL, with NO dependence on Leaflet's default icon
+// images (whose bundled paths can fail and render the broken-image "Mark").
+const BLUE_PIN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNSIgaGVpZ2h0PSI0MSIgdmlld0JveD0iMCAwIDI1IDQxIj48cGF0aCBkPSJNMTIuNSAwQzUuNiAwIDAgNS42IDAgMTIuNWMwIDguNCAxMi41IDI4LjUgMTIuNSAyOC41UzI1IDIwLjkgMjUgMTIuNUMyNSA1LjYgMTkuNCAwIDEyLjUgMHoiIGZpbGw9IiMyYTZlZDQiLz48Y2lyY2xlIGN4PSIxMi41IiBjeT0iMTIuNSIgcj0iNSIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==';
 const GREEN_PIN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNSIgaGVpZ2h0PSI0MSIgdmlld0JveD0iMCAwIDI1IDQxIj48cGF0aCBkPSJNMTIuNSAwQzUuNiAwIDAgNS42IDAgMTIuNWMwIDguNCAxMi41IDI4LjUgMTIuNSAyOC41UzI1IDIwLjkgMjUgMTIuNUMyNSA1LjYgMTkuNCAwIDEyLjUgMHoiIGZpbGw9IiMyZWNjNDAiLz48Y2lyY2xlIGN4PSIxMi41IiBjeT0iMTIuNSIgcj0iNSIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==';
 
 const userIcon = new L.Icon({
   iconUrl: GREEN_PIN,
   iconRetinaUrl: GREEN_PIN,
-  shadowUrl: markerShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowSize: [41, 41],
+});
+
+const shopIcon = new L.Icon({
+  iconUrl: BLUE_PIN,
+  iconRetinaUrl: BLUE_PIN,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
 });
 
 export default function BarbershopMap({ shops, userLocation, onBook }) {
@@ -77,7 +73,7 @@ export default function BarbershopMap({ shops, userLocation, onBook }) {
     layer.clearLayers();
     const bounds = [];
 
-    // User marker
+    // User marker (green)
     if (userLocation && userLocation.latitude != null) {
       const m = L.marker([userLocation.latitude, userLocation.longitude], { icon: userIcon })
         .bindPopup(`<b>You are here</b><br/>${userLocation.addressLabel || 'Your location'}`);
@@ -85,7 +81,7 @@ export default function BarbershopMap({ shops, userLocation, onBook }) {
       bounds.push([userLocation.latitude, userLocation.longitude]);
     }
 
-    // Shop markers
+    // Shop markers (blue)
     (shops || []).forEach((shop) => {
       if (shop.latitude == null || shop.longitude == null) return;
       const dist = shop.distanceKm != null ? `<br/>${shop.distanceKm} km away` : '';
@@ -102,7 +98,7 @@ export default function BarbershopMap({ shops, userLocation, onBook }) {
           </button>
         </div>`;
 
-      const marker = L.marker([shop.latitude, shop.longitude]).bindPopup(popupHtml);
+      const marker = L.marker([shop.latitude, shop.longitude], { icon: shopIcon }).bindPopup(popupHtml);
 
       // Wire the Book button inside the popup once it opens.
       marker.on('popupopen', () => {
